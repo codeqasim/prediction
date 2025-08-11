@@ -32,17 +32,6 @@ function($scope, $location, AuthService) {
         });
     };
 
-    // Mobile menu state
-    vm.mobileMenuOpen = false;
-
-    vm.toggleMobileMenu = function() {
-        vm.mobileMenuOpen = !vm.mobileMenuOpen;
-    };
-
-    vm.closeMobileMenu = function() {
-        vm.mobileMenuOpen = false;
-    };
-
     // User dropdown state
     vm.userDropdownOpen = false;
 
@@ -53,4 +42,13 @@ function($scope, $location, AuthService) {
     vm.closeUserDropdown = function() {
         vm.userDropdownOpen = false;
     };
+
+    // Listen for auth state changes
+    $scope.$on('auth:login', function(event, user) {
+        // UI will update automatically
+    });
+
+    $scope.$on('auth:logout', function() {
+        // UI will update automatically  
+    });
 }]);

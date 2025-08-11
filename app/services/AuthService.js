@@ -1,6 +1,6 @@
 // Authentication Service - Handles user authentication
-angular.module('app').service('AuthService', ['$rootScope', '$q', 'SupabaseService',
-function($rootScope, $q, SupabaseService) {
+angular.module('app').service('AuthService', ['$rootScope', '$q', '$timeout', 'SupabaseService',
+function($rootScope, $q, $timeout, SupabaseService) {
     let currentUser = null;
     let authListener = null;
 
@@ -14,14 +14,16 @@ function($rootScope, $q, SupabaseService) {
         return currentUser;
     };
 
-    // Set current user
+    // Set current user  
     this.setCurrentUser = function(user) {
         currentUser = user;
-        if (user) {
-            $rootScope.$broadcast('auth:login', user);
-        } else {
-            $rootScope.$broadcast('auth:logout');
-        }
+        $timeout(function() {
+            if (user) {
+                $rootScope.$broadcast('auth:login', user);
+            } else {
+                $rootScope.$broadcast('auth:logout');
+            }
+        });
     };
 
     // Check existing authentication
@@ -31,7 +33,9 @@ function($rootScope, $q, SupabaseService) {
         SupabaseService.auth.getSession().then(function(response) {
             if (response.data && response.data.session && response.data.session.user) {
                 currentUser = response.data.session.user;
-                $rootScope.$broadcast('auth:login', currentUser);
+                $timeout(function() {
+                    $rootScope.$broadcast('auth:login', currentUser);
+                });
                 deferred.resolve(currentUser);
             } else {
                 currentUser = null;
@@ -55,7 +59,9 @@ function($rootScope, $q, SupabaseService) {
                 deferred.reject(response.error);
             } else if (response.data && response.data.user) {
                 currentUser = response.data.user;
-                $rootScope.$broadcast('auth:login', currentUser);
+                $timeout(function() {
+                    $rootScope.$broadcast('auth:login', currentUser);
+                });
                 deferred.resolve(currentUser);
             } else {
                 deferred.reject(new Error('Login failed - no user data received'));

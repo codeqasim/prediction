@@ -39,11 +39,11 @@ $headers = [
 
 
 // Debug: log outgoing request
-file_put_contents(__DIR__ . '/delete_debug.log', print_r([
-    'endpoint' => $endpoint,
-    'headers' => $headers,
-    'user_id' => $user_id
-], true));
+// file_put_contents(__DIR__ . '/delete_debug.log', print_r([
+//     'endpoint' => $endpoint,
+//     'headers' => $headers,
+//     'user_id' => $user_id
+// ], true));
 
 $ch = curl_init($endpoint);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');

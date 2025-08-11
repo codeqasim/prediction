@@ -183,9 +183,18 @@ function($rootScope, $q, SupabaseService) {
         }
 
         authListener = SupabaseService.auth.onAuthStateChange(function(event, session) {
+            console.log('Auth state changed:', event, session?.user?.email);
+            
             if (event === 'SIGNED_IN' && session && session.user) {
                 currentUser = session.user;
                 $rootScope.$broadcast('auth:login', currentUser);
+                
+                // If this is the first sign in after email confirmation, create user profile
+                if (session.user.email_confirmed_at && !session.user.user_metadata?.profile_created) {
+                    console.log('Creating user profile after email confirmation...');
+                    // You can call UserService.createProfile here if needed
+                }
+                
                 $rootScope.$apply();
             } else if (event === 'SIGNED_OUT') {
                 currentUser = null;

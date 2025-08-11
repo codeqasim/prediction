@@ -38,6 +38,11 @@ function($scope, $location, $rootScope, AuthService, UserService) {
     vm.showResetModal = false;
     vm.resetSent = false; // Track if reset email was sent
     vm.passwordUpdated = false; // Track if password was updated
+    vm.registrationSuccess = false; // Track successful registration
+    vm.successMessage = ''; // Success message display
+    vm.registeredEmail = ''; // Store registered email for display
+    vm.isResending = false; // Track resend confirmation state
+    vm.resendSuccess = false; // Track resend confirmation success
     vm.passwordStrength = {
         score: 0,
         feedback: 'Weak',
@@ -53,6 +58,10 @@ function($scope, $location, $rootScope, AuthService, UserService) {
     vm.switchMode = function(mode) {
         vm.currentMode = mode;
         vm.clearErrors();
+        vm.registrationSuccess = false;
+        vm.successMessage = '';
+        vm.registeredEmail = '';
+        vm.resendSuccess = false;
 
         // Update URL without page reload
         if (mode === 'register') {
@@ -65,6 +74,7 @@ function($scope, $location, $rootScope, AuthService, UserService) {
     // Clear errors
     vm.clearErrors = function() {
         vm.errors = {};
+        vm.successMessage = '';
     };
 
     // Set field error
@@ -134,13 +144,23 @@ function($scope, $location, $rootScope, AuthService, UserService) {
 
         AuthService.register(vm.registerForm.email, vm.registerForm.password, userData)
             .then(function(user) {
-                // Create user profile
-                return UserService.createProfile(userData);
-            })
-            .then(function() {
-                // Success message
-                alert('Account created successfully! Welcome to Prediction AI!');
-                $location.path('/dashboard');
+                console.log('✅ Registration successful:', user);
+                
+                // Set success state
+                vm.registrationSuccess = true;
+                vm.registeredEmail = vm.registerForm.email;
+                vm.successMessage = 'Account created successfully! Please check your email and click the confirmation link to activate your account.';
+                
+                // Clear the form
+                vm.registerForm = {
+                    firstName: '',
+                    lastName: '',
+                    username: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    agreeTerms: false
+                };
             })
             .catch(function(error) {
                 console.error('❌ Registration failed:', error);
@@ -157,6 +177,7 @@ function($scope, $location, $rootScope, AuthService, UserService) {
             .finally(function() {
                 vm.isLoading = false;
                 $rootScope.setLoading(false);
+                $scope.$apply();
             });
     };
 
@@ -312,6 +333,31 @@ function($scope, $location, $rootScope, AuthService, UserService) {
             })
             .catch(function(error) {
                 console.error('Error checking username:', error);
+            });
+    };
+
+    // Resend confirmation email
+    vm.resendConfirmation = function() {
+        if (vm.isResending || !vm.registeredEmail) return;
+
+        vm.isResending = true;
+        vm.resendSuccess = false;
+
+        AuthService.resetPassword(vm.registeredEmail)
+            .then(function() {
+                vm.resendSuccess = true;
+                setTimeout(function() {
+                    vm.resendSuccess = false;
+                    $scope.$apply();
+                }, 3000);
+            })
+            .catch(function(error) {
+                console.error('Error resending confirmation:', error);
+                // Show error but don't break the flow
+            })
+            .finally(function() {
+                vm.isResending = false;
+                $scope.$apply();
             });
     };
 

@@ -3,25 +3,22 @@
     <div class="admin-header bg-white shadow-sm border-b" ng-show="admin.isAdminAuthenticated">
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-purple-100 rounded-lg">
-                        <i class="fas fa-cog text-purple-600 text-lg"></i>
+                <div class="flex items-center space-x-2">
+                    <div class="p-1 bg-purple-100 rounded">
+                        <i class="fas fa-cog text-purple-600 text-sm"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900">Admin Dashboard</h1>
-                        <p class="text-sm text-gray-500">System management and user overview</p>
+                        <h1 class="text-lg font-semibold text-gray-900">Admin Dashboard</h1>
                     </div>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <button ng-click="admin.refreshData()" 
-                            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
-                        <i class="fas fa-sync-alt text-xs mr-2" ng-class="{'fa-spin': admin.isRefreshing}"></i>
-                        Refresh
+                <div class="flex items-center space-x-2">
+                    <button ng-click="admin.refreshData()"
+                            class="px-2 py-1 text-xs border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-sync-alt" ng-class="{'fa-spin': admin.isRefreshing}"></i>
                     </button>
-                    <button ng-click="admin.adminLogout()" 
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                        <i class="fas fa-sign-out-alt text-xs mr-2"></i>
-                        Logout
+                    <button ng-click="admin.adminLogout()"
+                            class="px-2 py-1 text-xs border border-transparent rounded text-white bg-red-600 hover:bg-red-700">
+                        <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             </div>
@@ -29,446 +26,293 @@
     </div>
 
     <!-- Admin Authentication Loading -->
-    <div ng-if="!admin.isAdminAuthenticated" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-            <p class="mt-4 text-gray-600 text-sm">Authenticating admin access...</p>
+    <div ng-if="!admin.isAdminAuthenticated" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="text-center py-6">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+            <p class="mt-2 text-gray-600 text-sm">Authenticating...</p>
         </div>
     </div>
 
     <!-- Loading State -->
-    <div ng-if="admin.isAdminAuthenticated && admin.isLoading" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-            <p class="mt-4 text-gray-600 text-sm">Loading dashboard data...</p>
+    <div ng-if="admin.isAdminAuthenticated && admin.isLoading" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="text-center py-6">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+            <p class="mt-2 text-gray-600 text-sm">Loading...</p>
         </div>
     </div>
 
-    <!-- Compact Admin Content -->
-    <div ng-if="admin.isAdminAuthenticated && !admin.isLoading" class="admin-content p-4">
-        
-        <!-- Compact Stats Row -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            <div class="stats-card bg-white rounded-lg shadow-sm border p-4">
+    <!-- Main Admin Content -->
+    <div ng-if="admin.isAdminAuthenticated && !admin.isLoading" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+
+        <!-- Compact Stats -->
+        <div class="grid grid-cols-4 gap-2 mb-3">
+            <div class="bg-white rounded border p-2">
                 <div class="flex items-center">
-                    <div class="p-2 rounded-lg bg-blue-50">
-                        <i class="fas fa-users text-blue-600 text-sm"></i>
+                    <div class="p-1 rounded bg-blue-50 mr-2">
+                        <i class="fas fa-users text-blue-600 text-xs"></i>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-xs text-gray-500">Users</p>
-                        <p class="text-lg font-bold text-gray-900">{{admin.stats.totalUsers || 0}}</p>
+                    <div>
+                        <div class="text-xs text-gray-500">Users</div>
+                        <div class="text-sm font-semibold text-gray-900">{{admin.stats.totalUsers || 0}}</div>
                     </div>
                 </div>
             </div>
-            
-            <div class="stats-card bg-white rounded-lg shadow-sm border p-4">
+
+            <div class="bg-white rounded border p-2">
                 <div class="flex items-center">
-                    <div class="p-2 rounded-lg bg-green-50">
-                        <i class="fas fa-user-check text-green-600 text-sm"></i>
+                    <div class="p-1 rounded bg-green-50 mr-2">
+                        <i class="fas fa-user-check text-green-600 text-xs"></i>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-xs text-gray-500">Active</p>
-                        <p class="text-lg font-bold text-gray-900">{{admin.stats.activeUsers || 0}}</p>
+                    <div>
+                        <div class="text-xs text-gray-500">Active</div>
+                        <div class="text-sm font-semibold text-gray-900">{{admin.stats.activeUsers || 0}}</div>
                     </div>
                 </div>
             </div>
-            
-            <div class="stats-card bg-white rounded-lg shadow-sm border p-4">
+
+            <div class="bg-white rounded border p-2">
                 <div class="flex items-center">
-                    <div class="p-2 rounded-lg bg-purple-50">
-                        <i class="fas fa-tags text-purple-600 text-sm"></i>
+                    <div class="p-1 rounded bg-purple-50 mr-2">
+                        <i class="fas fa-tags text-purple-600 text-xs"></i>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-xs text-gray-500">Categories</p>
-                        <p class="text-lg font-bold text-gray-900">{{admin.stats.totalCategories || 0}}</p>
+                    <div>
+                        <div class="text-xs text-gray-500">Categories</div>
+                        <div class="text-sm font-semibold text-gray-900">{{admin.stats.totalCategories || 0}}</div>
                     </div>
                 </div>
             </div>
-            
-            <div class="stats-card bg-white rounded-lg shadow-sm border p-4">
+
+            <div class="bg-white rounded border p-2">
                 <div class="flex items-center">
-                    <div class="p-2 rounded-lg bg-orange-50">
-                        <i class="fas fa-database text-orange-600 text-sm"></i>
+                    <div class="p-1 rounded bg-indigo-50 mr-2">
+                        <i class="fas fa-database text-indigo-600 text-xs"></i>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-xs text-gray-500">Records</p>
-                        <p class="text-lg font-bold text-gray-900">{{admin.stats.totalRecords || 0}}</p>
+                    <div>
+                        <div class="text-xs text-gray-500">Records</div>
+                        <div class="text-sm font-semibold text-gray-900">{{admin.stats.totalRecords || 0}}</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Compact Main Panel -->
-        <div class="bg-white rounded-lg shadow-sm border">
-            <!-- Compact Tab Navigation -->
-            <div class="border-b border-gray-100">
-                <nav class="flex px-4" aria-label="Admin Tabs">
-                    <button ng-repeat="tab in admin.tabs" 
+        <!-- Compact Tabs and Content -->
+        <div class="bg-white rounded border">
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-200">
+                <nav class="flex">
+                    <button ng-repeat="tab in admin.tabs"
                             ng-click="admin.setActiveTab(tab.key)"
-                            ng-class="admin.activeTab === tab.key ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700'"
-                            class="whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm transition-colors flex items-center">
-                        <i class="{{tab.icon}} text-xs mr-2"></i>
+                            ng-class="admin.activeTab === tab.key ? 'border-purple-500 text-purple-700 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                            class="flex-1 py-2 px-3 text-xs font-medium text-center border-b-2">
+                        <i class="{{tab.icon}} mr-1"></i>
                         {{tab.label}}
-                        <span ng-if="tab.count !== undefined" class="ml-2 bg-gray-100 text-gray-700 py-0.5 px-1.5 rounded text-xs">
+                        <span ng-if="tab.count !== undefined"
+                              ng-class="admin.activeTab === tab.key ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'"
+                              class="ml-1 px-1.5 py-0.5 rounded text-xs">
                             {{tab.count}}
                         </span>
                     </button>
                 </nav>
             </div>
 
-            <!-- Tab Content -->
-            <div class="p-4">
-                
-                <!-- Users Tab -->
-                <div ng-show="admin.activeTab === 'users'">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Users</h2>
-                        <div class="flex space-x-2">
-                            <div class="relative">
-                                <input type="text" 
-                                       ng-model="admin.userSearch" 
-                                       ng-change="admin.searchUsers()"
-                                       placeholder="Search..."
-                                       class="pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 w-40">
-                                <i class="fas fa-search absolute left-2.5 top-2 text-gray-400 text-xs"></i>
+            <!-- Users Tab Content -->
+            <div ng-show="admin.activeTab === 'users'" class="p-3">
+                <!-- Header with Search -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="text-sm font-medium text-gray-900">
+                        Users ({{admin.filteredUsers.length}})
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <!-- Search Input -->
+                        <div class="relative">
+                            <input type="text"
+                                   ng-model="admin.userSearch"
+                                   ng-change="admin.searchUsers()"
+                                   placeholder="Search..."
+                                   class="w-32 pl-6 pr-2 py-1 text-xs border border-gray-300 rounded">
+                            <i class="fas fa-search absolute left-2 top-1.5 text-gray-400 text-xs"></i>
+                        </div>
+                        <!-- Demo Badge -->
+                        <span class="px-2 py-1 text-xs bg-amber-100 text-amber-800 rounded">Demo</span>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border border-gray-200 rounded">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase border-b">User</th>
+                                <th class="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase border-b">Status</th>
+                                <th class="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase border-b">Date</th>
+                                <th class="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase border-b">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <tr ng-repeat="user in admin.filteredUsers track by user.id" class="hover:bg-gray-50 border-b border-gray-100">
+                                <td class="px-2 py-2">
+                                    <div class="flex items-center">
+                                        <div class="h-6 w-6 rounded-full bg-purple-500 flex items-center justify-center mr-2">
+                                            <span class="text-white text-xs">
+                                                {{((user.user_metadata && user.user_metadata.full_name) || user.email)[0].toUpperCase()}}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs font-medium text-gray-900">
+                                                {{(user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0]}}
+                                            </div>
+                                            <div class="text-xs text-gray-500">{{user.email}}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-2 py-2">
+                                    <span ng-class="user.email_confirmed_at ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
+                                          class="px-2 py-0.5 text-xs rounded-full">
+                                        {{user.email_confirmed_at ? 'Active' : 'Pending'}}
+                                    </span>
+                                </td>
+                                <td class="px-2 py-2 text-xs text-gray-500">
+                                    {{admin.formatDate(user.created_at)}}
+                                </td>
+                                <td class="px-2 py-2">
+                                    <button ng-click="admin.viewUser(user)"
+                                            class="px-2 py-1 text-xs border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div ng-if="admin.filteredUsers.length === 0" class="text-center py-6">
+                    <i class="fas fa-users text-gray-300 text-lg mb-2"></i>
+                    <div class="text-sm text-gray-500">
+                        <span ng-if="admin.userSearch">No users found</span>
+                        <span ng-if="!admin.userSearch">No users yet</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Tabs -->
+            <div ng-show="admin.activeTab !== 'users'" class="p-3">
+                <div class="text-center py-6">
+                    <i class="fas fa-cog text-gray-300 text-lg mb-2"></i>
+                    <div class="text-sm text-gray-500">{{admin.getActiveTabLabel()}} coming soon</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div ng-if="admin.showEditModal" class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                                User Details
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                                    <input type="text"
+                                           ng-model="admin.editingUser.full_name"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email"
+                                           ng-model="admin.editingUser.display_email"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Status</label>
+                                    <input type="text"
+                                           ng-model="admin.editingUser.display_status"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Created Date</label>
+                                    <input type="text"
+                                           ng-model="admin.editingUser.display_created"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Last Sign In</label>
+                                    <input type="text"
+                                           ng-model="admin.editingUser.display_last_signin"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">User ID</label>
+                                    <input type="text"
+                                           ng-model="admin.editingUser.display_id"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 font-mono text-xs">
+                                </div>
                             </div>
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-500 cursor-not-allowed">
-                                <i class="fas fa-info-circle text-xs mr-1"></i>
-                                Demo Mode
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Compact Users Table -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-100">
-                                <tr ng-repeat="user in admin.filteredUsers track by user.id" class="hover:bg-gray-50">
-                                    <td class="px-3 py-3">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-8 w-8">
-                                                <div class="h-8 w-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                                                    <span class="text-white text-xs font-medium">
-                                                        {{((user.user_metadata && user.user_metadata.full_name) || user.email)[0].toUpperCase()}}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    {{(user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0]}}
-                                                </div>
-                                                <div class="text-xs text-gray-500">{{user.email}}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-3 py-3">
-                                        <span ng-class="user.email_confirmed_at ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'" 
-                                              class="inline-flex px-2 py-0.5 text-xs font-medium rounded-full">
-                                            {{user.email_confirmed_at ? 'Active' : 'Pending'}}
-                                        </span>
-                                    </td>
-                                    <td class="px-3 py-3 text-xs text-gray-500">
-                                        {{admin.formatDate(user.created_at)}}
-                                    </td>
-                                    <td class="px-3 py-3">
-                                        <div class="flex space-x-2">
-                                            <button ng-click="admin.viewUser(user)" 
-                                                    class="text-blue-600 hover:text-blue-800 text-sm" 
-                                                    title="View User">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <span class="text-gray-300">|</span>
-                                            <span class="text-gray-400 text-xs">Admin View Only</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        
-                        <!-- Empty State -->
-                        <div ng-if="admin.filteredUsers.length === 0" class="text-center py-8">
-                            <i class="fas fa-users text-gray-300 text-2xl mb-3"></i>
-                            <h3 class="text-base font-medium text-gray-900 mb-1">No users found</h3>
-                            <p class="text-sm text-gray-500">
-                                <span ng-if="admin.userSearch">No users match your search.</span>
-                                <span ng-if="!admin.userSearch">Start by adding your first user.</span>
-                            </p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Other Tabs -->
-                <div ng-show="admin.activeTab !== 'users'">
-                    <div class="text-center py-8">
-                        <i class="fas fa-cog text-gray-300 text-2xl mb-3"></i>
-                        <h3 class="text-base font-medium text-gray-900 mb-1">{{admin.getActiveTabLabel()}}</h3>
-                        <p class="text-sm text-gray-500">This section will be implemented soon.</p>
-                    </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button"
+                            ng-click="admin.closeEditModal()"
+                            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Close
+                    </button>
                 </div>
-
             </div>
         </div>
     </div>
 
     <!-- Compact Notifications -->
-    <div ng-if="admin.errorMessage" class="fixed bottom-4 right-4 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg shadow-lg max-w-sm">
-        <div class="flex items-center">
-            <i class="fas fa-exclamation-circle text-sm mr-2"></i>
-            <span class="text-sm">{{admin.errorMessage}}</span>
-            <button ng-click="admin.clearError()" class="ml-3 text-red-500 hover:text-red-700">
-                <i class="fas fa-times text-xs"></i>
-            </button>
-        </div>
-    </div>
-
-    <div ng-if="admin.successMessage" class="fixed bottom-4 right-4 bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg shadow-lg max-w-sm">
-        <div class="flex items-center">
-            <i class="fas fa-check-circle text-sm mr-2"></i>
-            <span class="text-sm">{{admin.successMessage}}</span>
-            <button ng-click="admin.clearSuccess()" class="ml-3 text-green-500 hover:text-green-700">
-                <i class="fas fa-times text-xs"></i>
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Compact User Edit Modal -->
-<div ng-if="admin.showEditModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-4 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-lg bg-white">
-        <div class="mt-2">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium text-gray-900">
-                    {{admin.editingUser.id ? 'Edit User' : 'Add User'}}
-                </h3>
-                <button ng-click="admin.closeEditModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <form ng-submit="admin.saveUser()" class="space-y-3">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <input type="text" 
-                           ng-model="admin.editingUser.user_metadata.full_name" 
-                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                           placeholder="Enter full name">
+    <div ng-if="admin.errorMessage" class="fixed bottom-4 right-4 z-50 max-w-md">
+        <div class="bg-red-50 border-l-4 border-red-400 p-3 rounded shadow-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-circle text-red-400 text-sm"></i>
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" 
-                           ng-model="admin.editingUser.email" 
-                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                           placeholder="Enter email address"
-                           ng-disabled="admin.editingUser.id">
+                <div class="ml-2 flex-1">
+                    <p class="text-sm text-red-700">{{admin.errorMessage}}</p>
                 </div>
-                
-                <div ng-if="!admin.editingUser.id">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" 
-                           ng-model="admin.editingUser.password" 
-                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                           placeholder="Enter password">
-                </div>
-                
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" 
-                            ng-click="admin.closeEditModal()" 
-                            class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                        Cancel
-                    </button>
-                    <button type="submit" 
-                            ng-disabled="admin.isSaving"
-                            class="px-3 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">
-                        <span ng-if="admin.isSaving">Saving...</span>
-                        <span ng-if="!admin.isSaving">{{admin.editingUser.id ? 'Update' : 'Create'}}</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-
-                            
-                            <!-- Empty State -->
-                            <div ng-if="admin.filteredUsers.length === 0" class="text-center py-12">
-                                <i class="fas fa-users text-gray-300 text-4xl mb-4"></i>
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-                                <p class="text-gray-500">
-                                    <span ng-if="admin.userSearch">No users match your search criteria.</span>
-                                    <span ng-if="!admin.userSearch">Start by adding your first user.</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Categories Tab -->
-                    <div ng-show="admin.activeTab === 'categories'">
-                        <div class="text-center py-12">
-                            <i class="fas fa-tags text-gray-300 text-4xl mb-4"></i>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Categories Management</h3>
-                            <p class="text-gray-500">Categories management will be implemented here.</p>
-                        </div>
-                    </div>
-
-                    <!-- Other Tabs -->
-                    <div ng-show="admin.activeTab !== 'users' && admin.activeTab !== 'categories'">
-                        <div class="text-center py-12">
-                            <i class="fas fa-cog text-gray-300 text-4xl mb-4"></i>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">{{admin.getActiveTabLabel()}} Management</h3>
-                            <p class="text-gray-500">This section will be implemented soon.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Error Messages -->
-    <div ng-if="admin.errorMessage" class="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg">
-        <div class="flex items-center">
-            <i class="fas fa-exclamation-circle mr-2"></i>
-            <span>{{admin.errorMessage}}</span>
-            <button ng-click="admin.clearError()" class="ml-4 text-red-500 hover:text-red-700">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Success Messages -->
-    <div ng-if="admin.successMessage" class="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg">
-        <div class="flex items-center">
-            <i class="fas fa-check-circle mr-2"></i>
-            <span>{{admin.successMessage}}</span>
-            <button ng-click="admin.clearSuccess()" class="ml-4 text-green-500 hover:text-green-700">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- User Edit Modal -->
-<div ng-if="admin.showEditModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium text-gray-900">
-                    {{admin.editMode === 'view' ? 'User Details' : (admin.editingUser.id ? 'Edit User' : 'Add User')}}
-                </h3>
-                <button ng-click="admin.closeEditModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <!-- View Mode -->
-            <div ng-if="admin.editMode === 'view'" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
-                            {{admin.editingUser.full_name || 'Not provided'}}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
-                            {{admin.editingUser.display_email}}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                            <span ng-class="admin.editingUser.display_status === 'Active' ? 'text-green-800' : 'text-yellow-800'">
-                                {{admin.editingUser.display_status}}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Created</label>
-                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
-                            {{admin.editingUser.display_created}}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Sign In</label>
-                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
-                            {{admin.editingUser.display_last_signin || 'Never'}}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">User ID</label>
-                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-mono text-xs">
-                            {{admin.editingUser.display_id}}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex justify-end pt-4">
-                    <button type="button" 
-                            ng-click="admin.closeEditModal()" 
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        Close
+                <div class="ml-auto pl-2">
+                    <button ng-click="admin.clearError()"
+                            class="inline-flex text-red-400 hover:text-red-600 text-sm">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
-            
-            <!-- Edit Mode -->
-            <form ng-if="admin.editMode !== 'view'" ng-submit="admin.saveUser()" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <input type="text" 
-                           ng-model="admin.editingUser.user_metadata.full_name" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                           placeholder="Enter full name">
+        </div>
+    </div>
+
+    <div ng-if="admin.successMessage" class="fixed bottom-4 right-4 z-50 max-w-md">
+        <div class="bg-green-50 border-l-4 border-green-400 p-3 rounded shadow-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-400 text-sm"></i>
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" 
-                           ng-model="admin.editingUser.email" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                           placeholder="Enter email address"
-                           ng-disabled="admin.editingUser.id">
+                <div class="ml-2 flex-1">
+                    <p class="text-sm text-green-700">{{admin.successMessage}}</p>
                 </div>
-                
-                <div ng-if="!admin.editingUser.id">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" 
-                           ng-model="admin.editingUser.password" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                           placeholder="Enter password">
-                </div>
-                
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" 
-                            ng-click="admin.closeEditModal()" 
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                        Cancel
-                    </button>
-                    <button type="submit" 
-                            ng-disabled="admin.isSaving"
-                            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">
-                        <span ng-if="admin.isSaving">Saving...</span>
-                        <span ng-if="!admin.isSaving">{{admin.editingUser.id ? 'Update' : 'Create'}}</span>
+                <div class="ml-auto pl-2">
+                    <button ng-click="admin.clearSuccess()"
+                            class="inline-flex text-green-400 hover:text-green-600 text-sm">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

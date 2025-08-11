@@ -50,6 +50,17 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             }
         })
 
+        .when('/reset-password', {
+            templateUrl: 'app/views/auth/reset-password.html',
+            controller: 'AuthController',
+            controllerAs: 'auth',
+            title: 'Update Password - PredictIt',
+            meta: {
+                description: 'Set your new password for your PredictIt account.',
+                keywords: 'reset password, new password, update password'
+            }
+        })
+
         // Leaderboard Route
         .when('/leaderboard', {
             templateUrl: 'app/views/leaderboard/index.html',

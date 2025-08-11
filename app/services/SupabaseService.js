@@ -202,7 +202,7 @@ angular.module('app').service('SupabaseService', [function() {
             // If real Supabase client is available, use it
             if (client) {
                 return client.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/reset-password'
+                    redirectTo: window.location.origin + '#!/reset-password'
                 });
             }
 
@@ -215,6 +215,64 @@ angular.module('app').service('SupabaseService', [function() {
                             error: null
                         });
                     }, 300);
+                });
+            }
+
+            return Promise.reject(new Error('Supabase not available'));
+        }.bind(this),
+
+        // Update password
+        updatePassword: function(newPassword) {
+            const client = this.getClient();
+
+            // If real Supabase client is available, use it
+            if (client) {
+                // Simply update the password using the current session
+                // Session should have been established via setSession in initResetPassword
+                return client.auth.updateUser({
+                    password: newPassword
+                });
+            }
+
+            // Demo mode fallback - simulate successful password update
+            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
+                        resolve({
+                            data: { user: { id: 'demo-user-id' } },
+                            error: null
+                        });
+                    }, 500);
+                });
+            }
+
+            return Promise.reject(new Error('Supabase not available'));
+        }.bind(this),
+
+        // Set session
+        setSession: function(accessToken, refreshToken) {
+            const client = this.getClient();
+
+            // If real Supabase client is available, use it
+            if (client) {
+                return client.auth.setSession({
+                    access_token: accessToken,
+                    refresh_token: refreshToken
+                });
+            }
+
+            // Demo mode fallback - simulate successful session set
+            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
+                        resolve({
+                            data: { 
+                                user: { id: 'demo-user-id', email: 'demo@example.com' },
+                                session: { access_token: accessToken }
+                            },
+                            error: null
+                        });
+                    }, 200);
                 });
             }
 

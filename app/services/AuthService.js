@@ -136,6 +136,46 @@ function($rootScope, $q, SupabaseService) {
         return deferred.promise;
     };
 
+    // Update password
+    this.updatePassword = function(newPassword) {
+        const deferred = $q.defer();
+
+        SupabaseService.auth.updatePassword(newPassword).then(function(response) {
+            if (response.error) {
+                deferred.reject(response.error);
+            } else {
+                deferred.resolve(response.data);
+            }
+        }).catch(function(error) {
+            console.error('Update password error:', error);
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+    };
+
+    // Set session (for password reset)
+    this.setSession = function(accessToken, refreshToken) {
+        const deferred = $q.defer();
+
+        SupabaseService.auth.setSession(accessToken, refreshToken).then(function(response) {
+            if (response.error) {
+                deferred.reject(response.error);
+            } else {
+                if (response.data && response.data.user) {
+                    currentUser = response.data.user;
+                    $rootScope.$broadcast('auth:login', currentUser);
+                }
+                deferred.resolve(response.data);
+            }
+        }).catch(function(error) {
+            console.error('Set session error:', error);
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+    };
+
     // Initialize auth state listener
     this.initAuthListener = function() {
         if (authListener) {

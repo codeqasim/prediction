@@ -1,175 +1,184 @@
-<!-- Login Page - Matching Website Theme -->
-<section class="relative overflow-hidden min-h-screen flex items-center justify-center">
+<!-- Simple Login Page -->
+<div class="min-h-screen flex items-center justify-center relative">
+    
     <!-- Background Video -->
-    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+    <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover">
+        <source src="bg.mp4" type="video/mp4">
         <source src="assets/bg.mp4" type="video/mp4">
     </video>
-
-    <!-- Video Overlay -->
+    
+    <!-- Dark Overlay -->
     <div class="absolute inset-0 bg-black/60"></div>
-
-    <!-- Premium Background Animation -->
-    <div class="absolute inset-0 pointer-events-none overflow-hidden">
-        <!-- Floating Orbs -->
-        <div class="absolute w-64 h-64 rounded-full opacity-10"
-             style="background: radial-gradient(circle, rgba(139, 69, 255, 0.15) 0%, transparent 70%); top: 15%; left: 10%; filter: blur(40px); animation: float-slow 18s ease-in-out infinite;"></div>
-        <div class="absolute w-48 h-48 rounded-full opacity-8"
-             style="background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%); top: 60%; right: 15%; filter: blur(40px); animation: float-medium 14s ease-in-out infinite 3s;"></div>
-        
-        <!-- Compact Particles -->
-        <div class="particle-field">
-            <div class="w-0.5 h-0.5 bg-purple-400 rounded-full absolute opacity-50" style="left: 8%; animation: float-up-fast 12s linear infinite 0s;"></div>
-            <div class="w-1 h-1 bg-violet-400 absolute opacity-40 rotate-45" style="left: 22%; animation: float-up-medium 16s linear infinite 2s;"></div>
-            <div class="w-0.5 h-0.5 bg-purple-300 rounded-full absolute opacity-60" style="left: 36%; animation: float-up-slow 20s linear infinite 4s;"></div>
-            <div class="w-1 h-1 bg-purple-500 absolute opacity-45 rotate-45" style="left: 64%; animation: float-up-wave 18s linear infinite 8s;"></div>
-            <div class="w-0.5 h-0.5 bg-violet-500 rounded-full absolute opacity-55" style="left: 78%; animation: float-up-zigzag 14s linear infinite 10s;"></div>
-        </div>
-    </div>
-
-    <div class="relative z-10 max-w-md w-full mx-auto px-4">
-        <!-- Login Card -->
-        <div class="bg-black/20 backdrop-blur-xl border border-purple-500/30 rounded-3xl shadow-2xl shadow-purple-500/10 p-8 animate-fade-in-up">
+    
+    <!-- Enhanced Login Card -->
+    <div class="relative z-10 w-full max-w-md mx-4" ng-controller="AuthController as auth">
+        <div class="bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl">
+            
             <!-- Header -->
             <div class="text-center mb-8">
-                <!-- Logo -->
-                <div class="flex justify-center mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg">
-                        <span class="material-icons-outlined text-white text-xl">auto_awesome</span>
-                    </div>
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
                 </div>
-                
-                <h2 class="text-3xl font-bold bg-gradient-to-r from-white via-purple-100 to-purple-200 bg-clip-text text-transparent mb-2">
-                    Welcome Back
-                </h2>
-                <p class="text-slate-400">Sign in to your prediction account</p>
+                <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                <p class="text-gray-300">Sign in to your account to continue</p>
             </div>
-
-            <!-- Login Form -->
+            
+            <!-- Form -->
             <form ng-submit="auth.login()" class="space-y-6">
-                <!-- Error Messages -->
-                <div ng-if="auth.errors.general" class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl backdrop-blur-sm">
-                    <div class="flex items-center">
-                        <span class="material-icons-outlined text-sm mr-2">error</span>
-                        {{auth.errors.general}}
-                    </div>
-                </div>
-
-                <!-- Email Field -->
+                
+                <!-- Email -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-purple-300 mb-2">
-                        Email Address
-                    </label>
-                    <input 
-                        id="email"
-                        name="email" 
-                        type="email" 
-                        ng-model="auth.loginForm.email"
-                        ng-change="auth.clearErrors()"
-                        ng-class="{'border-red-500/50': auth.errors.email, 'border-purple-500/30': !auth.errors.email}"
-                        class="w-full px-4 py-3 bg-black/20 backdrop-blur-sm border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
-                        placeholder="Enter your email"
-                        required>
-                    <div ng-if="auth.errors.email" class="mt-2 text-red-400 text-sm flex items-center">
-                        <span class="material-icons-outlined text-xs mr-1">error</span>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <input type="email" 
+                           ng-model="auth.loginForm.email"
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300"
+                           placeholder="Enter your email address"
+                           required>
+                    <div ng-if="auth.errors.email" class="text-red-400 text-sm mt-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
                         {{auth.errors.email}}
                     </div>
                 </div>
-
-                <!-- Password Field -->
+                
+                <!-- Password -->
                 <div>
-                    <label for="password" class="block text-sm font-medium text-purple-300 mb-2">
-                        Password
-                    </label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
                     <div class="relative">
-                        <input 
-                            id="password"
-                            name="password" 
-                            ng-type="auth.showPassword ? 'text' : 'password'"
-                            ng-model="auth.loginForm.password"
-                            ng-change="auth.clearErrors()"
-                            ng-class="{'border-red-500/50': auth.errors.password, 'border-purple-500/30': !auth.errors.password}"
-                            class="w-full px-4 py-3 pr-12 bg-black/20 backdrop-blur-sm border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
-                            placeholder="Enter your password"
-                            required>
-                        <button 
-                            type="button"
-                            ng-click="auth.showPassword = !auth.showPassword"
-                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-purple-300 transition-colors duration-200">
-                            <span class="material-icons-outlined text-sm">
-                                {{auth.showPassword ? 'visibility_off' : 'visibility'}}
-                            </span>
-                        </button>
+                        <input type="password" 
+                               ng-model="auth.loginForm.password"
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300"
+                               placeholder="Enter your password"
+                               required>
                     </div>
-                    <div ng-if="auth.errors.password" class="mt-2 text-red-400 text-sm flex items-center">
-                        <span class="material-icons-outlined text-xs mr-1">error</span>
+                    <div ng-if="auth.errors.password" class="text-red-400 text-sm mt-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
                         {{auth.errors.password}}
                     </div>
                 </div>
 
                 <!-- Remember Me & Forgot Password -->
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input 
-                            id="remember-me" 
-                            name="remember-me" 
-                            type="checkbox" 
-                            ng-model="auth.loginForm.rememberMe"
-                            class="h-4 w-4 text-purple-600 bg-black/20 border-purple-500/30 rounded focus:ring-purple-500/50">
-                        <label for="remember-me" class="ml-2 text-sm text-slate-300">
-                            Remember me
-                        </label>
-                    </div>
-                    <a href="/forgot-password" class="text-sm text-purple-400 hover:text-purple-300 transition-colors duration-200">
+                    <label class="flex items-center">
+                        <input type="checkbox" 
+                               ng-model="auth.loginForm.remember"
+                               class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2">
+                        <span class="ml-2 text-sm text-gray-300">Remember me</span>
+                    </label>
+                    <a href="#" ng-click="auth.forgotPassword()" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
                         Forgot password?
                     </a>
                 </div>
-
+                
+                <!-- Error Message -->
+                <div ng-if="auth.errors.general" class="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300 text-sm">
+                    {{auth.errors.general}}
+                </div>
+                
                 <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    ng-disabled="auth.isLoading"
-                    class="group relative w-full flex justify-center py-3 px-4 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-purple-500/25 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-purple-500/50">
-                    <span ng-if="!auth.isLoading" class="flex items-center">
-                        <span class="material-icons-outlined mr-2 text-sm">login</span>
+                <button type="submit" 
+                        ng-disabled="auth.isLoading"
+                        class="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg">
+                    <span ng-if="!auth.isLoading" class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                        </svg>
                         Sign In
                     </span>
-                    <span ng-if="auth.isLoading" class="flex items-center">
-                        <svg class="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <span ng-if="auth.isLoading" class="flex items-center justify-center">
+                        <svg class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Signing in...
+                        Signing In...
                     </span>
                 </button>
-
-                <!-- Divider -->
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-purple-500/20"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-4 bg-gradient-to-r from-transparent via-black/40 to-transparent text-slate-400">
-                            Don't have an account?
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Register Link -->
-                <div class="text-center">
-                    <a href="/register" class="inline-flex items-center text-purple-400 hover:text-purple-300 font-medium transition-colors duration-200">
-                        <span class="material-icons-outlined text-sm mr-1">person_add</span>
-                        Create a new account
-                    </a>
-                </div>
+                
             </form>
-        </div>
 
-        <!-- Back to Home -->
-        <div class="text-center mt-6">
-            <a href="/" class="inline-flex items-center text-slate-400 hover:text-white transition-colors duration-200">
-                <span class="material-icons-outlined text-sm mr-1">arrow_back</span>
-                Back to PredictIt
-            </a>
+            <!-- Sign Up Link -->
+            <div class="text-center mt-6">
+                <p class="text-gray-400 text-sm">
+                    Don't have an account? 
+                    <a href="#" ng-click="auth.switchMode('register')" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+                        Sign up for free
+                    </a>
+                </p>
+            </div>
         </div>
     </div>
-</section>
+</div>
+
+<style>
+/* Enhanced Styles */
+input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+input::placeholder {
+    color: rgba(156, 163, 175, 0.8);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+input[type="checkbox"]:checked {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+}
+
+/* Button Hover Effects */
+button:hover {
+    transform: translateY(-1px);
+}
+
+/* Enhanced Card Styling */
+.bg-black\/40 {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+}
+
+/* Loading Animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Button Gradient Enhancement */
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .backdrop-blur-xl {
+        backdrop-filter: blur(16px);
+    }
+    
+    .rounded-2xl {
+        border-radius: 1rem;
+    }
+}
+
+/* Error icon styling */
+.text-red-400 svg {
+    flex-shrink: 0;
+}
+</style>

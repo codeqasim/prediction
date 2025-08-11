@@ -5,7 +5,7 @@
 
             <!-- Enhanced Logo -->
             <div class="flex items-center">
-                <a ng-click="header.navigateTo('/')" class="cursor-pointer flex items-center space-x-3 group">
+                <a href="/" class="cursor-pointer flex items-center space-x-3 group">
                     <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
                         <span class="material-icons-outlined text-white text-lg">auto_awesome</span>
                     </div>
@@ -17,11 +17,11 @@
 
             <!-- Compact Desktop Navigation -->
             <nav class="hidden md:flex items-center space-x-1">
-                <a ng-click="header.navigateTo('/')"
+                <!-- <a ng-click="header.navigateTo('/')"
                    ng-class="{'bg-purple-500/20 text-white border-purple-500/30': header.isActive('/'), 'text-slate-400 hover:text-white hover:bg-purple-500/10 border-transparent': !header.isActive('/')}"
                    class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer flex items-center border">
                     <span class="material-icons-outlined text-sm mr-2">home</span>Home
-                </a>
+                </a> -->
 
                 <a ng-click="header.navigateTo('/predictions')"
                    ng-class="{'bg-purple-500/20 text-white border-purple-500/30': header.isActive('/predictions'), 'text-slate-400 hover:text-white hover:bg-purple-500/10 border-transparent': !header.isActive('/predictions')}"
@@ -45,24 +45,24 @@
             <!-- Enhanced User Section -->
             <div class="flex items-center space-x-3">
 
-                <!-- Authenticated User -->
-                <div ng-if="header.isAuthenticated()" class="flex items-center space-x-3">&
-
-                    <!-- User Points -->
-                    <div class="hidden sm:flex items-center bg-gradient-to-r from-purple-500/20 to-violet-500/20 backdrop-blur-sm border border-purple-500/30 rounded-lg px-3 py-1.5">
+                <!-- Authenticated User - WITH REAL DATA -->
+                <div ng-show="header.isAuthenticated()" class="flex items-center space-x-3">
+                    
+                    <!-- User Points - Same height as dropdown -->
+                    <div class="flex items-center bg-gradient-to-r from-purple-500/20 to-violet-500/20 backdrop-blur-sm border border-purple-500/30 rounded-lg px-3 py-2 h-10">
                         <span class="material-icons-outlined text-purple-300 text-sm mr-2">stars</span>
-                        <span class="text-purple-300 font-semibold text-sm">{{header.getCurrentUser().points || 100}}</span>
+                        <span class="text-purple-300 font-semibold text-sm">{{(header.getCurrentUser() && header.getCurrentUser().points) || 1250}}</span>
                     </div>
 
                     <!-- Simple User Dropdown -->
                     <div class="relative">
                         <button ng-click="header.toggleUserDropdown()"
-                                class="flex items-center space-x-2 bg-white/10 hover:bg-purple-500/20 rounded-lg px-3 py-2 transition-all duration-300 border border-white/10 hover:border-purple-500/30">
-                            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center">
+                                class="flex items-center space-x-2 bg-white/10 hover:bg-purple-500/20 rounded-lg px-3 py-2 h-10 transition-all duration-300 border border-white/10 hover:border-purple-500/30">
+                            <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center">
                                 <span class="material-icons-outlined text-white text-sm">person</span>
                             </div>
-                            <span class="hidden sm:block text-white text-sm font-medium truncate max-w-24">
-                                {{header.getCurrentUser().email}}
+                            <span class="text-white text-sm font-medium">
+                                {{header.getUserDisplayName()}}
                             </span>
                             <span class="material-icons-outlined text-slate-400 text-sm transition-transform duration-200"
                                   ng-class="{'rotate-180': header.userDropdownOpen}">expand_more</span>
@@ -72,12 +72,14 @@
                         <div ng-show="header.userDropdownOpen"
                              class="absolute right-0 mt-2 w-52 bg-black/80 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-2xl shadow-purple-500/10 py-2 z-50">
 
-                            <!-- User Info -->
                             <div class="px-4 py-3 border-b border-purple-500/20">
-                                <div class="text-white text-sm font-medium">{{header.getCurrentUser().email}}</div>
-                                <div class="flex items-center text-xs">
+                                <div class="text-white text-sm font-medium">
+                                    {{header.getUserDisplayName()}}
+                                </div>
+                                <div class="text-xs text-slate-400">{{header.getCurrentUser() && header.getCurrentUser().email}}</div>
+                                <div class="flex items-center text-xs mt-1">
                                     <span class="material-icons-outlined text-purple-400 text-xs mr-1">stars</span>
-                                    <span class="text-purple-400">{{header.getCurrentUser().points || 100}} points</span>
+                                    <span class="text-purple-400">{{(header.getCurrentUser() && header.getCurrentUser().points) || 1250}} points</span>
                                 </div>
                             </div>
 
@@ -103,7 +105,7 @@
 
                 <!-- Guest User -->
                 <div ng-if="!header.isAuthenticated()" class="flex items-center space-x-2">
-                    <a href="/login"
+                    <a ng-click="header.navigateTo('/login')"
                        class="px-3 py-2 text-sm font-medium text-slate-400 hover:text-white transition-all duration-300 cursor-pointer">
                         Login
                     </a>
@@ -112,16 +114,8 @@
                         Get Started
                     </a>
                 </div>
-
-                <!-- Enhanced Mobile Menu Button -->
-                <!-- <button ng-controller="MobileMenuController as mobile"
-                        ng-click="mobile.toggle()"
-                        class="md:hidden p-2 rounded-lg bg-white/10 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 transition-all duration-300">
-                    <span class="material-icons-outlined text-white">{{mobile.isOpen ? 'close' : 'menu'}}</span>
-                </button> -->
             </div>
         </div>
-
     </div>
 </header>
 

@@ -284,6 +284,13 @@ function($scope, $location, $rootScope, AuthService, UserService) {
             });
     };
 
+    // Demo login for quick testing
+    vm.demoLogin = function() {
+        vm.loginForm.email = 'demo@example.com';
+        vm.loginForm.password = 'demo123';
+        vm.login();
+    };
+
     // Initialize based on URL params
     vm.init = function() {
         const urlParams = new URLSearchParams($location.search());

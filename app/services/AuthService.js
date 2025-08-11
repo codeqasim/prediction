@@ -1,6 +1,6 @@
 // Authentication Service - Handles user authentication
-angular.module('app').service('AuthService', ['$rootScope', '$q', '$timeout', 'SupabaseService',
-function($rootScope, $q, $timeout, SupabaseService) {
+angular.module('app').service('AuthService', ['$rootScope', '$q', 'SupabaseService',
+function($rootScope, $q, SupabaseService) {
     let currentUser = null;
     let authListener = null;
 
@@ -14,16 +14,17 @@ function($rootScope, $q, $timeout, SupabaseService) {
         return currentUser;
     };
 
-    // Set current user  
+    // Set current user
     this.setCurrentUser = function(user) {
+        console.log('AuthService setCurrentUser called with:', user);
         currentUser = user;
-        $timeout(function() {
-            if (user) {
-                $rootScope.$broadcast('auth:login', user);
-            } else {
-                $rootScope.$broadcast('auth:logout');
-            }
-        });
+        if (user) {
+            console.log('Broadcasting auth:login');
+            $rootScope.$broadcast('auth:login', user);
+        } else {
+            console.log('Broadcasting auth:logout');
+            $rootScope.$broadcast('auth:logout');
+        }
     };
 
     // Check existing authentication
@@ -33,9 +34,7 @@ function($rootScope, $q, $timeout, SupabaseService) {
         SupabaseService.auth.getSession().then(function(response) {
             if (response.data && response.data.session && response.data.session.user) {
                 currentUser = response.data.session.user;
-                $timeout(function() {
-                    $rootScope.$broadcast('auth:login', currentUser);
-                });
+                $rootScope.$broadcast('auth:login', currentUser);
                 deferred.resolve(currentUser);
             } else {
                 currentUser = null;
@@ -52,16 +51,17 @@ function($rootScope, $q, $timeout, SupabaseService) {
 
     // Login
     this.login = function(email, password) {
+        console.log('AuthService login called with:', email);
         const deferred = $q.defer();
 
         SupabaseService.auth.signIn(email, password).then(function(response) {
+            console.log('Login response:', response);
             if (response.error) {
                 deferred.reject(response.error);
             } else if (response.data && response.data.user) {
+                console.log('Setting current user:', response.data.user);
                 currentUser = response.data.user;
-                $timeout(function() {
-                    $rootScope.$broadcast('auth:login', currentUser);
-                });
+                $rootScope.$broadcast('auth:login', currentUser);
                 deferred.resolve(currentUser);
             } else {
                 deferred.reject(new Error('Login failed - no user data received'));

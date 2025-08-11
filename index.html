@@ -67,9 +67,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
 
-    <!-- OZ Lazy Load CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/oclazyload@1.1.0/dist/ocLazyLoad.min.js"></script>
-
     <!-- jQuery (for compatibility) -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -79,7 +76,7 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="assets/app.css">
 </head>
-<body class="text-white min-h-screen relative overflow-x-hidden" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
+<body class="text-white min-h-screen relative overflow-x-hidden" ng-controller="MainController" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
     <!-- Main Application Container -->
     <div class="min-h-screen">
         <!-- Header -->
@@ -99,9 +96,10 @@
     <script src="app/services/AuthService.js"></script>
     <script src="app/services/UserService.js"></script>
 
-    <!-- Core Controllers (loaded initially) -->
+    <!-- Controllers -->
     <script src="app/controllers/MainController.js"></script>
     <script src="app/controllers/HeaderController.js"></script>
+    <script src="app/controllers/AuthController.js"></script>
 
 </body>
 </html>

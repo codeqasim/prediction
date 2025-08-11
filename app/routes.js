@@ -20,11 +20,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             controllerAs: 'auth',
             title: 'Login',
             redirectIfAuth: true,
-            resolve: {
-                loadController: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load('app/controllers/AuthController.js');
-                }]
-            },
             meta: {
                 description: 'Sign in to your PredictIt account to start making predictions and competing with others.',
                 keywords: 'login, sign in, authentication, predict'
@@ -37,11 +32,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             controllerAs: 'auth',
             title: 'Create Account - PredictIt',
             redirectIfAuth: true,
-            resolve: {
-                loadController: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load('app/controllers/AuthController.js');
-                }]
-            },
             meta: {
                 description: 'Create your free PredictIt account and start predicting future events today.',
                 keywords: 'register, sign up, create account, join'
@@ -66,11 +56,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             controller: 'LeaderboardController',
             controllerAs: 'leaderboard',
             title: 'Leaderboard - PredictIt',
-            resolve: {
-                loadController: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load('app/controllers/LeaderboardController.js');
-                }]
-            },
             meta: {
                 description: 'View the top prediction leaders and see how you rank against other users.',
                 keywords: 'leaderboard, rankings, top users, competition'
@@ -84,11 +69,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             controllerAs: 'profile',
             title: 'My Profile',
             requireAuth: true,
-            resolve: {
-                loadController: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load('app/controllers/ProfileController.js');
-                }]
-            },
             meta: {
                 description: 'Manage your PredictIt and view your prediction history.',
                 keywords: 'profile, settings, history, account'
@@ -102,11 +82,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             controllerAs: 'dashboard',
             title: 'Dashboard',
             requireAuth: true,
-            resolve: {
-                loadController: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load('app/controllers/DashboardController.js');
-                }]
-            },
             meta: {
                 description: 'Your personal prediction dashboard with stats and active predictions.',
                 keywords: 'dashboard, stats, predictions, personal'

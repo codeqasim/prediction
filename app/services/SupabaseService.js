@@ -13,7 +13,7 @@ angular.module('app').service('SupabaseService', [function() {
             window.supabaseConfig = {
                 url: 'https://owoyahkmgzhnruoxghdf.supabase.co',
                 anonKey: 'sb_publishable_GXGzt6hCiacsgr_udR77_g_nER3M4hH',
-                demoMode: false // Add demo mode flag
+                demoMode: true // Enable demo mode for easy testing
             };
         }
 
@@ -66,10 +66,11 @@ angular.module('app').service('SupabaseService', [function() {
                             id: 'demo-user-id-' + Date.now(),
                             email: email,
                             user_metadata: {
-                                first_name: options.data?.first_name || 'Demo',
-                                last_name: options.data?.last_name || 'User',
+                                first_name: options.data?.first_name || 'John',
+                                last_name: options.data?.last_name || 'Doe',
                                 username: options.data?.username || 'demo_user'
-                            }
+                            },
+                            points: 1250
                         };
 
                         resolve({
@@ -105,10 +106,11 @@ angular.module('app').service('SupabaseService', [function() {
                             id: 'demo-user-id',
                             email: email,
                             user_metadata: {
-                                first_name: 'Demo',
-                                last_name: 'User',
+                                first_name: 'John',
+                                last_name: 'Doe',
                                 username: 'demo_user'
-                            }
+                            },
+                            points: 1250
                         };
 
                         resolve({

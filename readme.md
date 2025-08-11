@@ -1,7 +1,7 @@
-# Prediction - Prediction Platform Project Documentation
+# PredictIt - Prediction Platform Project Documentation
 
 ## 🎯 Project Overview
-**Prediction** is a next-generation prediction platform that allows users to predict future events, compete with others, and climb leaderboards. Built with AngularJS frontend and Supabase backend.
+**PredictIt** is a next-generation prediction platform that allows users to predict future events, compete with others, and climb leaderboards. Built with AngularJS frontend and Supabase backend.
 
 **Core Purpose**: Create an engaging prediction market platform where users can test their forecasting skills and compete globally.
 

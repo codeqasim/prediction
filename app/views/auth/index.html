@@ -1,0 +1,248 @@
+<!-- Dashboard View -->
+<div class="relative min-h-screen overflow-hidden">
+
+    <!-- Animated Star Background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <!-- Main stars -->
+        <div class="absolute w-1 h-1 bg-white rounded-full animate-stars opacity-70" style="top: 10%; left: 10%; animation-delay: 0s;"></div>
+        <div class="absolute w-0.5 h-0.5 bg-blue-300 rounded-full animate-stars opacity-60" style="top: 20%; left: 80%; animation-delay: 2s;"></div>
+        <div class="absolute w-1 h-1 bg-white rounded-full animate-stars opacity-80" style="top: 30%; left: 30%; animation-delay: 1s;"></div>
+        <div class="absolute w-0.5 h-0.5 bg-purple-300 rounded-full animate-stars opacity-50" style="top: 50%; left: 70%; animation-delay: 3s;"></div>
+        <div class="absolute w-1 h-1 bg-white rounded-full animate-stars opacity-75" style="top: 70%; left: 20%; animation-delay: 1.5s;"></div>
+        <div class="absolute w-0.5 h-0.5 bg-cyan-300 rounded-full animate-stars opacity-65" style="top: 80%; left: 90%; animation-delay: 2.5s;"></div>
+
+        <!-- Meteors -->
+        <div class="absolute w-2 h-0.5 bg-gradient-to-r from-white to-transparent rounded-full animate-meteor opacity-80" style="top: 15%; left: -10%; animation-delay: 4s;"></div>
+        <div class="absolute w-1.5 h-0.5 bg-gradient-to-r from-blue-300 to-transparent rounded-full animate-meteor opacity-60" style="top: 60%; left: -10%; animation-delay: 8s;"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <!-- Loading State -->
+        <div ng-if="ctrl.isLoading" class="text-center py-20">
+            <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-12 max-w-md mx-auto">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-6"></div>
+                <p class="text-slate-300 text-lg">Loading your dashboard...</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div ng-if="!ctrl.isLoading">
+            <!-- Welcome Header -->
+            <div class="text-center mb-16">
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 max-w-4xl mx-auto">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-xl border border-white/20 rounded-2xl mb-6 shadow-2xl">
+                        <span class="material-icons-outlined text-white text-3xl">dashboard</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+                            Welcome back,
+                        </span>
+                        <br>
+                        <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                            {{ctrl.currentUser.first_name && ctrl.currentUser.last_name ? (ctrl.currentUser.first_name + ' ' + ctrl.currentUser.last_name) : (ctrl.currentUser.username || ctrl.currentUser.email.split('@')[0])}}
+                        </span>
+                    </h1>
+                    <p class="text-xl text-slate-300 leading-relaxed">
+                        Here's your prediction performance overview
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <!-- Total Predictions -->
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 text-center hover:bg-dark-950/40 transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-blue-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-blue-500/20 transition-all duration-300">
+                        <span class="material-icons-outlined text-blue-400 text-2xl">psychology</span>
+                    </div>
+                    <div class="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-2">{{ctrl.userStats.totalPredictions}}</div>
+                    <div class="text-slate-400">Total Predictions</div>
+                </div>
+
+                <!-- Accuracy -->
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 text-center hover:bg-dark-950/40 transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-green-500/10 backdrop-blur-xl border border-green-500/20 rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-green-500/20 transition-all duration-300">
+                        <span class="material-icons-outlined text-green-400 text-2xl">target</span>
+                    </div>
+                    <div ng-class="ctrl.getAccuracyColor(ctrl.userStats.accuracy)" class="text-4xl font-bold mb-2">{{ctrl.userStats.accuracy}}%</div>
+                    <div class="text-slate-400">Accuracy</div>
+                </div>
+
+                <!-- Current Rank -->
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 text-center hover:bg-dark-950/40 transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-yellow-500/10 backdrop-blur-xl border border-yellow-500/20 rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <span class="material-icons-outlined text-yellow-400 text-2xl">leaderboard</span>
+                    </div>
+                    <div class="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-2">{{ctrl.userStats.currentRank}}<span class="text-xl">{{ctrl.getRankSuffix(ctrl.userStats.currentRank)}}</span></div>
+                    <div class="text-slate-400">Current Rank</div>
+                </div>
+
+                <!-- Points -->
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 text-center hover:bg-dark-950/40 transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-purple-500/10 backdrop-blur-xl border border-purple-500/20 rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                        <span class="material-icons-outlined text-purple-400 text-2xl">stars</span>
+                    </div>
+                    <div class="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-2">{{ctrl.userStats.points}}</div>
+                    <div class="text-slate-400">Points Earned</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                <!-- Recent Predictions -->
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent flex items-center">
+                            <span class="material-icons-outlined mr-3 text-blue-400 text-3xl">history</span>
+                            Recent Predictions
+                        </h2>
+                        <button ng-click="ctrl.navigateTo('/predictions')"
+                                class="text-blue-400 hover:text-blue-300 font-medium transition-all duration-200 bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-xl border border-blue-500/20">
+                            View All
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div ng-repeat="prediction in ctrl.recentPredictions track by prediction.id"
+                             class="bg-dark-950/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-950/60 hover:border-white/20 transition-all duration-300 cursor-pointer group"
+                             ng-click="ctrl.viewPrediction(prediction.id)">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between mb-4">
+                                <div ng-class="ctrl.getPredictionStatusBadge(prediction).class"
+                                     class="text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-xl border">
+                                    {{ctrl.getPredictionStatusBadge(prediction).text}}
+                                </div>
+                                <div class="text-slate-400 text-sm">{{ctrl.formatDate(prediction.created_at)}}</div>
+                            </div>
+
+                            <!-- Title -->
+                            <h3 class="text-white font-semibold mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">{{prediction.title}}</h3>
+
+                            <!-- Prediction Details -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-slate-400 text-sm">Your choice:</span>
+                                    <span ng-class="ctrl.getUserChoiceClass(prediction)" class="font-bold">{{ctrl.getUserChoice(prediction)}}</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-white font-semibold">{{prediction.current_yes_percentage}}% YES</div>
+                                    <div class="text-slate-400 text-xs">Current odds</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div ng-if="ctrl.recentPredictions.length === 0" class="text-center py-12">
+                            <div class="w-16 h-16 bg-slate-500/10 backdrop-blur-xl border border-slate-500/20 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                                <span class="material-icons-outlined text-slate-400 text-2xl">psychology</span>
+                            </div>
+                            <p class="text-slate-300 mb-6 text-lg">No predictions yet</p>
+                            <button ng-click="ctrl.navigateTo('/predictions')"
+                                    class="bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-xl text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700/90 hover:to-purple-700/90 transition-all duration-200 border border-white/10">
+                                Make Your First Prediction
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview -->
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8">
+                    <h2 class="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-8 flex items-center">
+                        <span class="material-icons-outlined mr-3 text-green-400 text-3xl">trending_up</span>
+                        Performance Overview
+                    </h2>
+
+                    <!-- Accuracy Breakdown -->
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-slate-300 text-lg">Correct Predictions</span>
+                                <span class="text-white font-semibold text-lg">{{ctrl.userStats.correctPredictions}}/{{ctrl.userStats.totalPredictions}}</span>
+                            </div>
+                            <div class="w-full bg-dark-900/50 backdrop-blur-xl border border-white/10 rounded-full h-4 overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-500 to-emerald-400 h-4 rounded-full transition-all duration-500 shadow-lg"
+                                     ng-style="{'width': ctrl.userStats.accuracy + '%'}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Performance -->
+                        <div class="border-t border-white/10 pt-8">
+                            <h3 class="text-white font-semibold mb-6 text-lg">Recent Performance</h3>
+                            <div class="grid grid-cols-3 gap-6 text-center">
+                                <div class="bg-dark-950/50 backdrop-blur-xl border border-green-500/20 rounded-2xl p-4">
+                                    <div class="text-3xl font-bold text-green-400 mb-2">3</div>
+                                    <div class="text-slate-400 text-sm">Won</div>
+                                </div>
+                                <div class="bg-dark-950/50 backdrop-blur-xl border border-red-500/20 rounded-2xl p-4">
+                                    <div class="text-3xl font-bold text-red-400 mb-2">1</div>
+                                    <div class="text-slate-400 text-sm">Lost</div>
+                                </div>
+                                <div class="bg-dark-950/50 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-4">
+                                    <div class="text-3xl font-bold text-blue-400 mb-2">2</div>
+                                    <div class="text-slate-400 text-sm">Pending</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Achievements -->
+                        <div class="border-t border-white/10 pt-8">
+                            <h3 class="text-white font-semibold mb-6 text-lg">Recent Achievements</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-4 bg-dark-950/50 backdrop-blur-xl border border-yellow-500/20 rounded-2xl p-4">
+                                    <div class="w-12 h-12 bg-yellow-500/10 backdrop-blur-xl border border-yellow-500/20 rounded-xl flex items-center justify-center">
+                                        <span class="material-icons-outlined text-yellow-400 text-xl">star</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-medium">Accuracy Master</div>
+                                        <div class="text-slate-400 text-sm">80%+ accuracy achieved</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4 bg-dark-950/50 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-4">
+                                    <div class="w-12 h-12 bg-blue-500/10 backdrop-blur-xl border border-blue-500/20 rounded-xl flex items-center justify-center">
+                                        <span class="material-icons-outlined text-blue-400 text-xl">emoji_events</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-medium">Top 20 Predictor</div>
+                                        <div class="text-slate-400 text-sm">Ranked in top 20</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="text-center">
+                <div class="bg-dark-950/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+                            Ready for Your Next Prediction?
+                        </span>
+                    </h2>
+                    <p class="text-xl text-slate-300 leading-relaxed mb-8 max-w-2xl mx-auto">
+                        Keep your winning streak going and climb higher on the leaderboard!
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button ng-click="ctrl.navigateTo('/predictions')"
+                                class="bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-xl text-white px-8 py-4 rounded-2xl font-semibold hover:from-blue-700/90 hover:to-purple-700/90 transition-all duration-200 border border-white/10 shadow-xl">
+                            <span class="material-icons-outlined mr-2 align-middle">psychology</span>
+                            Make Prediction
+                        </button>
+                        <button ng-click="ctrl.navigateTo('/leaderboard')"
+                                class="bg-dark-950/50 backdrop-blur-2xl border border-white/20 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-dark-950/60 hover:border-white/30 transition-all duration-200">
+                            <span class="material-icons-outlined mr-2 align-middle">leaderboard</span>
+                            View Leaderboard
+                        </button>
+                        <button ng-click="ctrl.navigateTo('/profile')"
+                                class="bg-dark-950/50 backdrop-blur-2xl border border-white/20 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-dark-950/60 hover:border-white/30 transition-all duration-200">
+                            <span class="material-icons-outlined mr-2 align-middle">person</span>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

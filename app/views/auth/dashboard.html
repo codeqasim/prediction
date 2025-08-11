@@ -1,0 +1,877 @@
+<!-- Enhanced Authentication View Body -->
+<div class="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative z-10" ng-controller="AuthController as auth">
+
+    <!-- Premium Background Animation -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <!-- Floating Orbs -->
+        <div class="absolute w-64 h-64 rounded-full opacity-10"
+             style="background: radial-gradient(circle, rgba(139, 69, 255, 0.15) 0%, transparent 70%); top: 15%; left: 10%; filter: blur(40px); animation: float-slow 18s ease-in-out infinite;"></div>
+        <div class="absolute w-48 h-48 rounded-full opacity-8"
+             style="background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%); top: 60%; right: 15%; filter: blur(40px); animation: float-medium 14s ease-in-out infinite 3s;"></div>
+        <div class="absolute w-56 h-56 rounded-full opacity-6"
+             style="background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%); bottom: 25%; left: 65%; filter: blur(40px); animation: float-fast 11s ease-in-out infinite 6s;"></div>
+    </div>
+
+    <div class="max-w-lg w-full space-y-8">
+        <!-- Enhanced Auth Container -->
+        <div class="bg-white/5 backdrop-blur-2xl border border-purple-500/20 rounded-3xl shadow-2xl shadow-purple-500/10 p-8 hover:border-purple-500/30 transition-all duration-500">
+
+            <!-- Enhanced Header with Logo -->
+            <div class="text-center mb-8">
+                <!-- Logo -->
+                <div class="flex items-center justify-center space-x-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg">
+                        <span class="material-icons-outlined text-white text-2xl">auto_awesome</span>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                        PredictIt
+                    </span>
+                </div>
+
+                <h2 class="text-2xl font-bold text-white mb-2">
+                    {{auth.currentMode === 'login' ? 'Welcome Back' : 'Join PredictIt'}}
+                </h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    {{auth.currentMode === 'login' ? 'Sign in to continue your prediction journey' : 'Start predicting the future and earn rewards'}}
+                </p>
+            </div>
+
+            <!-- Enhanced Mode Toggle -->
+            <div class="flex bg-white/5 border border-purple-500/20 rounded-2xl p-1.5 mb-8">
+                <button ng-click="auth.switchMode('login')"
+                        ng-class="{'bg-gradient-to-r from-purple-500 to-violet-600 text-white shadow-lg shadow-purple-500/25': auth.currentMode === 'login', 'text-slate-400 hover:text-white hover:bg-purple-500/10': auth.currentMode !== 'login'}"
+                        class="flex-1 py-3 text-center rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-[1.02]">
+                    <span class="material-icons-outlined text-base mr-2 inline-block">login</span>Sign In
+                </button>
+                <button ng-click="auth.switchMode('register')"
+                        ng-class="{'bg-gradient-to-r from-purple-500 to-violet-600 text-white shadow-lg shadow-purple-500/25': auth.currentMode === 'register', 'text-slate-400 hover:text-white hover:bg-purple-500/10': auth.currentMode !== 'register'}"
+                        class="flex-1 py-3 text-center rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-[1.02]">
+                    <span class="material-icons-outlined text-base mr-2 inline-block">person_add</span>Sign Up
+                </button>
+            </div>
+
+            <!-- Enhanced Login Form -->
+            <form ng-show="auth.currentMode === 'login'" ng-submit="auth.login()" class="space-y-6">
+
+                <!-- Email Input -->
+                <div class="space-y-2">
+                    <label for="loginEmail" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">email</span>Email Address
+                    </label>
+                    <div class="relative group">
+                        <input id="loginEmail"
+                               ng-model="auth.loginForm.email"
+                               type="email"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.email, 'border-purple-500/30 focus:border-purple-500': !auth.errors.email}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Enter your email address">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    <div ng-show="auth.errors.email" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.email}}
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="space-y-2">
+                    <label for="loginPassword" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">lock</span>Password
+                    </label>
+                    <div class="relative group">
+                        <input id="loginPassword"
+                               ng-model="auth.loginForm.password"
+                               ng-type="auth.showPassword ? 'text' : 'password'"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.password, 'border-purple-500/30 focus:border-purple-500': !auth.errors.password}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 pr-12 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Enter your password">
+                        <button type="button"
+                                ng-click="auth.showPassword = !auth.showPassword"
+                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-purple-300 transition-all duration-300 p-1 rounded-lg hover:bg-purple-500/20">
+                            <span class="material-icons-outlined text-lg">{{auth.showPassword ? 'visibility_off' : 'visibility'}}</span>
+                        </button>
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    <div ng-show="auth.errors.password" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.password}}
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot -->
+                <div class="flex items-center justify-between pt-2">
+                    <label class="flex items-center group cursor-pointer">
+                        <div class="relative">
+                            <input id="rememberMe"
+                                   ng-model="auth.loginForm.rememberMe"
+                                   type="checkbox"
+                                   class="sr-only">
+                            <div class="w-5 h-5 bg-white/10 border border-purple-500/30 rounded-md group-hover:border-purple-400/50 transition-all duration-300 flex items-center justify-center"
+                                 ng-class="{'bg-gradient-to-r from-purple-500 to-violet-600 border-purple-500': auth.loginForm.rememberMe}">
+                                <span ng-show="auth.loginForm.rememberMe" class="material-icons-outlined text-white text-sm">check</span>
+                            </div>
+                        </div>
+                        <span class="ml-3 text-sm text-slate-300 group-hover:text-white transition-colors">Remember me</span>
+                    </label>
+                    <button type="button"
+                            ng-click="auth.showResetModal = true"
+                            class="text-sm text-purple-300 hover:text-purple-200 transition-colors font-medium flex items-center group">
+                        <span class="material-icons-outlined text-sm mr-1 group-hover:scale-110 transition-transform">help</span>
+                        Forgot password?
+                    </button>
+                </div>
+
+                <!-- General Error -->
+                <div ng-show="auth.errors.general" class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                    <div class="flex items-center text-red-300">
+                        <span class="material-icons-outlined text-lg mr-2">error</span>
+                        <span class="text-sm font-medium">{{auth.errors.general}}</span>
+                    </div>
+                </div>
+
+                <!-- Enhanced Login Button -->
+                <div class="pt-2">
+                    <button type="submit"
+                            ng-disabled="auth.isLoading"
+                            class="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white py-4 px-6 rounded-xl text-sm font-bold focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-purple-500/25">
+                        <span ng-hide="auth.isLoading" class="flex items-center justify-center">
+                            <span class="material-icons-outlined mr-2">login</span>Sign In to PredictIt
+                        </span>
+                        <span ng-show="auth.isLoading" class="flex items-center justify-center">
+                            <span class="material-icons-outlined animate-spin mr-2">refresh</span>Signing In...
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Enhanced Register Form -->
+            <form ng-show="auth.currentMode === 'register'" ng-submit="auth.register()" class="space-y-6">
+
+                <!-- First Name & Last Name -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="firstName" class="block text-sm font-semibold text-slate-200 flex items-center">
+                            <span class="material-icons-outlined text-purple-400 text-lg mr-2">badge</span>First Name
+                        </label>
+                        <div class="relative group">
+                            <input id="firstName"
+                                   ng-model="auth.registerForm.firstName"
+                                   type="text"
+                                   required
+                                   ng-focus="auth.clearErrors()"
+                                   ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.firstName, 'border-purple-500/30 focus:border-purple-500': !auth.errors.firstName}"
+                                   class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                                   placeholder="John">
+                            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                        <div ng-show="auth.errors.firstName" class="text-red-400 text-xs flex items-center mt-2">
+                            <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.firstName}}
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="lastName" class="block text-sm font-semibold text-slate-200 flex items-center">
+                            <span class="material-icons-outlined text-purple-400 text-lg mr-2">badge</span>Last Name
+                        </label>
+                        <div class="relative group">
+                            <input id="lastName"
+                                   ng-model="auth.registerForm.lastName"
+                                   type="text"
+                                   required
+                                   ng-focus="auth.clearErrors()"
+                                   ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.lastName, 'border-purple-500/30 focus:border-purple-500': !auth.errors.lastName}"
+                                   class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                                   placeholder="Doe">
+                            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                        <div ng-show="auth.errors.lastName" class="text-red-400 text-xs flex items-center mt-2">
+                            <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.lastName}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="space-y-2">
+                    <label for="signupUsername" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">person</span>Username
+                    </label>
+                    <div class="relative group">
+                        <input id="signupUsername"
+                               ng-model="auth.registerForm.username"
+                               type="text"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-blur="auth.checkUsernameAvailability()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.username, 'border-purple-500/30 focus:border-purple-500': !auth.errors.username}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Choose a unique username">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    <p class="text-xs text-slate-400 flex items-center">
+                        <span class="material-icons-outlined text-xs mr-1">info</span>
+                        This will be your public display name
+                    </p>
+                    <div ng-show="auth.errors.username" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.username}}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="space-y-2">
+                    <label for="signupEmail" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">email</span>Email Address
+                    </label>
+                    <div class="relative group">
+                        <input id="signupEmail"
+                               ng-model="auth.registerForm.email"
+                               type="email"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.email, 'border-purple-500/30 focus:border-purple-500': !auth.errors.email}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Enter your email address">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    <div ng-show="auth.errors.email" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.email}}
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="space-y-2">
+                    <label for="signupPassword" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">lock</span>Password
+                    </label>
+                    <div class="relative group">
+                        <input id="signupPassword"
+                               ng-model="auth.registerForm.password"
+                               ng-type="auth.showPassword ? 'text' : 'password'"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-keyup="auth.checkPasswordStrength()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.password, 'border-purple-500/30 focus:border-purple-500': !auth.errors.password}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 pr-12 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Create a strong password">
+                        <button type="button"
+                                ng-click="auth.showPassword = !auth.showPassword"
+                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-purple-300 transition-all duration-300 p-1 rounded-lg hover:bg-purple-500/20">
+                            <span class="material-icons-outlined text-lg">{{auth.showPassword ? 'visibility_off' : 'visibility'}}</span>
+                        </button>
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+
+                    <!-- Enhanced Password Strength Indicator -->
+                    <div ng-show="auth.passwordStrength.visible" class="space-y-2">
+                        <div class="flex space-x-1">
+                            <div ng-repeat="i in [1,2,3,4,5] track by $index"
+                                 ng-class="{'bg-emerald-500': $index < auth.passwordStrength.score && auth.passwordStrength.score >= 4, 'bg-yellow-500': $index < auth.passwordStrength.score && auth.passwordStrength.score >= 2 && auth.passwordStrength.score < 4, 'bg-red-500': $index < auth.passwordStrength.score && auth.passwordStrength.score < 2, 'bg-white/10': $index >= auth.passwordStrength.score}"
+                                 class="h-1.5 flex-1 rounded-full transition-all duration-300"></div>
+                        </div>
+                        <p class="text-xs text-slate-400 flex items-center">
+                            <span class="material-icons-outlined text-xs mr-1">security</span>
+                            Password strength: {{auth.passwordStrength.feedback}}
+                        </p>
+                    </div>
+                    <div ng-show="auth.errors.password" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.password}}
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="space-y-2">
+                    <label for="confirmPassword" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">lock_open</span>Confirm Password
+                    </label>
+                    <div class="relative group">
+                        <input id="confirmPassword"
+                               ng-model="auth.registerForm.confirmPassword"
+                               ng-type="auth.showConfirmPassword ? 'text' : 'password'"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.confirmPassword, 'border-purple-500/30 focus:border-purple-500': !auth.errors.confirmPassword}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Confirm your password">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    <div ng-show="auth.errors.confirmPassword" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.confirmPassword}}
+                    </div>
+                </div>
+
+                <!-- Enhanced Terms Checkbox -->
+                <div class="space-y-2">
+                    <label class="flex items-start group cursor-pointer">
+                        <div class="relative mt-0.5">
+                            <input id="agreeTerms"
+                                   ng-model="auth.registerForm.agreeTerms"
+                                   type="checkbox"
+                                   required
+                                   ng-focus="auth.clearErrors()"
+                                   class="sr-only">
+                            <div class="w-5 h-5 bg-white/10 border border-purple-500/30 rounded-md group-hover:border-purple-400/50 transition-all duration-300 flex items-center justify-center"
+                                 ng-class="{'bg-gradient-to-r from-purple-500 to-violet-600 border-purple-500': auth.registerForm.agreeTerms}">
+                                <span ng-show="auth.registerForm.agreeTerms" class="material-icons-outlined text-white text-sm">check</span>
+                            </div>
+                        </div>
+                        <span class="ml-3 text-sm text-slate-300 group-hover:text-white transition-colors leading-relaxed">
+                            I agree to the <a href="/terms" class="text-purple-300 hover:text-purple-200 underline transition-colors">Terms of Service</a>
+                            and <a href="/privacy" class="text-purple-300 hover:text-purple-200 underline transition-colors">Privacy Policy</a>
+                        </span>
+                    </label>
+                    <div ng-show="auth.errors.agreeTerms" class="text-red-400 text-xs flex items-center">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.agreeTerms}}
+                    </div>
+                </div>
+
+                <!-- General Error -->
+                <div ng-show="auth.errors.general" class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                    <div class="flex items-center text-red-300">
+                        <span class="material-icons-outlined text-lg mr-2">error</span>
+                        <span class="text-sm font-medium">{{auth.errors.general}}</span>
+                    </div>
+                </div>
+
+                <!-- Enhanced Register Button -->
+                <div class="pt-2">
+                    <button type="submit"
+                            ng-disabled="auth.isLoading"
+                            class="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white py-4 px-6 rounded-xl text-sm font-bold focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-purple-500/25">
+                        <span ng-hide="auth.isLoading" class="flex items-center justify-center">
+                            <span class="material-icons-outlined mr-2">person_add</span>Create Account
+                        </span>
+                        <span ng-show="auth.isLoading" class="flex items-center justify-center">
+                            <span class="material-icons-outlined animate-spin mr-2">refresh</span>Creating Account...
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Enhanced Welcome Bonus -->
+            <div class="mt-8 p-4 bg-gradient-to-r from-purple-500/10 to-violet-500/10 border border-purple-500/30 rounded-xl">
+                <div class="flex items-center justify-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-slate-900 text-lg">stars</span>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-white font-semibold text-sm">Welcome Bonus</p>
+                        <p class="text-slate-300 text-xs">Get 100 free points when you join!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Additional Info -->
+        <div class="text-center space-y-4">
+            <div class="bg-white/5 backdrop-blur-lg border border-purple-500/20 rounded-2xl p-6">
+                <div class="flex items-center justify-center space-x-6 text-sm">
+                    <div class="flex items-center text-slate-300">
+                        <span class="material-icons-outlined text-purple-400 mr-2">security</span>
+                        <span>Secure & Encrypted</span>
+                    </div>
+                    <div class="w-px h-4 bg-purple-500/30"></div>
+                    <div class="flex items-center text-slate-300">
+                        <span class="material-icons-outlined text-purple-400 mr-2">verified</span>
+                        <span>Trusted Platform</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Password Reset Modal -->
+    <div ng-show="auth.showResetModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4 flex items-center justify-center">
+        <div class="bg-white/10 backdrop-blur-2xl border border-purple-500/30 rounded-3xl max-w-md w-full p-8 shadow-2xl shadow-purple-500/10">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons-outlined text-white text-2xl">vpn_key</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Reset Password</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">Enter your email to receive reset instructions</p>
+            </div>
+
+            <form ng-submit="auth.resetPassword()" class="space-y-6">
+                <div class="space-y-2">
+                    <label for="resetEmail" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-<label for="resetEmail" class="block text-sm font-semibold text-slate-200 flex items-center">
+                        <span class="material-icons-outlined text-purple-400 text-lg mr-2">email</span>Email Address
+                    </label>
+                    <div class="relative group">
+                        <input id="resetEmail"
+                               ng-model="auth.resetForm.email"
+                               type="email"
+                               required
+                               ng-focus="auth.clearErrors()"
+                               ng-class="{'border-red-500/50 focus:border-red-500': auth.errors.resetEmail, 'border-purple-500/30 focus:border-purple-500': !auth.errors.resetEmail}"
+                               class="w-full px-4 py-3.5 bg-white/5 backdrop-blur-sm border rounded-xl text-white focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 placeholder-slate-400 group-hover:bg-white/10"
+                               placeholder="Enter your email address">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    <div ng-show="auth.errors.resetEmail" class="text-red-400 text-xs flex items-center mt-2">
+                        <span class="material-icons-outlined text-sm mr-1">error</span>{{auth.errors.resetEmail}}
+                    </div>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button type="button"
+                            ng-click="auth.showResetModal = false"
+                            class="flex-1 bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 border border-white/20 hover:border-purple-500/30">
+                        <span class="flex items-center justify-center">
+                            <span class="material-icons-outlined mr-2">close</span>Cancel
+                        </span>
+                    </button>
+                    <button type="submit"
+                            ng-disabled="auth.isLoading"
+                            class="flex-1 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-purple-500/25 transform hover:scale-[1.02]">
+                        <span ng-hide="auth.isLoading" class="flex items-center justify-center">
+                            <span class="material-icons-outlined mr-2">send</span>Send Reset Link
+                        </span>
+                        <span ng-show="auth.isLoading" class="flex items-center justify-center">
+                            <span class="material-icons-outlined animate-spin mr-2">refresh</span>Sending...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Enhanced Authentication Styles */
+
+    /* Floating animations for background orbs */
+    @keyframes float-slow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(20px, -30px) scale(1.05); }
+        50% { transform: translate(-15px, -20px) scale(0.95); }
+        75% { transform: translate(10px, 20px) scale(1.02); }
+    }
+
+    @keyframes float-medium {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(-25px, 15px) scale(1.1); }
+        66% { transform: translate(20px, -25px) scale(0.9); }
+    }
+
+    @keyframes float-fast {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        20% { transform: translate(15px, -20px) scale(1.05); }
+        40% { transform: translate(-20px, 10px) scale(0.95); }
+        60% { transform: translate(10px, 25px) scale(1.08); }
+        80% { transform: translate(-10px, -15px) scale(0.92); }
+    }
+
+    /* Enhanced input focus effects */
+    .auth-input-group {
+        position: relative;
+    }
+
+    .auth-input-group:focus-within label {
+        color: rgb(168 85 247);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+    .auth-input-group input:focus {
+        box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    }
+
+    /* Custom checkbox styling */
+    .custom-checkbox {
+        appearance: none;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(139, 69, 255, 0.3);
+        border-radius: 6px;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .custom-checkbox:checked {
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        border-color: #a855f7;
+    }
+
+    .custom-checkbox:checked::after {
+        content: '✓';
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .custom-checkbox:hover {
+        border-color: rgba(168, 85, 247, 0.5);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Enhanced button animations */
+    .auth-button {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .auth-button:hover::before {
+        left: 100%;
+    }
+
+    /* Password strength indicator animations */
+    .password-strength-bar {
+        transition: all 0.3s ease;
+        transform-origin: left;
+    }
+
+    .password-strength-bar.weak {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+
+    .password-strength-bar.medium {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+
+    .password-strength-bar.strong {
+        background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    /* Modal entrance animation */
+    .modal-enter {
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Form container animations */
+    .auth-container {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Enhanced glassmorphism effects */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(139, 69, 255, 0.2);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(139, 69, 255, 0.1) inset;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(139, 69, 255, 0.3);
+        box-shadow:
+            0 12px 40px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(139, 69, 255, 0.2) inset,
+            0 0 20px rgba(139, 69, 255, 0.1);
+    }
+
+    /* Input glow effects */
+    .input-glow:focus {
+        box-shadow:
+            0 0 0 2px rgba(139, 69, 255, 0.5),
+            0 0 20px rgba(139, 69, 255, 0.2);
+    }
+
+    /* Button ripple effect */
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-ripple::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+        transform: translate(-50%, -50%);
+    }
+
+    .btn-ripple:active::after {
+        width: 300px;
+        height: 300px;
+        top: 50%;
+        left: 50%;
+    }
+
+    /* Enhanced error message styling */
+    .error-message {
+        animation: errorShake 0.5s ease-in-out;
+    }
+
+    @keyframes errorShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    /* Loading spinner enhancement */
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
+    /* Responsive enhancements */
+    @media (max-width: 768px) {
+        .auth-container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .glass-card {
+            border-radius: 1.5rem;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+
+    /* Enhanced focus management */
+    .focus\:ring-purple-500\/50:focus {
+        --tw-ring-color: rgba(139, 69, 255, 0.5);
+    }
+
+    /* Improved accessibility */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+        .glass-card {
+            border-width: 2px;
+            border-color: #a855f7;
+        }
+
+        .text-slate-400 {
+            color: #cbd5e1;
+        }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    /* Print styles */
+    @media print {
+        .glass-card {
+            background: white;
+            border: 1px solid #000;
+            box-shadow: none;
+        }
+
+        .bg-gradient-to-r {
+            background: #6366f1 !important;
+        }
+    }
+
+    /* Dark mode optimizations */
+    @media (prefers-color-scheme: dark) {
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(139, 69, 255, 0.25);
+        }
+    }
+</style>
+
+<script>
+    // Enhanced JavaScript for authentication interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced form validation feedback
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('input-focused');
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('input-focused');
+            });
+
+            // Real-time validation feedback
+            input.addEventListener('input', function() {
+                if (this.validity.valid) {
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-green-500');
+                } else {
+                    this.classList.remove('border-green-500');
+                    this.classList.add('border-red-500');
+                }
+            });
+        });
+
+        // Enhanced password visibility toggle
+        const toggleButtons = document.querySelectorAll('[data-toggle-password]');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const icon = this.querySelector('.material-icons-outlined');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility_off';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            });
+        });
+
+        // Enhanced form submission with loading states
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitButton = this.querySelector('button[type="submit"]');
+                const loadingSpan = submitButton.querySelector('.animate-spin');
+
+                if (loadingSpan) {
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50');
+                }
+
+                // Simulate form processing
+                setTimeout(() => {
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.classList.remove('opacity-50');
+                    }
+                }, 2000);
+            });
+        });
+
+        // Modal keyboard navigation
+        const modal = document.querySelector('[ng-show="auth.showResetModal"]');
+        if (modal) {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display !== 'none') {
+                    // Close modal
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Enhanced accessibility for custom checkboxes
+        const customCheckboxes = document.querySelectorAll('.custom-checkbox');
+        customCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    this.checked = !this.checked;
+                    this.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Form auto-save (localStorage fallback for development)
+        const saveFormData = (formData, formType) => {
+            try {
+                // In production, this would sync with your backend
+                console.log(`Saving ${formType} form data:`, formData);
+            } catch (error) {
+                console.warn('Could not save form data:', error);
+            }
+        };
+
+        // Auto-save form data on input changes
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const form = this.closest('form');
+                const formData = new FormData(form);
+                const formType = form.querySelector('button[type="submit"]').textContent.includes('Sign In') ? 'login' : 'register';
+
+                saveFormData(Object.fromEntries(formData), formType);
+            });
+        });
+
+        // Enhanced error handling
+        window.addEventListener('error', function(e) {
+            console.error('Authentication form error:', e.error);
+            // In production, you might want to send this to your error tracking service
+        });
+
+        // Performance monitoring
+        const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry) => {
+                if (entry.entryType === 'measure') {
+                    console.log(`Performance: ${entry.name} took ${entry.duration}ms`);
+                }
+            });
+        });
+
+        if (window.PerformanceObserver) {
+            observer.observe({entryTypes: ['measure']});
+        }
+
+        // Enhanced animation timing
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.auth-container');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animate-fade-in-up');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        animateOnScroll(); // Run on initial load
+    });
+</script>

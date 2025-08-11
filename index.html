@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title ng-bind="pageTitle || 'Predict Tomorrow Win Today'">Predict Tomorrow Win Today</title>
+    <meta name="description" content="{{pageDescription || 'Join the ultimate prediction market platform. Make predictions, compete with others, and climb the leaderboard.'}}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind CDN warning in development
+        if (console.warn) {
+            const originalWarn = console.warn;
+            console.warn = function(message) {
+                if (typeof message === 'string' && message.includes('cdn.tailwindcss.com')) {
+                    return; // Suppress Tailwind CDN warning
+                }
+                originalWarn.apply(console, arguments);
+            };
+        }
+
+        // Tailwind config for your original design
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#ffffff',
+                        secondary: '#f8fafc',
+                        accent: '#64748b',
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
+
+    <!-- jQuery (for compatibility) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="text-white min-h-screen relative overflow-x-hidden" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
+    <!-- Main Application Container -->
+    <div class="min-h-screen">
+        <!-- Header -->
+        <div ng-include="'app/views/partials/header.html'"></div>
+        <main>
+            <div ng-view></div>
+        </main>
+        <div ng-include="'app/views/partials/footer.html'"></div>
+    </div>
+
+    <!-- App Configuration -->
+    <script src="app/app.js"></script>
+    <script src="app/routes.js"></script>
+
+    <!-- Services -->
+    <script src="app/services/SupabaseService.js"></script>
+    <script src="app/services/AuthService.js"></script>
+    <script src="app/services/UserService.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!-- Hero Section with Background Video -->
+<section class="relative overflow-hidden min-h-screen flex items-center justify-center">
+    <!-- Background Video - Only for Hero -->
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+        <source src="assets/bg.mp4" type="video/mp4">
+    </video>
+
+    <!-- Video Overlay -->
+    <div class="absolute inset-0 bg-black/50"></div>
+
+    <!-- Premium Background Animation -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <!-- Floating Orbs -->
+        <div class="absolute w-64 h-64 rounded-full opacity-10"
+             style="background: radial-gradient(circle, rgba(139, 69, 255, 0.15) 0%, transparent 70%); top: 15%; left: 10%; filter: blur(40px); animation: float-slow 18s ease-in-out infinite;"></div>
+        <div class="absolute w-48 h-48 rounded-full opacity-8"
+             style="background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%); top: 60%; right: 15%; filter: blur(40px); animation: float-medium 14s ease-in-out infinite 3s;"></div>
+        <div class="absolute w-56 h-56 rounded-full opacity-6"
+             style="background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%); bottom: 25%; left: 65%; filter: blur(40px); animation: float-fast 11s ease-in-out infinite 6s;"></div>
+
+        <!-- Compact Particles -->
+        <div class="particle-field">
+            <div class="w-0.5 h-0.5 bg-purple-400 rounded-full absolute opacity-50" style="left: 8%; animation: float-up-fast 12s linear infinite 0s;"></div>
+            <div class="w-1 h-1 bg-violet-400 absolute opacity-40 rotate-45" style="left: 22%; animation: float-up-medium 16s linear infinite 2s;"></div>
+            <div class="w-0.5 h-0.5 bg-purple-300 rounded-full absolute opacity-60" style="left: 36%; animation: float-up-slow 20s linear infinite 4s;"></div>
+            <div class="w-1 h-1 bg-purple-500 absolute opacity-45 rotate-45" style="left: 64%; animation: float-up-wave 18s linear infinite 8s;"></div>
+            <div class="w-0.5 h-0.5 bg-violet-500 rounded-full absolute opacity-55" style="left: 78%; animation: float-up-zigzag 14s linear infinite 10s;"></div>
+            <div class="w-0.5 h-0.5 bg-purple-600 rounded-full absolute opacity-40" style="left: 92%; animation: float-up-fast 15s linear infinite 12s;"></div>
+        </div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Compact Hero Content -->
+        <div class="space-y-8">
+            <!-- Tagline -->
+            <div class="inline-flex items-center px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 text-sm font-semibold animate-fade-in">
+                <span class="material-icons-outlined mr-2 text-base">auto_awesome</span>
+                Next-Gen Prediction Platform
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight animate-fade-in-up" style="animation-delay: 0.2s;">
+                <span class="bg-gradient-to-r from-white via-purple-100 to-purple-200 bg-clip-text text-transparent">
+                    Predict Tomorrow
+                </span>
+                <br>
+                <span class="bg-gradient-to-r from-purple-400 via-violet-400 to-purple-500 bg-clip-text text-transparent">
+                    Win Today
+                </span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-xl sm:text-2xl text-slate-200 leading-relaxed max-w-3xl mx-auto font-light animate-fade-in-up" style="animation-delay: 0.4s;">
+                Join elite forecasters predicting <span class="text-purple-300 font-semibold">global events</span> and
+                <span class="text-violet-300 font-semibold">market movements</span> with precision.
+            </p>
+
+            <!-- Compact CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.6s;">
+                <button ng-click="home.startPredicting()" class="px-8 py-3 bg-gradient-to-r from-purple-500 via-violet-600 to-purple-600 hover:from-purple-600 hover:via-violet-700 hover:to-purple-700 text-white rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <span class="material-icons-outlined mr-2 group-hover:rotate-12 transition-transform">rocket_launch</span>
+                    Start Predicting
+                </button>
+
+                <button ng-click="home.navigateTo('/leaderboard')" class="px-8 py-3 bg-white/10 hover:bg-white/20 text-white border-2 border-white/20 hover:border-purple-400/50 rounded-2xl font-bold text-lg transition-all duration-300 backdrop-blur-lg flex items-center justify-center group">
+                    <span class="material-icons-outlined mr-2 group-hover:scale-110 transition-transform">emoji_events</span>
+                    Leaderboard
+                </button>
+            </div>
+
+            <!-- Compact Stats -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto animate-fade-in-up" style="animation-delay: 0.8s;">
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div class="text-2xl font-black bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent">
+                        {{home.stats.totalPredictions | number}}
+                    </div>
+                    <div class="text-xs text-slate-300 font-semibold uppercase tracking-wider">Predictions</div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div class="text-2xl font-black bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
+                        {{home.stats.totalUsers | number}}
+                    </div>
+                    <div class="text-xs text-slate-300 font-semibold uppercase tracking-wider">Analysts</div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div class="text-2xl font-black bg-gradient-to-r from-purple-300 to-violet-300 bg-clip-text text-transparent">
+                        {{home.stats.activePredictions}}
+                    </div>
+                    <div class="text-xs text-slate-300 font-semibold uppercase tracking-wider">Live Markets</div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div class="text-2xl font-black bg-gradient-to-r from-violet-300 to-purple-300 bg-clip-text text-transparent">
+                        {{home.stats.accuracy}}%
+                    </div>
+                    <div class="text-xs text-slate-300 font-semibold uppercase tracking-wider">Accuracy</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div class="w-5 h-8 border-2 border-white/30 rounded-full flex justify-center">
+            <div class="w-1 h-2 bg-white/50 rounded-full mt-1 animate-pulse"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Sections - Dark Background -->
+<div class="bg-gradient-to-b from-slate-900 to-black">
+
+    <!-- Featured Predictions Section -->
+    <section class="relative py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Compact Section Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 text-sm font-semibold mb-4">
+                    <span class="material-icons-outlined mr-2 text-base">trending_up</span>
+                    Featured Markets
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+                    <span class="bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                        Trending Predictions
+                    </span>
+                </h2>
+                <p class="text-lg text-slate-300 max-w-2xl mx-auto">
+                    Explore popular predictions across technology, finance, and global events.
+                </p>
+            </div>
+
+            <!-- Compact Predictions Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div ng-repeat="prediction in home.featuredPredictions"
+                     class="group bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105"
+                     ng-click="home.navigateTo('/predictions/' + prediction.id)">
+
+                    <!-- Compact Card Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-violet-500/20 border border-purple-500/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-icons-outlined text-purple-400 text-xl">{{prediction.icon}}</span>
+                        </div>
+                        <span class="px-2 py-1 bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-semibold rounded-full">
+                            {{prediction.category}}
+                        </span>
+                    </div>
+
+                    <!-- Card Content -->
+                    <h3 class="text-lg font-bold text-white mb-3 leading-tight group-hover:text-purple-300 transition-colors">
+                        {{prediction.title}}
+                    </h3>
+
+                    <!-- Compact Footer -->
+                    <div class="flex items-center justify-between text-sm text-slate-400">
+                        <span class="flex items-center">
+                            <span class="material-icons-outlined text-base mr-1">groups</span>
+                            {{prediction.participants | number}}
+                        </span>
+                        <span class="flex items-center">
+                            <span class="material-icons-outlined text-base mr-1">schedule</span>
+                            {{prediction.endDate | date:'MMM d'}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compact View All Button -->
+            <div class="text-center">
+                <button ng-click="home.navigateTo('/predictions')"
+                        class="px-6 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-purple-400/50 rounded-xl font-semibold transition-all duration-300 backdrop-blur-lg flex items-center mx-auto group">
+                    <span class="material-icons-outlined mr-2 group-hover:scale-110 transition-transform text-base">explore</span>
+                    Explore All Markets
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Performers & Recent Activity Section -->
+    <section class="relative py-16 bg-slate-900/50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-8">
+
+                <!-- Compact Top Performers -->
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center mb-1">
+                                <span class="material-icons-outlined mr-2 text-yellow-400 text-2xl">emoji_events</span>
+                                Elite Forecasters
+                            </h3>
+                            <p class="text-sm text-slate-400">Top performers this month</p>
+                        </div>
+                        <button ng-click="home.navigateTo('/leaderboard')"
+                                class="text-purple-400 hover:text-purple-300 transition-colors text-sm font-semibold flex items-center group">
+                            View All
+                            <span class="material-icons-outlined ml-1 text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </button>
+                    </div>
+
+                    <!-- Compact Performers List -->
+                    <div class="space-y-3">
+                        <div ng-repeat="user in home.topPredictors"
+                             class="flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 rounded-xl transition-all duration-300 group cursor-pointer">
+
+                            <div class="flex items-center space-x-3">
+                                <div class="relative">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center font-bold text-slate-900 text-sm">
+                                        {{user.rank}}
+                                    </div>
+                                    <div ng-if="user.rank <= 3" class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
+                                        <span class="material-icons-outlined text-slate-900 text-xs">star</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="font-semibold text-white group-hover:text-purple-300 transition-colors text-sm">
+                                        {{user.username || user.first_name + ' ' + user.last_name}}
+                                    </div>
+                                    <div class="text-xs text-slate-400">Rank #{{user.rank}}</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg px-3 py-1">
+                                <span class="material-icons-outlined text-yellow-400 text-base mr-1">stars</span>
+                                <span class="text-yellow-400 font-bold text-sm">{{user.points | number}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compact Join CTA -->
+                    <div class="mt-6 p-4 bg-gradient-to-r from-purple-500/10 to-violet-500/10 border border-purple-500/20 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-white text-sm">Join Competition</h4>
+                                <p class="text-xs text-slate-400">Start predicting and climb ranks</p>
+                            </div>
+                            <button ng-click="home.startPredicting()"
+                                    class="px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold text-sm transition-all duration-300 flex items-center">
+                                Join
+                                <span class="material-icons-outlined ml-1 text-base">rocket_launch</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compact Recent Activity -->
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center mb-1">
+                                <span class="material-icons-outlined mr-2 text-purple-400 text-2xl">timeline</span>
+                                Live Activity
+                            </h3>
+                            <p class="text-sm text-slate-400">Real-time updates</p>
+                        </div>
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    </div>
+
+                    <!-- Compact Activity Feed -->
+                    <div class="space-y-3">
+                        <div ng-repeat="activity in home.recentActivity"
+                             class="flex items-start space-x-3 p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 rounded-xl transition-all duration-300 group">
+
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500/20 to-violet-500/20 border border-purple-500/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <span class="material-icons-outlined text-purple-400 text-sm">
+                                    <span ng-if="activity.action === 'predicted'">psychology</span>
+                                    <span ng-if="activity.action === 'won'">emoji_events</span>
+                                    <span ng-if="activity.action !== 'predicted' && activity.action !== 'won'">trending_up</span>
+                                </span>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <div class="text-white text-sm leading-relaxed mb-1">
+                                    <span class="font-semibold text-purple-300">{{activity.user}}</span>
+                                    <span class="text-slate-400">{{activity.action}}</span>
+                                    <span class="font-medium">"{{activity.prediction}}"</span>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-slate-500">{{activity.timeAgo}}</span>
+                                    <span ng-if="activity.points" class="text-xs font-semibold text-green-400 bg-green-400/20 px-2 py-0.5 rounded-full">
+                                        {{activity.points}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compact Activity Stats -->
+                    <div class="mt-6 grid grid-cols-3 gap-3">
+                        <div class="text-center p-3 bg-white/5 rounded-lg">
+                            <div class="text-xl font-bold text-purple-400">24</div>
+                            <div class="text-xs text-slate-400 uppercase">Today</div>
+                        </div>
+                        <div class="text-center p-3 bg-white/5 rounded-lg">
+                            <div class="text-xl font-bold text-violet-400">156</div>
+                            <div class="text-xs text-slate-400 uppercase">Week</div>
+                        </div>
+                        <div class="text-center p-3 bg-white/5 rounded-lg">
+                            <div class="text-xl font-bold text-purple-300">2.8k</div>
+                            <div class="text-xs text-slate-400 uppercase">Month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="relative py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Compact Section Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 text-sm font-semibold mb-4">
+                    <span class="material-icons-outlined mr-2 text-base">lightbulb</span>
+                    How It Works
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+                    <span class="bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                        Start in 3 Simple Steps
+                    </span>
+                </h2>
+            </div>
+
+            <!-- Compact Steps Grid -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <!-- Step 1 -->
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons-outlined text-white text-2xl">person_add</span>
+                    </div>
+                    <div class="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-white mb-2">1. Sign Up</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Create account and get 100 free points to start forecasting.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons-outlined text-white text-2xl">psychology</span>
+                    </div>
+                    <div class="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-white mb-2">2. Predict</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Browse markets and make predictions on events that matter.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-violet-700 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons-outlined text-white text-2xl">emoji_events</span>
+                    </div>
+                    <div class="bg-purple-600/10 border border-purple-600/20 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-white mb-2">3. Win Rewards</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Earn points for accurate predictions and climb leaderboard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compact Final CTA -->
+            <div class="text-center">
+                <div class="bg-gradient-to-r from-purple-500/10 via-violet-500/10 to-purple-600/10 border border-purple-500/20 rounded-2xl p-6 max-w-3xl mx-auto">
+                    <h3 class="text-2xl font-bold text-white mb-3">Ready to Start Forecasting?</h3>
+                    <p class="text-slate-300 mb-4 text-sm">
+                        Join thousands of analysts making accurate predictions and earning rewards.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button ng-click="home.startPredicting()"
+                                class="px-6 py-3 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                            <span class="material-icons-outlined mr-2">rocket_launch</span>
+                            Start Now
+                        </button>
+                        <button ng-click="home.navigateTo('/about')"
+                                class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center">
+                            <span class="material-icons-outlined mr-2">info</span>
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>

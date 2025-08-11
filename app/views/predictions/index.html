@@ -1,0 +1,237 @@
+<!-- Predictions View -->
+<div class="min-h-screen relative overflow-x-hidden" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl mb-6 shadow-2xl">
+                <span class="material-icons-outlined text-white text-2xl">psychology</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                Market <span class="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Predictions</span>
+            </h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto">
+                Explore trending predictions and make your voice heard in the prediction market
+            </p>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-6 mb-8">
+            <!-- Search Bar -->
+            <div class="mb-6">
+                <div class="relative max-w-2xl mx-auto">
+                    <span class="material-icons-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">search</span>
+                    <input ng-model="ctrl.searchQuery"
+                           ng-keyup="$event.keyCode == 13 && ctrl.search()"
+                           type="text"
+                           placeholder="Search predictions..."
+                           class="w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-slate-400 focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all duration-300">
+                    <button ng-click="ctrl.search()"
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-slate-100 text-dark-900 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-4 justify-center">
+                <!-- Category Filter -->
+                <div class="flex flex-wrap gap-2">
+                    <button ng-click="ctrl.setCategory('all')"
+                            ng-class="ctrl.filters.category === 'all' ? 'bg-white text-dark-900 shadow-lg' : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'"
+                            class="px-4 py-2 rounded-xl font-medium transition-all duration-300">
+                        All Categories
+                    </button>
+                    <button ng-repeat="category in ctrl.categories"
+                            ng-click="ctrl.setCategory(category)"
+                            ng-class="ctrl.filters.category === category ? 'bg-white text-dark-900 shadow-lg' : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'"
+                            class="px-4 py-2 rounded-xl font-medium transition-all duration-300">
+                        <span class="material-icons-outlined mr-1 text-sm align-middle">{{ctrl.getCategoryIcon(category)}}</span>
+                        {{category}}
+                    </button>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="flex gap-2">
+                    <button ng-click="ctrl.setStatus('active')"
+                            ng-class="ctrl.filters.status === 'active' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'"
+                            class="px-4 py-2 rounded-xl font-medium transition-all duration-300">
+                        Active
+                    </button>
+                    <button ng-click="ctrl.setStatus('resolved')"
+                            ng-class="ctrl.filters.status === 'resolved' ? 'bg-slate-500 text-white shadow-lg' : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'"
+                            class="px-4 py-2 rounded-xl font-medium transition-all duration-300">
+                        Resolved
+                    </button>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="flex gap-2">
+                    <select ng-model="ctrl.sortBy"
+                            ng-change="ctrl.setSortBy(ctrl.sortBy)"
+                            class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all duration-300">
+                        <option value="trending" class="bg-dark-800 text-white">Trending</option>
+                        <option value="newest" class="bg-dark-800 text-white">Newest</option>
+                        <option value="ending_soon" class="bg-dark-800 text-white">Ending Soon</option>
+                        <option value="most_popular" class="bg-dark-800 text-white">Most Popular</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Predictions -->
+        <div ng-if="ctrl.featuredPredictions.length > 0" class="mb-12">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                <span class="material-icons-outlined mr-2 text-amber-400">star</span>
+                Featured Predictions
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div ng-repeat="prediction in ctrl.featuredPredictions track by prediction.id"
+                     class="bg-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-6 hover:scale-105 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                     ng-click="ctrl.viewPrediction(prediction.id)">
+                    <!-- Featured Badge -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 text-amber-400 px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                            <span class="material-icons-outlined mr-1 text-sm">star</span>
+                            Featured
+                        </div>
+                        <div ng-class="ctrl.getStatusBadge(prediction).class"
+                             class="text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm border border-white/20">
+                            {{ctrl.getStatusBadge(prediction).text}}
+                        </div>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="flex items-center mb-3">
+                        <span class="material-icons-outlined mr-2 text-slate-400">{{ctrl.getCategoryIcon(prediction.category)}}</span>
+                        <span class="text-slate-400 font-medium">{{prediction.category}}</span>
+                    </div>
+
+                    <!-- Title -->
+                    <h3 class="text-white font-bold text-lg mb-3 line-clamp-2">{{prediction.title}}</h3>
+
+                    <!-- Description -->
+                    <p class="text-slate-300 text-sm mb-4 line-clamp-3">{{prediction.description}}</p>
+
+                    <!-- Prediction Stats -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-emerald-400 font-bold text-lg">{{prediction.yes_percentage}}%</div>
+                                <div class="text-slate-500 text-xs">YES</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-red-400 font-bold text-lg">{{prediction.no_percentage}}%</div>
+                                <div class="text-slate-500 text-xs">NO</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-white font-semibold">{{ctrl.formatVolume(prediction.volume)}}</div>
+                            <div class="text-slate-500 text-xs">Volume</div>
+                        </div>
+                    </div>
+
+                    <!-- Participants -->
+                    <div class="text-slate-400 text-sm">
+                        {{prediction.total_predictions}} predictions made
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div ng-if="ctrl.isLoading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
+            <p class="text-slate-300">Loading predictions...</p>
+        </div>
+
+        <!-- All Predictions -->
+        <div ng-if="!ctrl.isLoading">
+            <h2 class="text-2xl font-bold text-white mb-6">All Predictions</h2>
+
+            <!-- Predictions Grid -->
+            <div ng-if="ctrl.predictions.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div ng-repeat="prediction in ctrl.predictions track by prediction.id"
+                     class="bg-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-6 hover:scale-105 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                     ng-click="ctrl.viewPrediction(prediction.id)">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <span class="material-icons-outlined mr-2 text-slate-400">{{ctrl.getCategoryIcon(prediction.category)}}</span>
+                            <span class="text-slate-400 font-medium text-sm">{{prediction.category}}</span>
+                        </div>
+                        <div ng-class="ctrl.getStatusBadge(prediction).class"
+                             class="text-white px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm border border-white/20">
+                            {{ctrl.getStatusBadge(prediction).text}}
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <h3 class="text-white font-bold text-lg mb-3 line-clamp-2">{{prediction.title}}</h3>
+
+                    <!-- Prediction Percentages -->
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-emerald-400 font-semibold">YES {{prediction.yes_percentage}}%</span>
+                            <span class="text-red-400 font-semibold">NO {{prediction.no_percentage}}%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2 rounded-full transition-all duration-300"
+                                 ng-style="{'width': prediction.yes_percentage + '%'}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="text-slate-300">
+                            {{prediction.total_predictions}} predictions
+                        </div>
+                        <div class="text-white font-semibold">
+                            {{ctrl.formatVolume(prediction.volume)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div ng-if="ctrl.predictions.length === 0" class="text-center py-12">
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl mx-auto mb-6 flex items-center justify-center">
+                    <span class="material-icons-outlined text-slate-400 text-2xl">search_off</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">No Predictions Found</h3>
+                <p class="text-slate-300 mb-6">Try adjusting your filters or search terms.</p>
+                <button ng-click="ctrl.setCategory('all'); ctrl.searchQuery = ''; ctrl.search()"
+                        class="bg-white hover:bg-slate-100 text-dark-900 px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg">
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-16">
+            <div class="bg-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8">
+                <h2 class="text-3xl font-bold text-white mb-4">Ready to Make Your Prediction?</h2>
+                <p class="text-slate-300 mb-6 max-w-2xl mx-auto">
+                    Join thousands of predictors and put your forecasting skills to the test. Every prediction helps shape the market.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button ng-if="$root.isAuthenticated" ng-click="ctrl.navigateTo('/dashboard')"
+                            class="bg-white hover:bg-slate-100 text-dark-900 px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg">
+                        <span class="material-icons-outlined mr-2 align-middle">dashboard</span>
+                        Go to Dashboard
+                    </button>
+                    <button ng-if="!$root.isAuthenticated" ng-click="ctrl.navigateTo('/auth')"
+                            class="bg-white hover:bg-slate-100 text-dark-900 px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg">
+                        <span class="material-icons-outlined mr-2 align-middle">login</span>
+                        Sign Up to Predict
+                    </button>
+                    <button ng-click="ctrl.navigateTo('/leaderboard')"
+                            class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300">
+                        <span class="material-icons-outlined mr-2 align-middle">leaderboard</span>
+                        View Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

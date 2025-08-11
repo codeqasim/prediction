@@ -1,0 +1,173 @@
+<!-- Prediction Detail View -->
+<div class="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 pt-16">
+    <!-- Animated star background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="stars absolute inset-0">
+            <div class="animate-pulse absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full opacity-70"></div>
+            <div class="animate-pulse absolute top-1/3 right-1/3 w-1 h-1 bg-blue-300 rounded-full opacity-60" style="animation-delay: 1s;"></div>
+            <div class="animate-pulse absolute bottom-1/4 left-1/3 w-1 h-1 bg-purple-300 rounded-full opacity-50" style="animation-delay: 2s;"></div>
+            <div class="animate-pulse absolute top-2/3 right-1/4 w-1 h-1 bg-white rounded-full opacity-80" style="animation-delay: 0.5s;"></div>
+            <div class="animate-pulse absolute bottom-1/3 right-2/3 w-1 h-1 bg-indigo-300 rounded-full opacity-60" style="animation-delay: 1.5s;"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Back Button -->
+        <button ng-click="ctrl.navigateTo('/predictions')"
+                class="flex items-center text-gray-300 hover:text-white mb-6 transition-colors duration-200">
+            <span class="material-icons-outlined mr-2">arrow_back</span>
+            Back to Predictions
+        </button>
+
+        <!-- Loading State -->
+        <div ng-if="ctrl.isLoading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
+            <p class="text-gray-300">Loading prediction details...</p>
+        </div>
+
+        <!-- Prediction Not Found -->
+        <div ng-if="!ctrl.isLoading && !ctrl.prediction" class="text-center py-12">
+            <div class="w-16 h-16 bg-gray-500/20 rounded-xl mx-auto mb-6 flex items-center justify-center">
+                <span class="material-icons-outlined text-gray-400 text-2xl">error_outline</span>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-4">Prediction Not Found</h2>
+            <p class="text-gray-300 mb-6">The prediction you're looking for doesn't exist or has been removed.</p>
+            <button ng-click="ctrl.navigateTo('/predictions')"
+                    class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
+                Browse Predictions
+            </button>
+        </div>
+
+        <!-- Prediction Content -->
+        <div ng-if="!ctrl.isLoading && ctrl.prediction">
+            <!-- Main Card -->
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-8 mb-8">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <span class="material-icons-outlined mr-3 text-blue-400 text-2xl">{{ctrl.getCategoryIcon(ctrl.prediction.category)}}</span>
+                        <div>
+                            <span class="text-blue-400 font-medium">{{ctrl.prediction.category}}</span>
+                            <div ng-class="ctrl.getStatusBadge(ctrl.prediction).class"
+                                 class="text-white px-3 py-1 rounded-full text-sm font-medium mt-1 inline-block">
+                                {{ctrl.getStatusBadge(ctrl.prediction).text}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-white">{{ctrl.formatVolume(ctrl.prediction.volume)}}</div>
+                        <div class="text-gray-300 text-sm">Total Volume</div>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">{{ctrl.prediction.title}}</h1>
+
+                <!-- Description -->
+                <p class="text-gray-300 text-lg leading-relaxed mb-8">{{ctrl.prediction.description}}</p>
+
+                <!-- Prediction Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <!-- YES Vote -->
+                    <div class="bg-green-500/20 border border-green-500/30 rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-green-400 font-bold text-xl">YES</h3>
+                            <span class="text-green-400 text-3xl font-bold">{{ctrl.prediction.yes_percentage}}%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                            <div class="bg-gradient-to-r from-green-500 to-green-400 h-3 rounded-full transition-all duration-300"
+                                 ng-style="{'width': ctrl.prediction.yes_percentage + '%'}"></div>
+                        </div>
+                        <p class="text-gray-300 text-sm">{{ctrl.prediction.yes_votes || Math.floor(ctrl.prediction.total_predictions * ctrl.prediction.yes_percentage / 100)}} people believe this will happen</p>
+                    </div>
+
+                    <!-- NO Vote -->
+                    <div class="bg-red-500/20 border border-red-500/30 rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-red-400 font-bold text-xl">NO</h3>
+                            <span class="text-red-400 text-3xl font-bold">{{ctrl.prediction.no_percentage}}%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                            <div class="bg-gradient-to-r from-red-500 to-red-400 h-3 rounded-full transition-all duration-300"
+                                 ng-style="{'width': ctrl.prediction.no_percentage + '%'}"></div>
+                        </div>
+                        <p class="text-gray-300 text-sm">{{ctrl.prediction.no_votes || Math.floor(ctrl.prediction.total_predictions * ctrl.prediction.no_percentage / 100)}} people believe this won't happen</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div ng-if="$root.isAuthenticated" class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button ng-click="ctrl.makePrediction('yes')"
+                            class="bg-gradient-to-r from-green-600 to-green-500 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-green-600 transition-all duration-200 shadow-lg">
+                        <span class="material-icons-outlined mr-2 align-middle">thumb_up</span>
+                        Predict YES
+                    </button>
+                    <button ng-click="ctrl.makePrediction('no')"
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-8 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-red-600 transition-all duration-200 shadow-lg">
+                        <span class="material-icons-outlined mr-2 align-middle">thumb_down</span>
+                        Predict NO
+                    </button>
+                </div>
+
+                <!-- Login Prompt -->
+                <div ng-if="!$root.isAuthenticated" class="text-center">
+                    <p class="text-gray-300 mb-4">Sign up to make your prediction and compete with others!</p>
+                    <button ng-click="ctrl.navigateTo('/auth')"
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
+                        <span class="material-icons-outlined mr-2 align-middle">login</span>
+                        Sign Up to Predict
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Prediction Stats -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6">
+                    <h3 class="text-white font-bold text-lg mb-4 flex items-center">
+                        <span class="material-icons-outlined mr-2">bar_chart</span>
+                        Statistics
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Total Predictions:</span>
+                            <span class="text-white font-semibold">{{ctrl.prediction.total_predictions}}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Created:</span>
+                            <span class="text-white font-semibold">{{ctrl.formatDate(ctrl.prediction.created_at)}}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Ends:</span>
+                            <span class="text-white font-semibold">{{ctrl.formatDate(ctrl.prediction.end_date)}}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Days Remaining:</span>
+                            <span class="text-white font-semibold">{{ctrl.getDaysUntilEnd(ctrl.prediction.end_date)}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Predictions -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6">
+                    <h3 class="text-white font-bold text-lg mb-4 flex items-center">
+                        <span class="material-icons-outlined mr-2">related_queries</span>
+                        Related Predictions
+                    </h3>
+                    <div class="space-y-3">
+                        <div ng-repeat="related in ctrl.relatedPredictions track by related.id">
+                            <a ng-click="ctrl.viewPrediction(related.id)"
+                               class="block text-blue-400 hover:text-blue-300 cursor-pointer transition-colors duration-200">
+                                {{related.title}}
+                            </a>
+                        </div>
+                        <div ng-if="ctrl.relatedPredictions.length === 0" class="text-gray-400 text-sm">
+                            No related predictions found.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

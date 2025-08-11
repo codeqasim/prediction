@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="200" cy="200" r="200" fill="url(#gradient)"/>
+
+  <!-- User Icon -->
+  <path d="M200 180C230.928 180 256 154.928 256 124C256 93.0721 230.928 68 200 68C169.072 68 144 93.0721 144 124C144 154.928 169.072 180 200 180Z" fill="white" opacity="0.8"/>
+  <path d="M120 320C120 269.609 159.609 230 210 230H190C240.391 230 280 269.609 280 320V340H120V320Z" fill="white" opacity="0.8"/>
+
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

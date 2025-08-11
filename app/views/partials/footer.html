@@ -1,0 +1,320 @@
+<!-- Enhanced Footer Component -->
+<footer class="mt-auto bg-gradient-to-b from-black/80 to-black border-t border-purple-500/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Main Footer Content -->
+        <div class="py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <!-- Brand Section -->
+                <div class="lg:col-span-2">
+                    <!-- Enhanced Logo -->
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg">
+                            <span class="material-icons-outlined text-white text-xl">auto_awesome</span>
+                        </div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                            PredictIt
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 max-w-md">
+                        The next-generation prediction platform where insights meet rewards.
+                        Join thousands of analysts forecasting the future with unprecedented accuracy.
+                    </p>
+
+                    <!-- Social Links -->
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="w-9 h-9 bg-white/10 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 rounded-lg flex items-center justify-center transition-all duration-300 group">
+                            <span class="material-icons-outlined text-slate-400 group-hover:text-purple-300 text-lg">link</span>
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-white/10 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 rounded-lg flex items-center justify-center transition-all duration-300 group">
+                            <span class="material-icons-outlined text-slate-400 group-hover:text-purple-300 text-lg">alternate_email</span>
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-white/10 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 rounded-lg flex items-center justify-center transition-all duration-300 group">
+                            <span class="material-icons-outlined text-slate-400 group-hover:text-purple-300 text-lg">forum</span>
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-white/10 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 rounded-lg flex items-center justify-center transition-all duration-300 group">
+                            <span class="material-icons-outlined text-slate-400 group-hover:text-purple-300 text-lg">help</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Platform Links -->
+                <div>
+                    <h3 class="text-white font-semibold text-sm mb-4 flex items-center">
+                        <span class="material-icons-outlined mr-2 text-purple-400 text-lg">dashboard</span>
+                        Platform
+                    </h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a ng-click="navigateTo('/predictions')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">psychology</span>
+                                Predictions
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="navigateTo('/leaderboard')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">emoji_events</span>
+                                Leaderboard
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="navigateTo('/markets')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">trending_up</span>
+                                Markets
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="navigateTo('/analytics')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">analytics</span>
+                                Analytics
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Support Links -->
+                <div>
+                    <h3 class="text-white font-semibold text-sm mb-4 flex items-center">
+                        <span class="material-icons-outlined mr-2 text-purple-400 text-lg">support</span>
+                        Support
+                    </h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a ng-click="navigateTo('/help')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">help_center</span>
+                                Help Center
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="navigateTo('/about')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">info</span>
+                                About Us
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="navigateTo('/contact')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">contact_mail</span>
+                                Contact
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="navigateTo('/api')" class="text-slate-400 hover:text-purple-300 text-sm transition-colors duration-300 cursor-pointer flex items-center group">
+                                <span class="material-icons-outlined mr-2 text-xs text-purple-500 group-hover:scale-110 transition-transform">api</span>
+                                API Docs
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="border-t border-purple-500/20 py-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center group cursor-pointer">
+                    <div class="text-lg font-bold text-purple-400 group-hover:text-purple-300 transition-colors">
+                        {{home.stats.totalUsers | number}}+
+                    </div>
+                    <div class="text-xs text-slate-500 uppercase tracking-wider">Analysts</div>
+                </div>
+                <div class="text-center group cursor-pointer">
+                    <div class="text-lg font-bold text-purple-400 group-hover:text-purple-300 transition-colors">
+                        {{home.stats.totalPredictions | number}}+
+                    </div>
+                    <div class="text-xs text-slate-500 uppercase tracking-wider">Predictions</div>
+                </div>
+                <div class="text-center group cursor-pointer">
+                    <div class="text-lg font-bold text-purple-400 group-hover:text-purple-300 transition-colors">
+                        {{home.stats.activePredictions}}
+                    </div>
+                    <div class="text-xs text-slate-500 uppercase tracking-wider">Live Markets</div>
+                </div>
+                <div class="text-center group cursor-pointer">
+                    <div class="text-lg font-bold text-purple-400 group-hover:text-purple-300 transition-colors">
+                        {{home.stats.accuracy}}%
+                    </div>
+                    <div class="text-xs text-slate-500 uppercase tracking-wider">Accuracy</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="border-t border-purple-500/20 py-6">
+            <div class="max-w-md mx-auto text-center">
+                <h3 class="text-white font-semibold text-sm mb-2 flex items-center justify-center">
+                    <span class="material-icons-outlined mr-2 text-purple-400 text-lg">notifications</span>
+                    Stay Updated
+                </h3>
+                <p class="text-slate-400 text-xs mb-4">Get notified about new markets and features</p>
+                <div class="flex space-x-2">
+                    <input type="email" placeholder="Enter your email"
+                           class="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 text-sm focus:outline-none focus:border-purple-500/50 focus:bg-white/20 transition-all duration-300">
+                    <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 flex items-center">
+                        <span class="material-icons-outlined text-sm">send</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-purple-500/20 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+
+                <!-- Copyright -->
+                <div class="flex items-center space-x-4 text-sm">
+                    <p class="text-slate-400">
+                        © 2024 PredictIt. All rights reserved.
+                    </p>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a ng-click="navigateTo('/privacy')" class="text-slate-500 hover:text-purple-400 transition-colors cursor-pointer">Privacy</a>
+                        <a ng-click="navigateTo('/terms')" class="text-slate-500 hover:text-purple-400 transition-colors cursor-pointer">Terms</a>
+                        <a ng-click="navigateTo('/cookies')" class="text-slate-500 hover:text-purple-400 transition-colors cursor-pointer">Cookies</a>
+                    </div>
+                </div>
+
+                <!-- Version & Status -->
+                <div class="flex items-center space-x-4 text-xs">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="text-slate-500">All systems operational</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="material-icons-outlined text-purple-500 text-sm">code</span>
+                        <span class="text-slate-500">v2.1.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Legal Links -->
+            <div class="md:hidden flex items-center justify-center space-x-4 mt-4 pt-4 border-t border-purple-500/20">
+                <a ng-click="navigateTo('/privacy')" class="text-slate-500 hover:text-purple-400 transition-colors cursor-pointer text-xs">Privacy</a>
+                <a ng-click="navigateTo('/terms')" class="text-slate-500 hover:text-purple-400 transition-colors cursor-pointer text-xs">Terms</a>
+                <a ng-click="navigateTo('/cookies')" class="text-slate-500 hover:text-purple-400 transition-colors cursor-pointer text-xs">Cookies</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* Footer specific styles */
+    footer {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(17, 17, 27, 0.95) 100%);
+        border-top: 1px solid rgba(139, 69, 255, 0.2);
+        backdrop-filter: blur(8px);
+    }
+
+    /* Enhanced logo hover effect */
+    footer .bg-gradient-to-br.from-purple-500:hover {
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(139, 69, 255, 0.4);
+    }
+
+    /* Link hover animations */
+    footer a {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    footer a:hover {
+        transform: translateX(2px);
+    }
+
+    /* Social link hover effects */
+    footer .w-9.h-9:hover {
+        box-shadow: 0 4px 12px rgba(139, 69, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Stats hover effects */
+    footer .group:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Newsletter input focus effects */
+    footer input:focus {
+        box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    }
+
+    /* Newsletter button hover effect */
+    footer button:hover {
+        box-shadow: 0 4px 12px rgba(139, 69, 255, 0.3);
+    }
+
+    /* Icon animations */
+    footer .material-icons-outlined {
+        transition: transform 0.2s ease;
+    }
+
+    footer .group:hover .material-icons-outlined {
+        transform: scale(1.1);
+    }
+
+    /* Status indicator animation */
+    footer .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* Enhanced grid hover effects */
+    footer .grid > div:hover {
+        background: rgba(139, 69, 255, 0.05);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        footer .grid {
+            gap: 1.5rem;
+        }
+
+        footer .py-12 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        footer .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+    }
+
+    /* Subtle entrance animation */
+    footer {
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    @keyframes slideInUp {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Enhanced accessibility */
+    footer a:focus,
+    footer button:focus,
+    footer input:focus {
+        outline: 2px solid rgba(139, 69, 255, 0.5);
+        outline-offset: 2px;
+    }
+
+    /* Improved glassmorphism */
+    footer .backdrop-blur-sm {
+        backdrop-filter: blur(8px);
+    }
+
+    /* Version badge styling */
+    footer .flex.items-center.space-x-2:last-child {
+        background: rgba(139, 69, 255, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(139, 69, 255, 0.2);
+    }
+</style>

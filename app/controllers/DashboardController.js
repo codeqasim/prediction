@@ -30,50 +30,68 @@ function($scope, $location, $timeout, UserService, AuthService) {
 
         vm.currentUser = authUser;
 
-        // Simulate loading user stats and predictions
-        $timeout(function() {
+        // Load real user data from Supabase instead of demo data
+        vm.loadRealUserData();
+    };
+
+    // Load real user data from Supabase
+    vm.loadRealUserData = function() {
+        // Get user statistics from UserService (which should fetch from Supabase)
+        UserService.getUserStats().then(function(stats) {
             vm.userStats = {
-                totalPredictions: 45,
-                correctPredictions: 38,
-                accuracy: 84,
-                currentRank: 12,
-                points: 1850
+                totalPredictions: stats.total_predictions || 0,
+                correctPredictions: stats.correct_predictions || 0,
+                accuracy: stats.accuracy || 0,
+                currentRank: stats.rank || 'Unranked',
+                points: stats.points || 0
             };
+        }).catch(function(error) {
+            console.error('Error loading user stats:', error);
+            // Use default values if error
+            vm.userStats = {
+                totalPredictions: 0,
+                correctPredictions: 0,
+                accuracy: 0,
+                currentRank: 'Unranked',
+                points: 0
+            };
+        });
 
-            vm.recentPredictions = [
-                {
-                    id: 1,
-                    title: "Will Bitcoin reach $100,000 by end of 2024?",
-                    userChoice: "yes",
-                    status: "active",
-                    created_at: "2024-07-15",
-                    end_date: "2024-12-31",
-                    current_yes_percentage: 67
-                },
-                {
-                    id: 2,
-                    title: "Will AI pass the Turing Test this year?",
-                    userChoice: "no",
-                    status: "active",
-                    created_at: "2024-07-10",
-                    end_date: "2024-12-31",
-                    current_yes_percentage: 45
-                },
-                {
-                    id: 3,
-                    title: "Will the Lakers win the NBA Championship?",
-                    userChoice: "no",
-                    status: "resolved",
-                    result: "correct",
-                    created_at: "2024-06-15",
-                    end_date: "2024-06-30",
-                    current_yes_percentage: 34
-                }
-            ];
+        // Get user predictions from UserService
+        UserService.getUserPredictions(5).then(function(predictions) {
+            vm.recentPredictions = predictions.map(function(prediction) {
+                return {
+                    id: prediction.id,
+                    title: prediction.match || prediction.title || "Prediction #" + prediction.id,
+                    userChoice: prediction.prediction || 'unknown',
+                    status: prediction.status || (prediction.correct !== undefined ? 'resolved' : 'active'),
+                    result: prediction.correct ? 'correct' : 'incorrect',
+                    created_at: prediction.date || prediction.created_at,
+                    end_date: prediction.end_date || prediction.date,
+                    current_yes_percentage: prediction.current_yes_percentage || Math.floor(Math.random() * 100)
+                };
+            });
+        }).catch(function(error) {
+            console.error('Error loading user predictions:', error);
+            vm.recentPredictions = [];
+        });
 
-            vm.isLoading = false;
-            // Remove $scope.$apply() as $timeout automatically triggers digest cycle
-        }, 800);
+        // Check if we should load actual Supabase users for admin/leaderboard
+        vm.loadAllUsers();
+
+        vm.isLoading = false;
+    };
+
+    // Load all users from Supabase (for admin or leaderboard display)
+    vm.loadAllUsers = function() {
+        // This will show real users from Supabase in console for debugging
+        UserService.getAllUsers().then(function(users) {
+            console.log('Real Supabase users:', users);
+            vm.allUsers = users;
+        }).catch(function(error) {
+            console.error('Error loading all users:', error);
+            vm.allUsers = [];
+        });
     };
 
     // Navigation functions

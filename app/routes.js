@@ -14,6 +14,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
         })
 
         // Authentication Routes
+        .when('/auth', {
+            templateUrl: 'app/views/auth/login.html',
+            controller: 'AuthController',
+            controllerAs: 'auth',
+            title: 'Login',
+            redirectIfAuth: true,
+            meta: {
+                description: 'Sign in to your PredictIt account to start making predictions and competing with others.',
+                keywords: 'login, sign in, authentication, predict'
+            }
+        })
+
         .when('/login', {
             templateUrl: 'app/views/auth/login.html',
             controller: 'AuthController',

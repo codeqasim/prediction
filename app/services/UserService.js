@@ -58,49 +58,49 @@ function($q, $timeout, AuthService) {
         return deferred.promise;
     };
 
-    // Get user statistics (demo mode)
+    // Get user statistics (real data from current user)
     this.getUserStats = function() {
         const deferred = $q.defer();
         
+        const authUser = AuthService.getCurrentUser();
+        if (!authUser) {
+            deferred.reject(new Error('No authenticated user'));
+            return deferred.promise;
+        }
+
         $timeout(function() {
+            // Use real user metadata or defaults for new users
             const stats = {
-                total_predictions: 15,
-                correct_predictions: 12,
-                accuracy: 80,
-                points: 1250,
-                rank: 'Gold'
+                total_predictions: authUser.user_metadata?.predictions_total || 0,
+                correct_predictions: authUser.user_metadata?.predictions_correct || 0,
+                accuracy: authUser.user_metadata?.predictions_total > 0 ? 
+                         Math.round((authUser.user_metadata?.predictions_correct || 0) / authUser.user_metadata.predictions_total * 100) : 0,
+                points: authUser.user_metadata?.points || 0,
+                rank: authUser.user_metadata?.rank || 'Unranked'
             };
+            console.log('UserService: Real user stats:', stats);
             deferred.resolve(stats);
         }, 100);
         
         return deferred.promise;
     };
 
-    // Get user predictions history (demo mode)
+    // Get user predictions history (real data)
     this.getUserPredictions = function(limit = 10) {
         const deferred = $q.defer();
         
+        const authUser = AuthService.getCurrentUser();
+        if (!authUser) {
+            deferred.reject(new Error('No authenticated user'));
+            return deferred.promise;
+        }
+
         $timeout(function() {
-            const predictions = [
-                {
-                    id: 1,
-                    match: 'Team A vs Team B',
-                    prediction: 'Team A',
-                    actual_result: 'Team A',
-                    correct: true,
-                    points_earned: 100,
-                    date: '2024-02-15'
-                },
-                {
-                    id: 2,
-                    match: 'Team C vs Team D',
-                    prediction: 'Team C',
-                    actual_result: 'Team D',
-                    correct: false,
-                    points_earned: 0,
-                    date: '2024-02-14'
-                }
-            ];
+            // For now, return empty array since user is new
+            // In a real app, this would fetch from a predictions table in Supabase
+            const predictions = [];
+            
+            console.log('UserService: Real user predictions:', predictions);
             deferred.resolve(predictions);
         }, 100);
         
@@ -136,6 +136,108 @@ function($q, $timeout, AuthService) {
             deferred.resolve(leaderboard);
         }, 100);
         
+        return deferred.promise;
+    };
+
+    // Create user profile (called after registration) - Demo mode
+    this.createProfile = function(userData) {
+        const deferred = $q.defer();
+
+        const authUser = AuthService.getCurrentUser();
+        if (!authUser) {
+            deferred.reject(new Error('No authenticated user'));
+            return deferred.promise;
+        }
+
+        // In demo mode, we just simulate profile creation
+        const profileData = {
+            id: authUser.id,
+            email: authUser.email,
+            username: userData.username || authUser.email.split('@')[0],
+            first_name: userData.firstName || '',
+            last_name: userData.lastName || '',
+            created_at: authUser.created_at,
+            points: 0, // New user starts with 0 points
+            predictions_total: 0,
+            predictions_correct: 0,
+            avatar_url: userData.avatar_url || 
+                       'https://ui-avatars.com/api/?name=' + encodeURIComponent((userData.firstName || '') + ' ' + (userData.lastName || '')) + '&background=8b45ff&color=fff'
+        };
+
+        $timeout(function() {
+            console.log('UserService: Profile created (demo mode):', profileData);
+            deferred.resolve(profileData);
+        }, 100);
+
+        return deferred.promise;
+    };
+
+    // Get all users from Supabase (for admin dashboard, leaderboard, etc.)
+    this.getAllUsers = function() {
+        const deferred = $q.defer();
+
+        // Try to get real users from Supabase
+        const supabaseService = angular.element(document).injector().get('SupabaseService');
+        const supabaseClient = supabaseService.getClient();
+
+        if (supabaseClient && !window.supabaseConfig.demoMode) {
+            // Use real Supabase data
+            supabaseClient.auth.admin.listUsers()
+                .then(function(response) {
+                    if (response.data && response.data.users) {
+                        const users = response.data.users.map(function(user) {
+                            return {
+                                id: user.id,
+                                email: user.email,
+                                created_at: user.created_at,
+                                last_sign_in_at: user.last_sign_in_at,
+                                username: user.user_metadata?.username || user.email.split('@')[0],
+                                first_name: user.user_metadata?.first_name || '',
+                                last_name: user.user_metadata?.last_name || '',
+                                points: user.user_metadata?.points || 0,
+                                predictions_total: user.user_metadata?.predictions_total || 0,
+                                predictions_correct: user.user_metadata?.predictions_correct || 0
+                            };
+                        });
+                        deferred.resolve(users);
+                    } else {
+                        deferred.resolve([]);
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error fetching users from Supabase:', error);
+                    deferred.reject(error);
+                });
+        } else {
+            // Fallback: Try to get authenticated users list using the public API
+            // This is a workaround since admin API requires service role key
+            $timeout(function() {
+                console.log('Attempting to fetch real users from Supabase...');
+                
+                // For now, show the current user as an example
+                const authUser = AuthService.getCurrentUser();
+                const users = [];
+                
+                if (authUser) {
+                    users.push({
+                        id: authUser.id,
+                        email: authUser.email,
+                        created_at: authUser.created_at,
+                        last_sign_in_at: authUser.last_sign_in_at,
+                        username: authUser.user_metadata?.username || authUser.email.split('@')[0],
+                        first_name: authUser.user_metadata?.first_name || '',
+                        last_name: authUser.user_metadata?.last_name || '',
+                        points: authUser.user_metadata?.points || 0,
+                        predictions_total: 0,
+                        predictions_correct: 0
+                    });
+                }
+
+                console.log('Current authenticated user:', users);
+                deferred.resolve(users);
+            }, 100);
+        }
+
         return deferred.promise;
     };
 }]);

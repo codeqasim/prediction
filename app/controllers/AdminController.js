@@ -14,7 +14,10 @@ angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$l
     vm.filteredUsers = [];
     vm.userSearch = '';
     vm.showEditModal = false;
+    vm.showDeleteModal = false;
     vm.editingUser = {};
+    vm.userToDelete = {};
+    vm.isDeleting = false;
 
     // Stats
     vm.stats = {
@@ -245,21 +248,36 @@ angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$l
     };
 
     vm.deleteUser = function(user) {
-        if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-            return;
-        }
+        vm.userToDelete = angular.copy(user);
+        vm.showDeleteModal = true;
+    };
 
-        AdminService.deleteUser(user.id)
+    vm.confirmDeleteUser = function() {
+        if (vm.isDeleting) return;
+
+        vm.isDeleting = true;
+
+        AdminService.deleteUser(vm.userToDelete.id)
             .then(function() {
+                vm.isDeleting = false;
+                vm.showDeleteModal = false;
+                vm.userToDelete = {};
                 vm.showSuccess('User deleted successfully');
                 vm.loadUsers();
                 $scope.$apply();
             })
             .catch(function(error) {
+                vm.isDeleting = false;
                 vm.showError('Failed to delete user: ' + error.message);
                 console.error('❌ Failed to delete user:', error);
                 $scope.$apply();
             });
+    };
+
+    vm.cancelDeleteUser = function() {
+        vm.showDeleteModal = false;
+        vm.userToDelete = {};
+        vm.isDeleting = false;
     };
 
     vm.viewUser = function(user) {

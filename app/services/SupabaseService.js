@@ -13,7 +13,7 @@ angular.module('app').service('SupabaseService', [function() {
             window.supabaseConfig = {
                 url: 'https://owoyahkmgzhnruoxghdf.supabase.co',
                 anonKey: 'sb_publishable_GXGzt6hCiacsgr_udR77_g_nER3M4hH',
-                demoMode: true // Enable demo mode for easy testing
+                demoMode: false // Disable demo mode to use real Supabase
             };
         }
 

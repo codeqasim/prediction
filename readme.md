@@ -1,133 +1,163 @@
-# PredictIt - Prediction Platform Project Documentation
+# 🔮 Prediction AI - Modern Prediction Platform
 
-## 🎯 Project Overview
-**PredictIt** is a next-generation prediction platform that allows users to predict future events, compete with others, and climb leaderboards. Built with AngularJS frontend and Supabase backend.
+## 📋 Project Overview
+**Prediction AI** is a cutting-edge prediction platform that enables users to forecast future events, compete globally, and climb dynamic leaderboards. Built with modern web technologies and featuring a sophisticated glassmorphism design.
 
-**Core Purpose**: Create an engaging prediction market platform where users can test their forecasting skills and compete globally.
-
----
-
-## 🏗️ Infrastructure & Architecture
-
-### Frontend Framework
-- **Framework**: AngularJS 1.8.3
-- **Routing**: ngRoute with lazy loading via ocLazyLoad
-- **CSS Framework**: Tailwind CSS (CDN)
-- **Icons**: Material Icons & Material Icons Outlined
-
-### Backend & Database
-- **Backend Service**: Supabase (PostgreSQL database)
-- **Authentication**: Supabase Auth
-- **Storage**: Supabase Storage (for avatars and files)
-- **Real-time**: Supabase Realtime subscriptions
+**Core Mission**: Create an engaging, user-friendly prediction market where individuals can test their forecasting abilities and compete in real-time.
 
 ---
 
-## 🔐 Authentication Module
+## 🛠️ Technology Stack
 
-### How Auth Works
-1. **SupabaseService.js**: Core connection to Supabase backend
-   - Handles all Supabase client operations
-   - Provides auth methods (login, register, logout, password reset)
-   - Database operations and file storage
+### Frontend Architecture
+- **Framework**: AngularJS 1.8.3 with Controller-as syntax
+- **Routing**: ngRoute with ocLazyLoad for performance optimization
+- **Styling**: Tailwind CSS with custom glassmorphism components
+- **Icons**: Material Icons & SVG icons for professional appearance
+- **Animations**: CSS keyframes with smooth transitions
 
-2. **AuthService.js**: Frontend authentication logic
-   - Manages user session state
-   - Broadcasts auth events across the app
-   - Handles authentication checks and user data
+### Backend Infrastructure
+- **Platform**: Supabase (PostgreSQL-based)
+- **Authentication**: Supabase Auth with JWT tokens
+- **Database**: Real-time PostgreSQL with Row Level Security
+- **Storage**: Supabase Storage for user avatars and assets
+- **Real-time**: Live updates via Supabase Realtime
 
-3. **AuthController.js**: UI authentication controller
-   - Manages login/register forms
-   - Form validation and error handling
-   - User interaction logic
+---
+
+## 🔐 Authentication System
+
+### Architecture Components
+1. **SupabaseService.js**: Core backend integration
+   - Supabase client initialization and configuration
+   - Database operations (CRUD) with error handling
+   - File upload and storage management
+   - Real-time subscription handling
+
+2. **AuthService.js**: Frontend authentication management
+   - Session state management with localStorage
+   - Cross-component event broadcasting via $rootScope
+   - User profile caching and updates
+   - Demo mode for development and testing
+
+3. **AuthController.js**: UI interaction controller
+   - Form validation with real-time error feedback
+   - Loading states and user experience management
+   - Mode switching (login/register) functionality
+
+4. **HeaderController.js**: Navigation and user display
+   - Authentication state monitoring
+   - User information display with fallbacks
+   - Logout functionality with proper cleanup
 
 ### Authentication Flow
 ```
-User Input → AuthController → AuthService → SupabaseService → Supabase Backend
-                ↓
-           UI Updates ← $rootScope.broadcast ← Session Management
+Login Form → AuthController → AuthService → SupabaseService → Supabase
+    ↓                                          ↓
+UI Updates ← Event Broadcasting ← Session Storage ← JWT Response
 ```
 
-### Database Credentials (Supabase)
-- **URL**: `https://owoyahkmgzhnruoxghdf.supabase.co`
-- **Anon Key**: `sb_publishable_GXGzt6hCiacsgr_udR77_g_nER3M4hH`
-- **Demo Mode**: Available for development/testing
-- **Tables**: Users, Predictions, Leaderboards, User_Profiles
+### Current Features
+- ✅ **Email/Password Authentication**: Secure login with validation
+- ✅ **Remember Me**: Persistent sessions with checkbox option
+- ✅ **Forgot Password**: Password reset functionality
+- ✅ **User Registration**: Account creation with profile setup
+- ✅ **Demo Mode**: Testing environment with sample data
+- ✅ **Header Integration**: Real-time authentication state display
 
 ---
 
-## 🎨 Theme & Design System
+## 🎨 Design System & Theme
 
 ### Color Palette
-- **Primary Purple**: `#8b45ff` (var(--primary-purple))
-- **Secondary Purple**: `#a855f7` (var(--secondary-purple))
-- **Light Purple**: `#c4b5fd` (var(--light-purple))
-- **Dark Purple**: `#6b21a8` (var(--dark-purple))
-- **Accent Violet**: `#8b5cf6` (var(--accent-violet))
+```css
+/* Primary Colors */
+--primary-purple: #8b45ff
+--secondary-purple: #a855f7
+--accent-violet: #8b5cf6
+--light-purple: #c4b5fd
+--dark-purple: #6b21a8
 
-### Design Elements
-- **Background**: Dark theme with gradient (`#020617` to `#1e293b`)
-- **Glassmorphism**: Backdrop blur effects with transparency
-- **Animation**: Floating particles, smooth transitions, hover effects
-- **Typography**: Inter font family with gradient text effects
-- **Borders**: Rounded corners (3xl = 1.5rem), purple borders
+/* Glassmorphism Effects */
+--glass-bg: rgba(255, 255, 255, 0.1)
+--glass-border: rgba(255, 255, 255, 0.2)
+--glass-blur: backdrop-filter: blur(20px)
+```
+
+### Design Principles
+- **Glassmorphism**: Translucent elements with backdrop blur
+- **Dark Theme**: Deep gradients from black to slate
+- **Purple Accents**: Consistent brand color throughout
+- **Smooth Animations**: Subtle hover and focus effects
+- **Modern Typography**: Clean, readable font hierarchy
 
 ### UI Components
-- **Cards**: Black/20 opacity with backdrop blur and purple borders
-- **Buttons**: Gradient purple backgrounds with hover scaling
-- **Forms**: Transparent inputs with purple focus rings
-- **Navigation**: Sticky header with glassmorphism effect
+- **Login Card**: Enhanced glassmorphism with video background
+- **Header Navigation**: Sticky header with user authentication display
+- **Buttons**: Gradient purple with hover animations
+- **Inputs**: Transparent with purple focus rings
+- **Icons**: Professional SVG icons and Material Icons
 
 ---
 
-## 📁 Project Structure
+## 📁 Enhanced Project Structure
 
 ```
 prediction/
 ├── app/
-│   ├── app.js                 # Main Angular module with ocLazyLoad
-│   ├── routes.js              # Route configuration with lazy loading
-│   ├── controllers/           # Lazy-loaded controllers
-│   │   ├── AuthController.js  # Authentication logic
+│   ├── app.js                    # Angular module with ocLazyLoad
+│   ├── routes.js                 # Lazy-loaded route configuration
+│   ├── controllers/
+│   │   ├── AuthController.js     # Authentication UI logic
+│   │   ├── HeaderController.js   # Navigation and user display
 │   │   ├── DashboardController.js
 │   │   ├── HomeController.js
-│   │   └── ...
-│   ├── services/              # Core services
-│   │   ├── SupabaseService.js # Database connection
-│   │   ├── AuthService.js     # Authentication management
-│   │   └── UserService.js     # User operations
-│   └── views/                 # HTML templates
+│   │   └── PredictionController.js
+│   ├── services/
+│   │   ├── SupabaseService.js    # Backend integration
+│   │   ├── AuthService.js        # Auth state management
+│   │   ├── UserService.js        # User operations
+│   │   └── PredictionService.js  # Prediction logic
+│   └── views/
 │       ├── auth/
-│       │   ├── login.html     # Themed login page
-│       │   ├── register.html
-│       │   └── dashboard.html
+│       │   ├── login.html        # Modern login with video bg
+│       │   ├── register.html     # User registration
+│       │   └── forgot.html       # Password reset
 │       ├── home/
-│       └── partials/
+│       │   └── index.html        # Landing page
+│       ├── partials/
+│       │   ├── header.html       # Navigation with auth display
+│       │   └── footer.html
+│       └── dashboard/
 ├── assets/
-│   ├── app.css               # Theme styles and animations
-│   ├── bg.mp4               # Background video
+│   ├── app.css                   # Custom theme and animations
+│   ├── bg.mp4                    # Hero background video
+│   ├── js/                       # Custom JavaScript utilities
 │   └── favicon.ico
-└── index.html               # Main entry point
+├── index.html                    # Main application entry
+├── readme.md                     # This documentation
+└── project.md                    # Additional project notes
 ```
 
 ---
 
-## 🚀 Lazy Loading Implementation
+## ⚡ Performance Optimizations
 
-### Controller Lazy Loading
-- **Library**: ocLazyLoad (CDN: `https://cdn.jsdelivr.net/npm/oclazyload@1.1.0/dist/ocLazyLoad.min.js`)
-- **Implementation**: Routes use `resolve` blocks to load controllers on demand
-- **Benefits**: Faster initial load, better performance
+### Lazy Loading Implementation
+- **Controller Loading**: On-demand controller loading with ocLazyLoad
+- **Route Optimization**: Resolve blocks for efficient resource loading
+- **Asset Management**: CDN-based dependencies for faster loading
 
-### Route Configuration Example
+### Code Example
 ```javascript
-.when('/login', {
-    templateUrl: 'app/views/auth/login.html',
-    controller: 'AuthController',
-    controllerAs: 'auth',
+// Route with lazy loading
+.when('/dashboard', {
+    templateUrl: 'app/views/dashboard/index.html',
+    controller: 'DashboardController',
+    controllerAs: 'dashboard',
     resolve: {
         loadController: ['$ocLazyLoad', function($ocLazyLoad) {
-            return $ocLazyLoad.load('app/controllers/AuthController.js');
+            return $ocLazyLoad.load('app/controllers/DashboardController.js');
         }]
     }
 })
@@ -135,99 +165,212 @@ prediction/
 
 ---
 
-## 🗄️ Database Schema (Supabase)
+## 🗄️ Database Architecture (Supabase)
+
+### Configuration
+- **URL**: `https://owoyahkmgzhnruoxghdf.supabase.co`
+- **Environment**: Development with demo mode
+- **Security**: Row Level Security (RLS) enabled
+- **Real-time**: Live updates for collaborative features
 
 ### Core Tables
-1. **users** (Supabase Auth table)
-   - id, email, created_at, user_metadata
+```sql
+-- User Profiles (extends Supabase auth.users)
+user_profiles (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES auth.users,
+    first_name TEXT,
+    last_name TEXT,
+    username TEXT UNIQUE,
+    avatar_url TEXT,
+    points INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+);
 
-2. **user_profiles**
-   - user_id (FK), first_name, last_name, username, avatar_url, points, created_at
+-- Predictions
+predictions (
+    id UUID PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    category TEXT,
+    end_date TIMESTAMP,
+    status TEXT DEFAULT 'active',
+    created_by UUID REFERENCES auth.users,
+    created_at TIMESTAMP DEFAULT NOW()
+);
 
-3. **predictions**
-   - id, title, description, category, end_date, status, created_by, created_at
+-- User Predictions
+user_predictions (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES auth.users,
+    prediction_id UUID REFERENCES predictions,
+    choice TEXT NOT NULL,
+    confidence INTEGER,
+    points_earned INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+);
 
-4. **user_predictions**
-   - user_id (FK), prediction_id (FK), choice, confidence, points_earned
-
-5. **leaderboard**
-   - user_id (FK), total_points, rank, total_predictions, accuracy_rate
-
----
-
-## 🔧 Development Setup
-
-### Prerequisites
-- Modern web browser
-- Local web server (Apache/Nginx/Node.js)
-- Supabase account
-
-### Installation
-1. Clone repository
-2. Configure Supabase credentials in `SupabaseService.js`
-3. Serve files via web server
-4. Access via browser
-
-### Key Files to Monitor
-- `app/services/SupabaseService.js` - Database connection
-- `app/routes.js` - Routing and lazy loading
-- `assets/app.css` - Theme styles
-- `index.html` - Dependencies and CDN links
-
----
-
-## 🔄 Recent Updates
-
-### Authentication & Lazy Loading (Latest)
-- ✅ Added ocLazyLoad for controller lazy loading
-- ✅ Updated routes with resolve blocks for performance
-- ✅ Created themed login page matching design system
-- ✅ Implemented proper auth flow with Supabase integration
-
-### Theme Implementation
-- ✅ Consistent purple/violet color scheme
-- ✅ Glassmorphism effects throughout UI
-- ✅ Animated background with floating particles
-- ✅ Responsive design with proper hover states
+-- Leaderboard
+leaderboard (
+    user_id UUID PRIMARY KEY REFERENCES auth.users,
+    total_points INTEGER DEFAULT 0,
+    rank INTEGER,
+    total_predictions INTEGER DEFAULT 0,
+    accuracy_rate DECIMAL(5,2) DEFAULT 0.00,
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+```
 
 ---
 
-## 🔮 Future Enhancements
+## 🚀 Development Workflow
 
-### Planned Features
-- Real-time prediction updates
-- Social sharing integration
-- Advanced analytics dashboard
-- Mobile app development
-- Payment integration for premium features
+### Setup Instructions
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd prediction
+
+# 2. Configure Supabase (update SupabaseService.js)
+# - Set your Supabase URL and anon key
+# - Configure database tables
+# - Set up Row Level Security policies
+
+# 3. Serve the application
+# Using Python 3
+python -m http.server 8000
+
+# Using Node.js
+npx serve .
+
+# Using PHP
+php -S localhost:8000
+
+# 4. Access the application
+# Navigate to http://localhost:8000
+```
+
+### Development Guidelines
+- **Authentication Testing**: Use demo mode for development
+- **Theme Consistency**: Maintain purple glassmorphism design
+- **Performance**: Always use lazy loading for new controllers
+- **Code Quality**: Follow AngularJS best practices
+- **Documentation**: Update README for significant changes
+
+---
+
+## 🔄 Recent Major Updates
+
+### Authentication System Enhancement (August 2025)
+- ✅ **Complete Auth Flow**: Login, register, forgot password, logout
+- ✅ **Header Integration**: Real-time authentication state display
+- ✅ **Demo Mode**: Development-friendly testing environment
+- ✅ **Error Handling**: Comprehensive validation and user feedback
+- ✅ **Remember Me**: Persistent session management
+
+### UI/UX Improvements
+- ✅ **Modern Login Page**: Video background with glassmorphism card
+- ✅ **Enhanced Header**: User display with stars and dropdown
+- ✅ **Responsive Design**: Mobile-first approach with proper scaling
+- ✅ **Professional Icons**: SVG icons for better scalability
+- ✅ **Smooth Animations**: Subtle hover and focus effects
+
+### Technical Enhancements
+- ✅ **Controller Lazy Loading**: Improved performance with ocLazyLoad
+- ✅ **Service Architecture**: Modular service design for maintainability
+- ✅ **Error Management**: Comprehensive error handling and user feedback
+- ✅ **Code Organization**: Clean file structure and separation of concerns
+
+---
+
+## 🔮 Roadmap & Future Features
+
+### Short-term Goals (Q4 2025)
+- [ ] **Prediction Creation**: User-generated prediction markets
+- [ ] **Real-time Updates**: Live prediction tracking and notifications
+- [ ] **Social Features**: User profiles and social sharing
+- [ ] **Mobile App**: React Native or PWA implementation
+
+### Long-term Vision (2026)
+- [ ] **AI Integration**: Machine learning prediction assistance
+- [ ] **Cryptocurrency**: Blockchain-based prediction tokens
+- [ ] **Advanced Analytics**: Detailed performance metrics
+- [ ] **Enterprise Features**: Custom prediction markets for businesses
 
 ### Technical Improvements
-- PWA implementation
-- Service worker for offline support
-- Advanced caching strategies
-- Performance monitoring
-- SEO optimization
+- [ ] **Progressive Web App**: Offline functionality and app-like experience
+- [ ] **Performance Monitoring**: Real-time performance analytics
+- [ ] **A/B Testing**: Feature experimentation framework
+- [ ] **Internationalization**: Multi-language support
 
 ---
 
-## 📝 Important Notes
+## 📊 Current Status
 
-### For Developers
-- Always maintain the purple theme consistency
-- Use lazy loading for new controllers
-- Follow glassmorphism design patterns
-- Test authentication flow thoroughly
-- Keep Supabase credentials secure
+### Completed Features ✅
+- User authentication system with Supabase
+- Modern glassmorphism UI design
+- Responsive navigation with user display
+- Lazy-loaded controller architecture
+- Professional login/register flow
+- Demo mode for development testing
 
-### For Deployment
-- Update Supabase URLs for production
-- Optimize assets and images
-- Configure proper CORS settings
-- Set up SSL certificates
-- Monitor performance metrics
+### In Development 🔄
+- Dashboard with prediction creation
+- Leaderboard system
+- User profile management
+- Real-time prediction updates
+
+### Planned Features 📋
+- Mobile application
+- Social sharing integration
+- Advanced analytics
+- Payment system integration
 
 ---
 
+## 🔧 Configuration & Deployment
+
+### Environment Variables
+```javascript
+// SupabaseService.js configuration
+const supabaseUrl = 'https://owoyahkmgzhnruoxghdf.supabase.co';
+const supabaseKey = 'your-anon-key-here';
+
+// Demo mode toggle
+const isDemoMode = true; // Set to false for production
+```
+
+### Production Deployment
+1. **Update Supabase credentials** for production environment
+2. **Configure SSL certificates** for secure connections
+3. **Set up CDN** for static asset delivery
+4. **Enable monitoring** for performance tracking
+5. **Configure backup** strategies for data protection
+
+---
+
+## 📞 Support & Contribution
+
+### Getting Help
+- **Documentation**: Refer to this README and project.md
+- **Issues**: Report bugs via project issue tracker
+- **Features**: Submit feature requests with detailed descriptions
+
+### Contributing
+- **Code Style**: Follow existing patterns and conventions
+- **Testing**: Test authentication flow thoroughly
+- **Documentation**: Update README for significant changes
+- **Design**: Maintain glassmorphism theme consistency
+
+---
+
+**Project Version**: 2.0.0  
 **Last Updated**: August 11, 2025  
-**Version**: 1.0.0  
+**Status**: Active Development  
+**License**: Private Project  
 **Maintainer**: Development Team
+
+---
+
+*Built with ❤️ using AngularJS, Supabase, and modern web technologies*

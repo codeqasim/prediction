@@ -26,14 +26,14 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             }
         })
 
-        .when('/register', {
-            templateUrl: 'app/views/auth/register.html',
+        .when('/signup', {
+            templateUrl: 'app/views/auth/signup.html',
             controller: 'AuthController',
             controllerAs: 'auth',
-            title: 'Create Account - PredictIt',
+            title: 'Create Account',
             redirectIfAuth: true,
             meta: {
-                description: 'Create your free PredictIt account and start predicting future events today.',
+                description: 'Create your free account and start predicting future events today.',
                 keywords: 'register, sign up, create account, join'
             }
         })

@@ -31,6 +31,7 @@ function($scope, $location, $rootScope, AuthService, UserService) {
     vm.showPassword = false;
     vm.showConfirmPassword = false;
     vm.showResetModal = false;
+    vm.resetSent = false; // Track if reset email was sent
     vm.passwordStrength = {
         score: 0,
         feedback: 'Weak',
@@ -126,16 +127,25 @@ function($scope, $location, $rootScope, AuthService, UserService) {
                 return UserService.createProfile(userData);
             })
             .then(function() {
-                $location.path('/');
+                // Success message
+                alert('Account created successfully! Welcome to Prediction AI!');
+                $location.path('/dashboard');
             })
             .catch(function(error) {
                 console.error('❌ Registration failed:', error);
-                vm.showError(AuthService.formatError(error));
+                
+                // Handle specific error cases
+                if (error.message && error.message.includes('email')) {
+                    vm.setFieldError('email', 'This email is already registered');
+                } else if (error.message && error.message.includes('username')) {
+                    vm.setFieldError('username', 'This username is already taken');
+                } else {
+                    vm.showError(AuthService.formatError(error));
+                }
             })
             .finally(function() {
                 vm.isLoading = false;
                 $rootScope.setLoading(false);
-                // Remove $scope.$apply() as promises automatically trigger digest cycle
             });
     };
 
@@ -240,9 +250,15 @@ function($scope, $location, $rootScope, AuthService, UserService) {
         if (vm.isLoading) return;
 
         vm.clearErrors();
+        vm.resetSent = false;
 
         if (!vm.resetForm.email) {
             vm.setFieldError('resetEmail', 'Email is required');
+            return;
+        }
+
+        if (!vm.isValidEmail(vm.resetForm.email)) {
+            vm.setFieldError('resetEmail', 'Please enter a valid email address');
             return;
         }
 
@@ -250,9 +266,14 @@ function($scope, $location, $rootScope, AuthService, UserService) {
 
         AuthService.resetPassword(vm.resetForm.email)
             .then(function() {
-                alert('Password reset email sent! Check your inbox.');
-                vm.showResetModal = false;
+                vm.resetSent = true;
                 vm.resetForm.email = '';
+                
+                // Auto redirect to login after 5 seconds
+                setTimeout(function() {
+                    $location.path('/login');
+                    $scope.$apply();
+                }, 5000);
             })
             .catch(function(error) {
                 console.error('Reset password error:', error);
@@ -260,7 +281,6 @@ function($scope, $location, $rootScope, AuthService, UserService) {
             })
             .finally(function() {
                 vm.isLoading = false;
-                // Remove $scope.$apply() as promises automatically trigger digest cycle
             });
     };
 

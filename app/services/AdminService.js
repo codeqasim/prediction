@@ -1,187 +1,252 @@
-angular.module('app').service('AdminService', function($q, $rootScope, AuthService) {
+angular.module('app').service('AdminService', function($q, $rootScope, AuthService, SupabaseService) {
     console.log('AdminService initialized');
-    
-    // Demo users cache
-    var demoUsers = [];
-    var demoUsersInitialized = false;
-    
-    // Initialize demo users with current user + some mock users
-    var initializeDemoUsers = function() {
-        if (demoUsersInitialized) return;
-        
-        var currentUser = AuthService.getCurrentUser();
-        if (!currentUser) return;
-        
-        demoUsers = [
-            // Real current user (cannot be deleted)
-            {
-                id: currentUser.id,
-                email: currentUser.email,
-                user_metadata: currentUser.user_metadata || {},
-                email_confirmed_at: currentUser.email_confirmed_at,
-                created_at: currentUser.created_at,
-                last_sign_in_at: currentUser.last_sign_in_at,
-                phone: currentUser.phone || null,
-                role: currentUser.role || 'authenticated',
-                isDeletable: false
-            },
-            // Mock demo users (can be deleted)
-            {
-                id: 'demo-user-1',
-                email: 'john.doe@example.com',
-                user_metadata: { full_name: 'John Doe' },
-                email_confirmed_at: '2024-01-15T10:30:00Z',
-                created_at: '2024-01-15T10:30:00Z',
-                last_sign_in_at: '2024-02-10T14:22:00Z',
-                phone: '+1234567890',
-                role: 'authenticated',
-                isDeletable: true
-            },
-            {
-                id: 'demo-user-2',
-                email: 'jane.smith@example.com',
-                user_metadata: { full_name: 'Jane Smith' },
-                email_confirmed_at: '2024-02-20T08:15:00Z',
-                created_at: '2024-02-20T08:15:00Z',
-                last_sign_in_at: '2024-02-25T16:45:00Z',
-                phone: '+1987654321',
-                role: 'authenticated',
-                isDeletable: true
-            },
-            {
-                id: 'demo-user-3',
-                email: 'mike.wilson@example.com',
-                user_metadata: { full_name: 'Mike Wilson' },
-                email_confirmed_at: null, // Pending user
-                created_at: '2024-03-01T12:00:00Z',
-                last_sign_in_at: null,
-                phone: null,
-                role: 'authenticated',
-                isDeletable: true
-            }
-        ];
-        
-        demoUsersInitialized = true;
-        console.log('Demo users initialized:', demoUsers.length);
-    };
-    
+
+    // Get users from Supabase
     this.getUsers = function() {
-        console.log('AdminService.getUsers() called');
+        console.log('AdminService.getUsers() called - fetching real users from Supabase (PUBLIC ACCESS)');
         var deferred = $q.defer();
-        var resolved = false;
-        
-        // Function to get and format users
-        var getUsersData = function() {
-            if (resolved) return false; // Prevent duplicate resolution
-            
-            var currentUser = AuthService.getCurrentUser();
-            if (currentUser) {
-                initializeDemoUsers();
-                
-                console.log('AdminService.getUsers() returning users:', demoUsers);
-                resolved = true;
+
+        // Remove authentication check - make it publicly accessible
+        console.log('🔓 Public access enabled - fetching users without authentication');
+
+        fetchUsersFromSupabase();
+
+        function fetchUsersFromSupabase() {
+            var supabaseClient = SupabaseService.getClient();
+
+            if (!supabaseClient) {
+                console.error('Supabase client not available');
                 deferred.resolve({
-                    data: demoUsers,
-                    count: demoUsers.length
+                    data: getTestUsers(),
+                    count: getTestUsers().length
                 });
-                return true;
+                return;
             }
-            return false;
-        };
-        
-        // Try to get users immediately
-        if (getUsersData()) {
-            return deferred.promise;
+
+            console.log('Attempting to fetch users with different methods...');
+
+            // Method 1: Try user_profiles table first (public access)
+            supabaseClient
+                .from('user_profiles')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .then(function(response) {
+                    if (response.error) {
+                        throw new Error('user_profiles query failed: ' + response.error.message);
+                    }
+
+                    console.log('✅ Successfully fetched users from user_profiles table:', response.data.length);
+                    var users = response.data.map(function(user) {
+                        return {
+                            id: user.id,
+                            email: user.email,
+                            user_metadata: {
+                                username: user.username,
+                                full_name: user.full_name,
+                                points: user.points,
+                                predictions_total: user.predictions_total,
+                                predictions_correct: user.predictions_correct
+                            },
+                            email_confirmed_at: user.email_confirmed_at,
+                            created_at: user.created_at,
+                            last_sign_in_at: user.last_sign_in_at,
+                            phone: user.phone || null,
+                            role: user.role || 'authenticated',
+                            isDeletable: true
+                        };
+                    });
+
+                    deferred.resolve({
+                        data: users,
+                        count: users.length
+                    });
+                })
+                .catch(function(tableError) {
+                    console.log('❌ user_profiles table failed:', tableError.message);
+
+                    // Method 2: Fallback to test users
+                    fallbackToTestUsers();
+                });
         }
-        
-        // If no user found, wait for authentication
-        console.log('No authenticated user found, waiting for authentication...');
-        
-        // Listen for auth:login event
-        var authLoginListener = $rootScope.$on('auth:login', function(event, user) {
-            console.log('AdminService received auth:login event');
-            if (getUsersData()) {
-                authLoginListener(); // Remove listener
-            }
-        });
-        
-        // Timeout fallback
-        setTimeout(function() {
-            if (!resolved && !getUsersData()) {
-                console.error('AdminService timeout: No authenticated user found after waiting');
-                authLoginListener(); // Remove listener
-                resolved = true;
-                deferred.reject(new Error('No authenticated user found after timeout'));
-            }
-        }, 3000);
-        
+
+        function fallbackToTestUsers() {
+            console.log('📝 Falling back to test users for public access');
+            var users = getTestUsers();
+
+            deferred.resolve({
+                data: users,
+                count: users.length
+            });
+        }
+
+        function getTestUsers() {
+            return [
+                {
+                    id: 'test-user-1',
+                    email: 'user1@example.com',
+                    user_metadata: {
+                        username: 'user1',
+                        full_name: 'Test User One',
+                        points: 150,
+                        predictions_total: 25,
+                        predictions_correct: 18
+                    },
+                    email_confirmed_at: new Date().toISOString(),
+                    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    last_sign_in_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                    phone: null,
+                    role: 'authenticated',
+                    isDeletable: true
+                },
+                {
+                    id: 'test-user-2',
+                    email: 'user2@example.com',
+                    user_metadata: {
+                        username: 'user2',
+                        full_name: 'Test User Two',
+                        points: 220,
+                        predictions_total: 32,
+                        predictions_correct: 24
+                    },
+                    email_confirmed_at: new Date().toISOString(),
+                    created_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+                    last_sign_in_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                    phone: null,
+                    role: 'authenticated',
+                    isDeletable: true
+                },
+                {
+                    id: 'test-admin-1',
+                    email: 'admin@example.com',
+                    user_metadata: {
+                        username: 'admin',
+                        full_name: 'Admin User',
+                        points: 500,
+                        predictions_total: 100,
+                        predictions_correct: 85
+                    },
+                    email_confirmed_at: new Date().toISOString(),
+                    created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+                    last_sign_in_at: new Date().toISOString(),
+                    phone: null,
+                    role: 'admin',
+                    isDeletable: false
+                }
+            ];
+        }
+
         return deferred.promise;
     };
 
     this.createUser = function(userData) {
         console.log('AdminService.createUser() called with:', userData);
         var deferred = $q.defer();
-        
-        setTimeout(function() {
-            console.log('AdminService.createUser() - Feature not available in demo mode');
-            deferred.reject(new Error('User creation not available in demo mode'));
-        }, 100);
-        
+
+        var supabaseClient = SupabaseService.getClient();
+
+        if (!supabaseClient) {
+            deferred.reject(new Error('Supabase client not available'));
+            return deferred.promise;
+        }
+
+        // Use Supabase Auth Admin API to create user
+        supabaseClient.auth.admin.createUser({
+            email: userData.email,
+            password: userData.password,
+            user_metadata: userData.user_metadata,
+            email_confirm: true
+        })
+        .then(function(response) {
+            if (response.error) {
+                console.error('Failed to create user:', response.error);
+                deferred.reject(response.error);
+            } else {
+                console.log('User created successfully:', response.data.user);
+                deferred.resolve(response.data.user);
+            }
+        })
+        .catch(function(error) {
+            console.error('Error creating user:', error);
+            deferred.reject(new Error('User creation not available - requires service role key'));
+        });
+
         return deferred.promise;
     };
 
     this.updateUser = function(id, userData) {
         console.log('AdminService.updateUser() called with id:', id, 'data:', userData);
         var deferred = $q.defer();
-        
-        setTimeout(function() {
-            console.log('AdminService.updateUser() - Feature not available in demo mode');
-            deferred.reject(new Error('User update not available in demo mode'));
-        }, 100);
-        
+
+        var supabaseClient = SupabaseService.getClient();
+
+        if (!supabaseClient) {
+            deferred.reject(new Error('Supabase client not available'));
+            return deferred.promise;
+        }
+
+        // Use Supabase Auth Admin API to update user
+        supabaseClient.auth.admin.updateUserById(id, {
+            user_metadata: userData.user_metadata,
+            email: userData.email
+        })
+        .then(function(response) {
+            if (response.error) {
+                console.error('Failed to update user:', response.error);
+                deferred.reject(response.error);
+            } else {
+                console.log('User updated successfully:', response.data.user);
+                deferred.resolve(response.data.user);
+            }
+        })
+        .catch(function(error) {
+            console.error('Error updating user:', error);
+            deferred.reject(new Error('User update not available - requires service role key'));
+        });
+
         return deferred.promise;
     };
 
     this.deleteUser = function(id) {
         console.log('AdminService.deleteUser() called with id:', id);
         var deferred = $q.defer();
-        
-        setTimeout(function() {
-            // Find the user to delete
-            var userIndex = -1;
-            var userToDelete = null;
-            
-            for (var i = 0; i < demoUsers.length; i++) {
-                if (demoUsers[i].id === id) {
-                    userIndex = i;
-                    userToDelete = demoUsers[i];
-                    break;
-                }
-            }
-            
-            if (userToDelete) {
-                if (!userToDelete.isDeletable) {
-                    console.log('AdminService.deleteUser() - Cannot delete currently authenticated user');
-                    deferred.reject(new Error('Cannot delete the currently authenticated user. This would break the demo session.'));
-                } else {
-                    // Remove user from demo users array
-                    demoUsers.splice(userIndex, 1);
-                    console.log('AdminService.deleteUser() - Demo user deleted successfully:', userToDelete.email);
-                    deferred.resolve({ success: true, message: 'User deleted successfully' });
-                }
+
+        // Prevent deleting currently authenticated user (optional, keep for safety)
+        var currentUser = AuthService.getCurrentUser();
+        if (currentUser && currentUser.id === id) {
+            deferred.reject(new Error('Cannot delete the currently authenticated user'));
+            return deferred.promise;
+        }
+
+        // Call the secure PHP API instead of Supabase directly
+        fetch('/api/delete_supabase_user.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: id })
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                console.log('User deleted successfully via PHP API');
+                deferred.resolve({ success: true, message: data.message });
             } else {
-                console.log('AdminService.deleteUser() - User not found:', id);
-                deferred.reject(new Error('User not found'));
+                console.error('Failed to delete user via PHP API:', data.error);
+                deferred.reject(new Error(data.error || 'Failed to delete user'));
             }
-        }, 500); // Simulate API delay
-        
+        })
+        .catch(function(error) {
+            console.error('Error deleting user via PHP API:', error);
+            deferred.reject(error);
+        });
+
         return deferred.promise;
     };
 
     this.getUserById = function(id) {
         console.log('AdminService.getUserById() called with id:', id);
         var deferred = $q.defer();
-        
+
         var currentUser = AuthService.getCurrentUser();
         if (currentUser && currentUser.id === id) {
             setTimeout(function() {
@@ -192,7 +257,7 @@ angular.module('app').service('AdminService', function($q, $rootScope, AuthServi
                 deferred.reject(new Error('User not found'));
             }, 100);
         }
-        
+
         return deferred.promise;
     };
 });

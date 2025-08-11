@@ -176,45 +176,54 @@ function($q, $timeout, AuthService) {
     this.getAllUsers = function() {
         const deferred = $q.defer();
 
-        // Try to get real users from Supabase
+        // Try to get real users from Supabase user_profiles table
         const supabaseService = angular.element(document).injector().get('SupabaseService');
         const supabaseClient = supabaseService.getClient();
 
-        if (supabaseClient && !window.supabaseConfig.demoMode) {
-            // Use real Supabase data
-            supabaseClient.auth.admin.listUsers()
+        if (supabaseClient) {
+            // Use the user_profiles table for better data access
+            supabaseClient
+                .from('user_profiles')
+                .select('*')
+                .order('created_at', { ascending: false })
                 .then(function(response) {
-                    if (response.data && response.data.users) {
-                        const users = response.data.users.map(function(user) {
-                            return {
-                                id: user.id,
-                                email: user.email,
-                                created_at: user.created_at,
-                                last_sign_in_at: user.last_sign_in_at,
-                                username: user.user_metadata?.username || user.email.split('@')[0],
-                                first_name: user.user_metadata?.first_name || '',
-                                last_name: user.user_metadata?.last_name || '',
-                                points: user.user_metadata?.points || 0,
-                                predictions_total: user.user_metadata?.predictions_total || 0,
-                                predictions_correct: user.user_metadata?.predictions_correct || 0
-                            };
-                        });
-                        deferred.resolve(users);
-                    } else {
-                        deferred.resolve([]);
+                    if (response.error) {
+                        console.error('Error fetching users from user_profiles:', response.error);
+                        // Fallback to current user
+                        fallbackToCurrentUser();
+                        return;
                     }
+                    
+                    console.log('✅ Successfully fetched users from user_profiles table:', response.data.length);
+                    const users = response.data.map(function(user) {
+                        return {
+                            id: user.id,
+                            email: user.email,
+                            created_at: user.created_at,
+                            last_sign_in_at: user.last_sign_in_at,
+                            username: user.username || user.email.split('@')[0],
+                            full_name: user.full_name || '',
+                            email_confirmed_at: user.email_confirmed_at,
+                            points: user.points || 0,
+                            predictions_total: user.predictions_total || 0,
+                            predictions_correct: user.predictions_correct || 0,
+                            accuracy: user.predictions_total > 0 ? 
+                                     Math.round((user.predictions_correct / user.predictions_total) * 100) : 0
+                        };
+                    });
+                    deferred.resolve(users);
                 })
                 .catch(function(error) {
-                    console.error('Error fetching users from Supabase:', error);
-                    deferred.reject(error);
+                    console.error('Error fetching users from user_profiles table:', error);
+                    fallbackToCurrentUser();
                 });
         } else {
-            // Fallback: Try to get authenticated users list using the public API
-            // This is a workaround since admin API requires service role key
+            fallbackToCurrentUser();
+        }
+
+        function fallbackToCurrentUser() {
+            // Fallback: Show current user only
             $timeout(function() {
-                console.log('Attempting to fetch real users from Supabase...');
-                
-                // For now, show the current user as an example
                 const authUser = AuthService.getCurrentUser();
                 const users = [];
                 
@@ -225,15 +234,16 @@ function($q, $timeout, AuthService) {
                         created_at: authUser.created_at,
                         last_sign_in_at: authUser.last_sign_in_at,
                         username: authUser.user_metadata?.username || authUser.email.split('@')[0],
-                        first_name: authUser.user_metadata?.first_name || '',
-                        last_name: authUser.user_metadata?.last_name || '',
+                        full_name: authUser.user_metadata?.full_name || '',
+                        email_confirmed_at: authUser.email_confirmed_at,
                         points: authUser.user_metadata?.points || 0,
                         predictions_total: 0,
-                        predictions_correct: 0
+                        predictions_correct: 0,
+                        accuracy: 0
                     });
                 }
 
-                console.log('Current authenticated user:', users);
+                console.log('Fallback: Current authenticated user:', users);
                 deferred.resolve(users);
             }, 100);
         }

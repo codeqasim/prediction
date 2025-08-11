@@ -36,70 +36,29 @@ angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$l
     ];
     vm.activeTab = 'users';
 
-    // Admin authentication state
-    vm.isAdminAuthenticated = false;
-    vm.adminPassword = 'adminz'; // Admin password
+    // Public access - no authentication required
+    vm.isAdminAuthenticated = true;
 
     // Initialize
     vm.init = function() {
-        console.log('🔄 Initializing Admin Dashboard...');
+        console.log('🔄 Initializing Admin Dashboard (Public Access)...');
+        
+        // Make admin dashboard publicly accessible
+        vm.isAdminAuthenticated = true;
         
         // Listen for authentication events
         $rootScope.$on('auth:login', function(event, user) {
             console.log('AdminController received auth:login, reloading users...');
-            if (vm.isAdminAuthenticated && vm.users.length === 0) {
-                vm.loadUsers();
-            }
+            vm.loadUsers();
         });
         
-        // Check if admin is already authenticated in session
-        var adminAuth = sessionStorage.getItem('adminAuthenticated');
-        if (adminAuth === 'true') {
-            vm.isAdminAuthenticated = true;
-            vm.loadData();
-        } else {
-            vm.promptAdminPassword();
-        }
-    };
-
-    // Prompt for admin password
-    vm.promptAdminPassword = function() {
-        var password = prompt('Enter admin password to access dashboard:');
-        
-        if (password === null) {
-            // User cancelled, redirect to home
-            console.log('❌ Admin authentication cancelled');
-            $location.path('/');
-            return;
-        }
-        
-        if (password === vm.adminPassword) {
-            console.log('✅ Admin authenticated successfully');
-            vm.isAdminAuthenticated = true;
-            sessionStorage.setItem('adminAuthenticated', 'true');
-            vm.loadData();
-        } else {
-            console.log('❌ Invalid admin password');
-            alert('Invalid admin password. Access denied.');
-            $location.path('/');
-        }
-    };
-
-    // Admin logout
-    vm.adminLogout = function() {
-        vm.isAdminAuthenticated = false;
-        sessionStorage.removeItem('adminAuthenticated');
-        console.log('🔓 Admin logged out');
-        $location.path('/');
+        // Load data immediately without authentication check
+        vm.loadData();
     };
 
     // Load all data
     vm.loadData = function() {
-        if (!vm.isAdminAuthenticated) {
-            console.log('❌ Admin not authenticated, cannot load data');
-            return;
-        }
-        
+        console.log('🔄 Loading admin data (public access)...');
         vm.isLoading = true;
 
         Promise.all([

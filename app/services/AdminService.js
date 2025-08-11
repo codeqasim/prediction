@@ -25,17 +25,17 @@ angular.module('app').service('AdminService', function($q, $rootScope, AuthServi
 
             console.log('Attempting to fetch users with different methods...');
 
-            // Method 1: Try user_profiles table first (public access)
+            // Method 1: Try profiles table first (public access)
             supabaseClient
-                .from('user_profiles')
+                .from('profiles')
                 .select('*')
                 .order('created_at', { ascending: false })
                 .then(function(response) {
                     if (response.error) {
-                        throw new Error('user_profiles query failed: ' + response.error.message);
+                        throw new Error('profiles query failed: ' + response.error.message);
                     }
 
-                    console.log('✅ Successfully fetched users from user_profiles table:', response.data.length);
+                    console.log('✅ Successfully fetched users from profiles table:', response.data.length);
                     var users = response.data.map(function(user) {
                         return {
                             id: user.id,
@@ -62,7 +62,7 @@ angular.module('app').service('AdminService', function($q, $rootScope, AuthServi
                     });
                 })
                 .catch(function(tableError) {
-                    console.log('❌ user_profiles table failed:', tableError.message);
+                    console.log('❌ profiles table failed:', tableError.message);
 
                     // Method 2: Fallback to test users
                     fallbackToTestUsers();

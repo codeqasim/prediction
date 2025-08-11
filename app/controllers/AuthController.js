@@ -108,11 +108,35 @@ function($scope, $location, $rootScope, AuthService, UserService) {
 
         AuthService.login(vm.loginForm.email, vm.loginForm.password)
             .then(function(user) {
+                console.log('✅ Login successful, ensuring user profile exists:', user);
+                
+                // Create or update user profile in database after successful login
+                const userData = {
+                    firstName: user.user_metadata?.firstName || '',
+                    lastName: user.user_metadata?.lastName || '',
+                    username: user.user_metadata?.username || user.email.split('@')[0]
+                };
+                
+                return UserService.createProfile(userData);
+            })
+            .then(function(profile) {
+                console.log('✅ User profile ensured/created:', profile);
                 $location.path('/');
             })
             .catch(function(error) {
-                console.error('❌ Login failed:', error);
-                vm.showError(AuthService.formatError(error));
+                console.error('❌ Login or profile creation failed:', error);
+                
+                // Handle profile creation errors gracefully during login
+                if (error.message && (error.message.includes('Database error saving new user') || 
+                                     error.message.includes('Database connection') ||
+                                     error.message.includes('Supabase'))) {
+                    console.warn('⚠️ Profile creation failed during login, but user is authenticated');
+                    console.warn('⚠️ User will be redirected to dashboard, profile can be created later');
+                    // Still redirect to dashboard, profile can be created later
+                    $location.path('/');
+                } else {
+                    vm.showError(AuthService.formatError(error));
+                }
             })
             .finally(function() {
                 vm.isLoading = false;
@@ -146,7 +170,7 @@ function($scope, $location, $rootScope, AuthService, UserService) {
             .then(function(user) {
                 console.log('✅ Registration successful:', user);
                 
-                // Set success state
+                // Set success state - profile will be created on first login
                 vm.registrationSuccess = true;
                 vm.registeredEmail = vm.registerForm.email;
                 vm.successMessage = 'Account created successfully! Please check your email and click the confirmation link to activate your account.';

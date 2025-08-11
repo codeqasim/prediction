@@ -5,25 +5,44 @@ angular.module('app').service('SupabaseService', [function() {
     // Initialize Supabase client
     this.init = function() {
         if (typeof window.supabase === 'undefined') {
+            console.warn('⚠️ Supabase library not loaded');
             return null;
         }
 
         // Demo configuration for development
         if (!window.supabaseConfig) {
+            console.warn('⚠️ No Supabase configuration found, using invalid demo config');
             window.supabaseConfig = {
                 url: 'https://owoyahkmgzhnruoxghdf.supabase.co',
-                anonKey: 'sb_publishable_GXGzt6hCiacsgr_udR77_g_nER3M4hH',
-                demoMode: false // Disable demo mode to use real Supabase
+                anonKey: 'INVALID_KEY_PLEASE_UPDATE', // Invalid key to force fallback
+                demoMode: true // Force demo mode when config is invalid
             };
         }
 
+        // Validate configuration
+        if (!window.supabaseConfig.url || !window.supabaseConfig.anonKey) {
+            console.error('❌ Invalid Supabase configuration: missing URL or anon key');
+            return null;
+        }
+
+        // Check if the anon key looks valid (should be a JWT starting with 'eyJ')
+        if (!window.supabaseConfig.anonKey.startsWith('eyJ') || window.supabaseConfig.anonKey.length < 100) {
+            console.warn('⚠️ Supabase anon key appears invalid (should be a long JWT starting with "eyJ")');
+            console.warn('⚠️ Forcing demo mode due to invalid key');
+            window.supabaseConfig.demoMode = true;
+            return null;
+        }
+
         try {
+            console.log('🔄 Initializing Supabase client...');
             supabaseClient = window.supabase.createClient(
                 window.supabaseConfig.url,
                 window.supabaseConfig.anonKey
             );
+            console.log('✅ Supabase client initialized successfully');
             return supabaseClient;
         } catch (error) {
+            console.error('❌ Failed to initialize Supabase client:', error);
             return null;
         }
     };
@@ -39,6 +58,42 @@ angular.module('app').service('SupabaseService', [function() {
     // Check if Supabase is available
     this.isAvailable = function() {
         return supabaseClient !== null && typeof supabaseClient !== 'undefined';
+    };
+
+    // Get configuration status
+    this.getConfigStatus = function() {
+        if (!window.supabaseConfig) {
+            return {
+                status: 'missing',
+                message: 'No Supabase configuration found'
+            };
+        }
+
+        if (window.supabaseConfig.demoMode) {
+            return {
+                status: 'demo',
+                message: 'Running in demo mode'
+            };
+        }
+
+        if (!window.supabaseConfig.anonKey.startsWith('eyJ') || window.supabaseConfig.anonKey.length < 100) {
+            return {
+                status: 'invalid_key',
+                message: 'Invalid Supabase anon key (should be a long JWT starting with "eyJ")'
+            };
+        }
+
+        if (this.isAvailable()) {
+            return {
+                status: 'connected',
+                message: 'Supabase client connected successfully'
+            };
+        }
+
+        return {
+            status: 'error',
+            message: 'Supabase configuration exists but client failed to initialize'
+        };
     };
 
     // Auth methods

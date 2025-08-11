@@ -176,7 +176,7 @@ prediction/
 ### Core Tables
 ```sql
 -- User Profiles (extends Supabase auth.users)
-user_profiles (
+profiles
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES auth.users,
     first_name TEXT,
@@ -365,10 +365,10 @@ const isDemoMode = true; // Set to false for production
 
 ---
 
-**Project Version**: 2.0.0  
-**Last Updated**: August 11, 2025  
-**Status**: Active Development  
-**License**: Private Project  
+**Project Version**: 2.0.0
+**Last Updated**: August 11, 2025
+**Status**: Active Development
+**License**: Private Project
 **Maintainer**: Development Team
 
 ---

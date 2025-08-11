@@ -93,6 +93,11 @@
                                 <span class="material-icons-outlined text-sm mr-3 text-purple-400">person</span>Profile
                             </a>
 
+                            <a ng-click="header.navigateTo('/admin'); header.closeUserDropdown()"
+                               class="flex items-center px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-purple-500/20 transition-all duration-300 cursor-pointer">
+                                <span class="material-icons-outlined text-sm mr-3 text-orange-400">admin_panel_settings</span>Admin
+                            </a>
+
                             <div class="border-t border-purple-500/20 my-2"></div>
 
                             <a ng-click="header.logout(); header.closeUserDropdown()"

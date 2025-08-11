@@ -5,6 +5,20 @@ function($scope, $location, AuthService) {
     
     console.log('HeaderController initialized');
 
+    // Cache user data to prevent excessive calls
+    vm.currentUser = null;
+    vm.isAuth = false;
+
+    // Update user data
+    vm.updateUserData = function() {
+        vm.currentUser = AuthService.getCurrentUser();
+        vm.isAuth = AuthService.isAuthenticated();
+        console.log('Header user data updated:', vm.currentUser ? 'logged in' : 'logged out');
+    };
+
+    // Initialize user data
+    vm.updateUserData();
+
     // Navigation function
     vm.navigateTo = function(path) {
         $location.path(path);
@@ -15,18 +29,14 @@ function($scope, $location, AuthService) {
         return $location.path() === route;
     };
 
-    // Check authentication status
+    // Check authentication status (cached)
     vm.isAuthenticated = function() {
-        const isAuth = AuthService.isAuthenticated();
-        console.log('Header checking auth:', isAuth);
-        return isAuth;
+        return vm.isAuth;
     };
 
-    // Get current user
+    // Get current user (cached)
     vm.getCurrentUser = function() {
-        const user = AuthService.getCurrentUser();
-        console.log('Header getting user:', user);
-        return user;
+        return vm.currentUser;
     };
     
     // Get user display name
@@ -98,13 +108,16 @@ function($scope, $location, AuthService) {
     // Listen for auth state changes
     $scope.$on('auth:login', function(event, userData) {
         console.log('HeaderController received auth:login:', userData);
-        // Force digest cycle
-        $scope.$apply();
+        vm.updateUserData(); // Refresh cached data
     });
 
-    $scope.$on('auth:logout', function() {
+    $scope.$on('auth:logout', function(event) {
         console.log('HeaderController received auth:logout');
-        // Force digest cycle
-        $scope.$apply();
+        vm.updateUserData(); // Refresh cached data
+    });
+
+    $scope.$on('auth:session-updated', function(event, userData) {
+        console.log('HeaderController received auth:session-updated:', userData);
+        vm.updateUserData(); // Refresh cached data
     });
 }]);

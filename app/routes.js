@@ -134,6 +134,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             }
         })
 
+        // Admin Route
+        .when('/admin', {
+            templateUrl: 'app/views/admin/index.html',
+            controller: 'AdminController',
+            controllerAs: 'admin',
+            title: 'Admin Dashboard',
+            meta: {
+                description: 'Admin dashboard for managing users, categories, and system data.',
+                keywords: 'admin, dashboard, management, users, categories'
+            }
+        })
+
         // 404 Error Route
         .when('/404', {
             templateUrl: 'app/views/errors/404.html',

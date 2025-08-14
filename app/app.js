@@ -1,12 +1,14 @@
+
+
 // AngularJS Application Module
-angular.module('app', ['ngRoute']).config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
+angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
         // Enable HTML5 mode for clean URLs
         $locationProvider.html5Mode({
             enabled: true,
             requireBase: false
         });
     }])
-    .run(['$rootScope', '$location', 'AuthService', function($rootScope, $location, AuthService) {
+    .run(['$rootScope', '$location', function($rootScope, $location) {
         // Global loading state
         $rootScope.isLoading = false;
 
@@ -62,5 +64,5 @@ angular.module('app', ['ngRoute']).config(['$locationProvider', '$routeProvider'
         });
 
         // Initialize authentication check
-        AuthService.checkExistingAuth();
+        // AuthService.checkExistingAuth();
     }]);

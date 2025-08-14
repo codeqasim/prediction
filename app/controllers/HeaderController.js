@@ -2,7 +2,7 @@
 angular.module('app').controller('HeaderController', ['$scope', '$location', 'AuthService',
 function($scope, $location, AuthService) {
     const vm = this;
-    
+
     console.log('HeaderController initialized');
 
     // Cache user data to prevent excessive calls
@@ -38,29 +38,29 @@ function($scope, $location, AuthService) {
     vm.getCurrentUser = function() {
         return vm.currentUser;
     };
-    
+
     // Get user display name
     vm.getUserDisplayName = function() {
         const user = vm.getCurrentUser();
         if (!user) return 'User';
-        
+
         // Check for first and last name
         if (user.user_metadata && (user.user_metadata.first_name || user.user_metadata.last_name)) {
             const firstName = user.user_metadata.first_name || '';
             const lastName = user.user_metadata.last_name || '';
             return (firstName + ' ' + lastName).trim();
         }
-        
+
         // Check for username
         if (user.user_metadata && user.user_metadata.username) {
             return user.user_metadata.username;
         }
-        
+
         // Use email prefix
         if (user.email) {
             return user.email.split('@')[0];
         }
-        
+
         return 'User';
     };
 
@@ -94,7 +94,7 @@ function($scope, $location, AuthService) {
     vm.closeUserDropdown = function() {
         vm.userDropdownOpen = false;
     };
-    
+
     // Test function to check auth state
     vm.testAuth = function() {
         console.log('=== AUTH TEST ===');
@@ -104,7 +104,7 @@ function($scope, $location, AuthService) {
         console.log('vm.getCurrentUser():', vm.getCurrentUser());
         alert('Check console for auth state');
     };
-    
+
     // Listen for auth state changes
     $scope.$on('auth:login', function(event, userData) {
         console.log('HeaderController received auth:login:', userData);

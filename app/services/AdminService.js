@@ -1,4 +1,4 @@
-angular.module('app').service('AdminService', function($q, $rootScope, AuthService, SupabaseService) {
+angular.module('app').service('AdminService', function($q, $rootScope, SupabaseService) {
     console.log('AdminService initialized');
 
     // Get users from Supabase

@@ -1,6 +1,5 @@
 // Home Controller - Handles homepage functionality
-angular.module('app').controller('HomeControllers', ['$scope', '$location', 'UserService', 'AuthService',
-function($scope, $location, UserService, AuthService) {
+angular.module('app').controller('HomeController', ['$scope', '$location', function($scope, $location) {
     const vm = this;
 
     // Page data
@@ -31,12 +30,6 @@ function($scope, $location, UserService, AuthService) {
     // Load page data
     vm.loadData = function() {
         // Load top predictors
-        UserService.getLeaderboard(5).then(function(users) {
-            vm.topPredictors = users;
-            // Remove $scope.$apply() as it's handled automatically by AngularJS promises
-        }).catch(function(error) {
-            console.error('Error loading top predictors:', error);
-        });
 
         // In a real app, you'd load featured predictions and recent activity here
         vm.featuredPredictions = [
@@ -96,4 +89,5 @@ function($scope, $location, UserService, AuthService) {
 
     // Call init
     vm.init();
+
 }]);

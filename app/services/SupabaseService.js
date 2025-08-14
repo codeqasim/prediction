@@ -1,6 +1,12 @@
-// Supabase Service - Handles Supabase connection and configuration
-angular.module('app').service('SupabaseService', [function() {
+// Supabase Service - Handles Supabase connection and configuration only
+angular.module('app').service('SupabaseService', ['$q', function($q) {
     let supabaseClient = null;
+
+    // Supabase Configuration - Replace with your actual credentials
+    var SUPABASE_CONFIG = {
+        url: 'https://cfkpfdpqobghtjewpzzd.supabase.co',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNma3BmZHBxb2JnaHRqZXdwenpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDk5MjMsImV4cCI6MjA3MDcyNTkyM30.gkjQLw5_SlHoqjoLeLytqM6Rwp92-2a5cnwIpr0n1xw'
+    };
 
     // Initialize Supabase client
     this.init = function() {
@@ -9,35 +15,17 @@ angular.module('app').service('SupabaseService', [function() {
             return null;
         }
 
-        // Demo configuration for development
-        if (!window.supabaseConfig) {
-            console.warn('⚠️ No Supabase configuration found, using invalid demo config');
-            window.supabaseConfig = {
-                url: 'https://owoyahkmgzhnruoxghdf.supabase.co',
-                anonKey: 'INVALID_KEY_PLEASE_UPDATE', // Invalid key to force fallback
-                demoMode: true // Force demo mode when config is invalid
-            };
-        }
-
         // Validate configuration
-        if (!window.supabaseConfig.url || !window.supabaseConfig.anonKey) {
+        if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
             console.error('❌ Invalid Supabase configuration: missing URL or anon key');
-            return null;
-        }
-
-        // Check if the anon key looks valid (should be a JWT starting with 'eyJ')
-        if (!window.supabaseConfig.anonKey.startsWith('eyJ') || window.supabaseConfig.anonKey.length < 100) {
-            console.warn('⚠️ Supabase anon key appears invalid (should be a long JWT starting with "eyJ")');
-            console.warn('⚠️ Forcing demo mode due to invalid key');
-            window.supabaseConfig.demoMode = true;
             return null;
         }
 
         try {
             console.log('🔄 Initializing Supabase client...');
             supabaseClient = window.supabase.createClient(
-                window.supabaseConfig.url,
-                window.supabaseConfig.anonKey
+                SUPABASE_CONFIG.url,
+                SUPABASE_CONFIG.anonKey
             );
             console.log('✅ Supabase client initialized successfully');
             return supabaseClient;
@@ -60,410 +48,94 @@ angular.module('app').service('SupabaseService', [function() {
         return supabaseClient !== null && typeof supabaseClient !== 'undefined';
     };
 
-    // Get configuration status
-    this.getConfigStatus = function() {
-        if (!window.supabaseConfig) {
-            return {
-                status: 'missing',
-                message: 'No Supabase configuration found'
-            };
-        }
+    // Helper function to convert native promises to Angular promises
+    var toAngularPromise = function(nativePromise) {
+        var deferred = $q.defer();
 
-        if (window.supabaseConfig.demoMode) {
-            return {
-                status: 'demo',
-                message: 'Running in demo mode'
-            };
-        }
+        nativePromise
+            .then(function(result) {
+                deferred.resolve(result);
+            })
+            .catch(function(error) {
+                deferred.reject(error);
+            });
 
-        if (!window.supabaseConfig.anonKey.startsWith('eyJ') || window.supabaseConfig.anonKey.length < 100) {
-            return {
-                status: 'invalid_key',
-                message: 'Invalid Supabase anon key (should be a long JWT starting with "eyJ")'
-            };
-        }
-
-        if (this.isAvailable()) {
-            return {
-                status: 'connected',
-                message: 'Supabase client connected successfully'
-            };
-        }
-
-        return {
-            status: 'error',
-            message: 'Supabase configuration exists but client failed to initialize'
-        };
+        return deferred.promise;
     };
 
-    // Auth methods
+    // Auth operations - direct Supabase client access
     this.auth = {
-        // Sign up
-        signUp: function(email, password, options = {}) {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: options
-                });
+        signUp: function(userData) {
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
             }
-
-            // Demo mode fallback - simulate successful registration without network calls
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    // Simulate network delay
-                    setTimeout(function() {
-                        // Return demo user data
-                        const demoUser = {
-                            id: 'demo-user-id-' + Date.now(),
-                            email: email,
-                            user_metadata: {
-                                first_name: options.data?.first_name || 'John',
-                                last_name: options.data?.last_name || 'Doe',
-                                username: options.data?.username || 'demo_user'
-                            },
-                            points: 1250
-                        };
-
-                        resolve({
-                            data: { user: demoUser },
-                            error: null
-                        });
-                    }, 800);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
+            return toAngularPromise(client.auth.signUp(userData));
         }.bind(this),
 
-        // Sign in
         signIn: function(email, password) {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
             }
-
-            // Demo mode fallback - simulate successful login without network calls
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    // Simulate network delay
-                    setTimeout(function() {
-                        // Return demo user data
-                        const demoUser = {
-                            id: 'demo-user-id',
-                            email: email,
-                            user_metadata: {
-                                first_name: 'John',
-                                last_name: 'Doe',
-                                username: 'demo_user'
-                            },
-                            points: 1250
-                        };
-
-                        resolve({
-                            data: { user: demoUser },
-                            error: null
-                        });
-                    }, 500);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
+            return toAngularPromise(client.auth.signInWithPassword({
+                email: email,
+                password: password
+            }));
         }.bind(this),
 
-        // Sign out
         signOut: function() {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.signOut();
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
             }
-
-            // Demo mode fallback - simulate successful logout without network calls
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    setTimeout(function() {
-                        resolve({
-                            error: null
-                        });
-                    }, 200);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
+            return toAngularPromise(client.auth.signOut());
         }.bind(this),
 
-        // Get current session
-        getSession: function() {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.getSession();
-            }
-
-            // Demo mode fallback - return null session (no user logged in initially)
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    setTimeout(function() {
-                        resolve({
-                            data: { session: null },
-                            error: null
-                        });
-                    }, 100);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
-        }.bind(this),
-
-        // Get current user
         getUser: function() {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.getUser();
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
             }
-
-            // Demo mode fallback - return null user (no user logged in initially)
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    setTimeout(function() {
-                        resolve({
-                            data: { user: null },
-                            error: null
-                        });
-                    }, 100);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
+            return toAngularPromise(client.auth.getUser());
         }.bind(this),
 
-        // Reset password
-        resetPassword: function(email) {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '#!/reset-password'
-                });
+        getSession: function() {
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
             }
-
-            // Demo mode fallback - simulate successful password reset
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    setTimeout(function() {
-                        resolve({
-                            data: {},
-                            error: null
-                        });
-                    }, 300);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
+            return toAngularPromise(client.auth.getSession());
         }.bind(this),
 
-        // Update password
-        updatePassword: function(newPassword) {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                // Simply update the password using the current session
-                // Session should have been established via setSession in initResetPassword
-                return client.auth.updateUser({
-                    password: newPassword
-                });
-            }
-
-            // Demo mode fallback - simulate successful password update
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    setTimeout(function() {
-                        resolve({
-                            data: { user: { id: 'demo-user-id' } },
-                            error: null
-                        });
-                    }, 500);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
-        }.bind(this),
-
-        // Set session
-        setSession: function(accessToken, refreshToken) {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.setSession({
-                    access_token: accessToken,
-                    refresh_token: refreshToken
-                });
-            }
-
-            // Demo mode fallback - simulate successful session set
-            if (window.supabaseConfig && window.supabaseConfig.demoMode) {
-                return new Promise(function(resolve) {
-                    setTimeout(function() {
-                        resolve({
-                            data: { 
-                                user: { id: 'demo-user-id', email: 'demo@example.com' },
-                                session: { access_token: accessToken }
-                            },
-                            error: null
-                        });
-                    }, 200);
-                });
-            }
-
-            return Promise.reject(new Error('Supabase not available'));
-        }.bind(this),
-
-        // Listen to auth changes
         onAuthStateChange: function(callback) {
-            const client = this.getClient();
-
-            // If real Supabase client is available, use it
-            if (client) {
-                return client.auth.onAuthStateChange(callback);
+            var client = this.getClient();
+            if (!client) {
+                console.warn('Supabase not available for auth state changes');
+                return null;
             }
-
-            // Demo mode fallback - return null (no auth listener in demo mode)
-            return null;
+            return client.auth.onAuthStateChange(callback);
         }.bind(this)
     };
 
-    // Database methods
-    this.db = {
-        // Select
-        select: function(table, columns = '*') {
-            const client = this.getClient();
-            if (!client) return Promise.reject(new Error('Supabase not available'));
+    // Database operations - direct table access
+    this.from = function(tableName) {
+        var client = this.getClient();
+        if (!client) {
+            throw new Error('Supabase not available');
+        }
+        return client.from(tableName);
+    };
 
-            return client.from(table).select(columns);
-        }.bind(this),
-
-        // Insert
-        insert: function(table, data) {
-            const client = this.getClient();
-            if (!client) return Promise.reject(new Error('Supabase not available'));
-
-            return client.from(table).insert(data);
-        }.bind(this),
-
-        // Update
-        update: function(table, data) {
-            const client = this.getClient();
-            if (!client) return Promise.reject(new Error('Supabase not available'));
-
-            return client.from(table).update(data);
-        }.bind(this),
-
-        // Delete
-        delete: function(table) {
-            const client = this.getClient();
-            if (!client) return Promise.reject(new Error('Supabase not available'));
-
-            return client.from(table).delete();
+    // Storage operations
+    this.storage = {
+        from: function(bucketName) {
+            var client = this.getClient();
+            if (!client) {
+                throw new Error('Supabase not available');
+            }
+            return client.storage.from(bucketName);
         }.bind(this)
-    };
-
-    // Storage Operations
-    this.uploadFile = async function(bucketName, fileName, file, options = {}) {
-        const supabase = this.getClient();
-        if (!supabase) {
-            throw new Error('Supabase client not available');
-        }
-
-        return await this.executeOperation(() =>
-            supabase.storage.from(bucketName).upload(fileName, file, options)
-        );
-    };
-
-    this.deleteFile = async function(bucketName, fileName) {
-        const supabase = this.getClient();
-        if (!supabase) {
-            throw new Error('Supabase client not available');
-        }
-
-        return await this.executeOperation(() =>
-            supabase.storage.from(bucketName).remove([fileName])
-        );
-    };
-
-    this.getFileUrl = function(bucketName, fileName) {
-        const supabase = this.getClient();
-        if (!supabase) {
-            console.warn('Supabase client not available, returning placeholder URL');
-            return '/assets/images/default-avatar.svg';
-        }
-
-        const { data } = supabase.storage.from(bucketName).getPublicUrl(fileName);
-        return data?.publicUrl || '/assets/images/default-avatar.svg';
-    };
-
-    this.getSignedUrl = async function(bucketName, fileName, expiresIn = 3600) {
-        const supabase = this.getClient();
-        if (!supabase) {
-            throw new Error('Supabase client not available');
-        }
-
-        return await this.executeOperation(() =>
-            supabase.storage.from(bucketName).createSignedUrl(fileName, expiresIn)
-        );
-    };
-
-    this.listFiles = async function(bucketName, folder = '') {
-        const supabase = this.getClient();
-        if (!supabase) {
-            throw new Error('Supabase client not available');
-        }
-
-        return await this.executeOperation(() =>
-            supabase.storage.from(bucketName).list(folder)
-        );
-    };
-
-    // Profile image specific methods
-    this.uploadProfileImage = async function(userId, file) {
-        const fileName = `${userId}/avatar_${Date.now()}.${file.name.split('.').pop()}`;
-        const result = await this.uploadFile('avatars', fileName, file, {
-            cacheControl: '3600',
-            upsert: true
-        });
-
-        if (result.error) {
-            throw new Error(result.error.message);
-        }
-
-        return {
-            fileName: fileName,
-            url: this.getFileUrl('avatars', fileName)
-        };
-    };
-
-    this.deleteProfileImage = async function(fileName) {
-        return await this.deleteFile('avatars', fileName);
-    };
-
-    this.getProfileImageUrl = function(fileName) {
-        if (!fileName) return '/assets/images/default-avatar.svg';
-        return this.getFileUrl('avatars', fileName);
     };
 
     // Initialize on service creation

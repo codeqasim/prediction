@@ -69,17 +69,15 @@
     <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
-
-    <!-- jQuery (for compatibility) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oclazyload/1.1.0/ocLazyLoad.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="assets/app.css">
 </head>
-<body class="text-white min-h-screen relative overflow-x-hidden" ng-controller="MainController" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
+
+<body class="text-white min-h-screen relative overflow-x-hidden" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
     <!-- Main Application Container -->
     <div class="min-h-screen">
         <!-- Header -->
@@ -96,16 +94,17 @@
 
     <!-- Services -->
     <script src="app/services/SupabaseService.js"></script>
-    <script src="app/services/AuthService.js"></script>
-    <script src="app/services/UserService.js"></script>
     <script src="app/services/AdminService.js"></script>
+    <!-- <script src="app/services/AuthService.js"></script>
+    <script src="app/services/UserService.js"></script>
+     -->
 
     <!-- Controllers -->
-    <script src="app/controllers/MainController.js"></script>
+    <!-- <script src="app/controllers/MainController.js"></script>
     <script src="app/controllers/HeaderController.js"></script>
     <script src="app/controllers/AuthController.js"></script>
     <script src="app/controllers/DashboardController.js"></script>
-    <script src="app/controllers/AdminController.js"></script>
+    <script src="app/controllers/AdminController.js"></script> -->
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 // Admin Controller
-angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$location', '$timeout', 'AuthService', 'AdminService', function($scope, $rootScope, $location, $timeout, AuthService, AdminService) {
+angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$location', '$timeout','AdminService', function($scope, $rootScope, $location, $timeout, AdminService) {
     var vm = this;
 
     // Initialize data
@@ -42,16 +42,16 @@ angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$l
     // Initialize
     vm.init = function() {
         console.log('🔄 Initializing Admin Dashboard (Public Access)...');
-        
+
         // Make admin dashboard publicly accessible
         vm.isAdminAuthenticated = true;
-        
+
         // Listen for authentication events
         $rootScope.$on('auth:login', function(event, user) {
             console.log('AdminController received auth:login, reloading users...');
             vm.loadUsers();
         });
-        
+
         // Load data immediately without authentication check
         vm.loadData();
     };
@@ -99,7 +99,7 @@ angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$l
             })
             .catch(function(error) {
                 console.error('❌ Failed to load users:', error);
-                
+
                 // If it's an authentication error, don't show error message immediately
                 if (error.message.includes('No authenticated user')) {
                     console.log('📝 Waiting for user authentication before loading users...');
@@ -243,7 +243,7 @@ angular.module('app').controller('AdminController', ['$scope', '$rootScope', '$l
         vm.editingUser = angular.copy(user);
         vm.showEditModal = true;
         vm.editMode = 'view';
-        
+
         // Populate form with user data
         vm.editingUser.full_name = (user.user_metadata && user.user_metadata.full_name) || '';
         vm.editingUser.display_email = user.email;

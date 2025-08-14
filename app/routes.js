@@ -1,54 +1,91 @@
 // AngularJS Routes Configuration
-angular.module('app').config(['$routeProvider', function($routeProvider) {
-    $routeProvider
-        // Home Route
+angular.module('app').config(['$routeProvider', function($routeProvider) { $routeProvider
+
+        // ========================================= HOME
+        .when('/admin', {
+            templateUrl: 'app/views/admin/index.html',
+            controller: 'AdminController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/AdminController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Admin Dashboard',
+        role: '',
+        })
+
+
+
+
+
+
+
+        // ========================================= HOME
         .when('/', {
             templateUrl: 'app/views/home/index.html',
-            controller: '',
-            controllerAs: 'home',
-            title: 'Predict the Future',
-            meta: {
-                description: 'Join thousands of users in predicting future events. Test your prediction skills and compete on our leaderboard.',
-                keywords: 'prediction, future, events, competition, leaderboard'
-            }
+            controller: 'HomeController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/HomeController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Predict the Future',
+        role: '',
+        })
+
+        // ========================================= Signup
+        .when('/signup', {
+            templateUrl: 'app/views/auth/signup.html',
+            controller: 'SignupController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/auth/SignupController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Signup',
+        role: '',
         })
 
         // Authentication Routes
-        .when('/auth', {
-            templateUrl: 'app/views/auth/login.html',
-            controller: 'AuthController',
-            controllerAs: 'auth',
-            title: 'Login',
-            redirectIfAuth: true,
-            meta: {
-                description: 'Sign in to your PredictIt account to start making predictions and competing with others.',
-                keywords: 'login, sign in, authentication, predict'
-            }
-        })
 
-        .when('/login', {
-            templateUrl: 'app/views/auth/login.html',
-            controller: 'AuthController',
-            controllerAs: 'auth',
-            title: 'Login',
-            redirectIfAuth: true,
-            meta: {
-                description: 'Sign in to your PredictIt account to start making predictions and competing with others.',
-                keywords: 'login, sign in, authentication, predict'
-            }
-        })
+        // .when('/login', {
+        //     templateUrl: 'app/views/auth/login.html',
+        //     controller: 'AuthController',
+        //     controllerAs: 'auth',
+        //     title: 'Login',
+        //     redirectIfAuth: true,
+        //     meta: {
+        //         description: 'Sign in to your PredictIt account to start making predictions and competing with others.',
+        //         keywords: 'login, sign in, authentication, predict'
+        //     }
+        // })
 
-        .when('/signup', {
-            templateUrl: 'app/views/auth/signup.html',
-            controller: 'AuthController',
-            controllerAs: 'auth',
-            title: 'Create Account',
-            redirectIfAuth: true,
-            meta: {
-                description: 'Create your free account and start predicting future events today.',
-                keywords: 'register, sign up, create account, join'
-            }
-        })
+        // .when('/signup', {
+        //     templateUrl: 'app/views/auth/signup.html',
+        //     controller: 'AuthController',
+        //     controllerAs: 'auth',
+        //     title: 'Create Account',
+        //     redirectIfAuth: true,
+        //     meta: {
+        //         description: 'Create your free account and start predicting future events today.',
+        //         keywords: 'register, sign up, create account, join'
+        //     }
+        // })
 
         .when('/forgot-password', {
             templateUrl: 'app/views/auth/forgot-password.html',
@@ -143,18 +180,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             meta: {
                 description: 'Learn more about PredictIt and how our prediction platform works.',
                 keywords: 'about, how it works, information, platform'
-            }
-        })
-
-        // Admin Route
-        .when('/admin', {
-            templateUrl: 'app/views/admin/index.html',
-            controller: 'AdminController',
-            controllerAs: 'admin',
-            title: 'Admin Dashboard',
-            meta: {
-                description: 'Admin dashboard for managing users, categories, and system data.',
-                keywords: 'admin, dashboard, management, users, categories'
             }
         })
 

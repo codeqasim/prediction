@@ -26,8 +26,8 @@ if (!$user_id) {
 }
 
 // Your Supabase project details
-$supabase_url = 'https://owoyahkmgzhnruoxghdf.supabase.co'; // <-- CHANGE THIS
-$service_role_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93b3lhaGttZ3pobnJ1b3hnaGRmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDAwNTIzNSwiZXhwIjoyMDY5NTgxMjM1fQ.ZxKCFPCMcvgJ4Ucfs4EwAIu_6vVulgOAUE8nnmiz3oY'; // <-- CHANGE THIS (keep secret!)
+$supabase_url = 'https://cfkpfdpqobghtjewpzzd.supabase.co'; // <-- CHANGE THIS
+$service_role_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNma3BmZHBxb2JnaHRqZXdwenpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDk5MjMsImV4cCI6MjA3MDcyNTkyM30.gkjQLw5_SlHoqjoLeLytqM6Rwp92-2a5cnwIpr0n1xw'; // <-- CHANGE THIS (keep secret!)
 
 // Prepare the API request
 $endpoint = $supabase_url . '/auth/v1/admin/users/' . $user_id;

@@ -1,143 +1,81 @@
 angular.module('app').service('AdminService', function($q, $rootScope, SupabaseService) {
     console.log('AdminService initialized');
 
-    // Get users from Supabase
+    // Get users from Supabase - REAL DATA ONLY
     this.getUsers = function() {
-        console.log('AdminService.getUsers() called - fetching real users from Supabase (PUBLIC ACCESS)');
+        console.log('AdminService.getUsers() called - fetching REAL users from Supabase');
         var deferred = $q.defer();
 
-        // Remove authentication check - make it publicly accessible
-        console.log('🔓 Public access enabled - fetching users without authentication');
+        var supabaseClient = SupabaseService.getClient();
 
-        fetchUsersFromSupabase();
-
-        function fetchUsersFromSupabase() {
-            var supabaseClient = SupabaseService.getClient();
-
-            if (!supabaseClient) {
-                console.error('Supabase client not available');
-                deferred.resolve({
-                    data: getTestUsers(),
-                    count: getTestUsers().length
-                });
-                return;
-            }
-
-            console.log('Attempting to fetch users with different methods...');
-
-            // Method 1: Try profiles table first (public access)
-            supabaseClient
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .then(function(response) {
-                    if (response.error) {
-                        throw new Error('profiles query failed: ' + response.error.message);
-                    }
-
-                    console.log('✅ Successfully fetched users from profiles table:', response.data.length);
-                    var users = response.data.map(function(user) {
-                        return {
-                            id: user.id,
-                            email: user.email,
-                            user_metadata: {
-                                username: user.username,
-                                full_name: user.full_name,
-                                points: user.points,
-                                predictions_total: user.predictions_total,
-                                predictions_correct: user.predictions_correct
-                            },
-                            email_confirmed_at: user.email_confirmed_at,
-                            created_at: user.created_at,
-                            last_sign_in_at: user.last_sign_in_at,
-                            phone: user.phone || null,
-                            role: user.role || 'authenticated',
-                            isDeletable: true
-                        };
-                    });
-
-                    deferred.resolve({
-                        data: users,
-                        count: users.length
-                    });
-                })
-                .catch(function(tableError) {
-                    console.log('❌ profiles table failed:', tableError.message);
-
-                    // Method 2: Fallback to test users
-                    fallbackToTestUsers();
-                });
-        }
-
-        function fallbackToTestUsers() {
-            console.log('📝 Falling back to test users for public access');
-            var users = getTestUsers();
-
+        if (!supabaseClient) {
+            console.error('Supabase client not available');
             deferred.resolve({
-                data: users,
-                count: users.length
+                data: [],
+                count: 0
             });
+            return deferred.promise;
         }
 
-        function getTestUsers() {
-            return [
-                {
-                    id: 'test-user-1',
-                    email: 'user1@example.com',
-                    user_metadata: {
-                        username: 'user1',
-                        full_name: 'Test User One',
-                        points: 150,
-                        predictions_total: 25,
-                        predictions_correct: 18
-                    },
-                    email_confirmed_at: new Date().toISOString(),
-                    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-                    last_sign_in_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                    phone: null,
-                    role: 'authenticated',
-                    isDeletable: true
-                },
-                {
-                    id: 'test-user-2',
-                    email: 'user2@example.com',
-                    user_metadata: {
-                        username: 'user2',
-                        full_name: 'Test User Two',
-                        points: 220,
-                        predictions_total: 32,
-                        predictions_correct: 24
-                    },
-                    email_confirmed_at: new Date().toISOString(),
-                    created_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-                    last_sign_in_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-                    phone: null,
-                    role: 'authenticated',
-                    isDeletable: true
-                },
-                {
-                    id: 'test-admin-1',
-                    email: 'admin@example.com',
-                    user_metadata: {
-                        username: 'admin',
-                        full_name: 'Admin User',
-                        points: 500,
-                        predictions_total: 100,
-                        predictions_correct: 85
-                    },
-                    email_confirmed_at: new Date().toISOString(),
-                    created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-                    last_sign_in_at: new Date().toISOString(),
-                    phone: null,
-                    role: 'admin',
-                    isDeletable: false
+        console.log('Fetching users from profiles table...');
+
+        // Get users from profiles table
+        supabaseClient
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .then(function(response) {
+                if (response.error) {
+                    console.error('Error fetching users:', response.error.message);
+                    deferred.resolve({
+                        data: [],
+                        count: 0
+                    });
+                    return;
                 }
-            ];
-        }
+
+                console.log('✅ Successfully fetched users:', response.data.length);
+
+                var users = response.data.map(function(user) {
+                    return {
+                        id: user.id,
+                        email: user.email || 'No email',
+                        user_metadata: {
+                            username: user.username || 'No username',
+                            first_name: user.first_name || '',
+                            last_name: user.last_name || '',
+                            full_name: (user.first_name || '') + ' ' + (user.last_name || ''),
+                            points: user.points || 0,
+                            predictions_total: user.predictions_total || 0,
+                            predictions_correct: user.predictions_correct || 0
+                        },
+                        email_confirmed_at: user.email_confirmed_at,
+                        created_at: user.created_at,
+                        updated_at: user.updated_at,
+                        last_sign_in_at: user.last_sign_in_at,
+                        phone: user.phone || null,
+                        role: user.role || 'authenticated',
+                        isDeletable: true
+                    };
+                });
+
+                deferred.resolve({
+                    data: users,
+                    count: users.length
+                });
+            })
+            .catch(function(error) {
+                console.error('❌ Error fetching users:', error.message);
+                deferred.resolve({
+                    data: [],
+                    count: 0
+                });
+            });
 
         return deferred.promise;
     };
 
+    // Create new user
     this.createUser = function(userData) {
         console.log('AdminService.createUser() called with:', userData);
         var deferred = $q.defer();
@@ -149,30 +87,37 @@ angular.module('app').service('AdminService', function($q, $rootScope, SupabaseS
             return deferred.promise;
         }
 
-        // Use Supabase Auth Admin API to create user
-        supabaseClient.auth.admin.createUser({
-            email: userData.email,
-            password: userData.password,
-            user_metadata: userData.user_metadata,
-            email_confirm: true
-        })
-        .then(function(response) {
-            if (response.error) {
-                console.error('Failed to create user:', response.error);
-                deferred.reject(response.error);
-            } else {
-                console.log('User created successfully:', response.data.user);
-                deferred.resolve(response.data.user);
-            }
-        })
-        .catch(function(error) {
-            console.error('Error creating user:', error);
-            deferred.reject(new Error('User creation not available - requires service role key'));
-        });
+        // Insert into profiles table
+        supabaseClient
+            .from('profiles')
+            .insert([{
+                username: userData.username,
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                email: userData.email,
+                points: userData.points || 0,
+                predictions_total: userData.predictions_total || 0,
+                predictions_correct: userData.predictions_correct || 0,
+                role: userData.role || 'authenticated'
+            }])
+            .then(function(response) {
+                if (response.error) {
+                    console.error('Failed to create user:', response.error);
+                    deferred.reject(response.error);
+                } else {
+                    console.log('User created successfully:', response.data);
+                    deferred.resolve(response.data[0]);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error creating user:', error);
+                deferred.reject(error);
+            });
 
         return deferred.promise;
     };
 
+    // Update user
     this.updateUser = function(id, userData) {
         console.log('AdminService.updateUser() called with id:', id, 'data:', userData);
         var deferred = $q.defer();
@@ -184,79 +129,131 @@ angular.module('app').service('AdminService', function($q, $rootScope, SupabaseS
             return deferred.promise;
         }
 
-        // Use Supabase Auth Admin API to update user
-        supabaseClient.auth.admin.updateUserById(id, {
-            user_metadata: userData.user_metadata,
-            email: userData.email
-        })
-        .then(function(response) {
-            if (response.error) {
-                console.error('Failed to update user:', response.error);
-                deferred.reject(response.error);
-            } else {
-                console.log('User updated successfully:', response.data.user);
-                deferred.resolve(response.data.user);
-            }
-        })
-        .catch(function(error) {
-            console.error('Error updating user:', error);
-            deferred.reject(new Error('User update not available - requires service role key'));
-        });
+        // Update profiles table
+        supabaseClient
+            .from('profiles')
+            .update({
+                username: userData.username,
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                email: userData.email,
+                points: userData.points,
+                predictions_total: userData.predictions_total,
+                predictions_correct: userData.predictions_correct,
+                role: userData.role,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', id)
+            .then(function(response) {
+                if (response.error) {
+                    console.error('Failed to update user:', response.error);
+                    deferred.reject(response.error);
+                } else {
+                    console.log('User updated successfully:', response.data);
+                    deferred.resolve(response.data[0]);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error updating user:', error);
+                deferred.reject(error);
+            });
 
         return deferred.promise;
     };
 
+    // Delete user
     this.deleteUser = function(id) {
         console.log('AdminService.deleteUser() called with id:', id);
         var deferred = $q.defer();
 
-        // Prevent deleting currently authenticated user (optional, keep for safety)
-        var currentUser = AuthService.getCurrentUser();
-        if (currentUser && currentUser.id === id) {
-            deferred.reject(new Error('Cannot delete the currently authenticated user'));
+        var supabaseClient = SupabaseService.getClient();
+
+        if (!supabaseClient) {
+            deferred.reject(new Error('Supabase client not available'));
             return deferred.promise;
         }
 
-        // Call the secure PHP API instead of Supabase directly
-        fetch('/api/delete_supabase_user.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_id: id })
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(data) {
-            if (data.success) {
-                console.log('User deleted successfully via PHP API');
-                deferred.resolve({ success: true, message: data.message });
-            } else {
-                console.error('Failed to delete user via PHP API:', data.error);
-                deferred.reject(new Error(data.error || 'Failed to delete user'));
-            }
-        })
-        .catch(function(error) {
-            console.error('Error deleting user via PHP API:', error);
-            deferred.reject(error);
-        });
+        // Delete from profiles table
+        supabaseClient
+            .from('profiles')
+            .delete()
+            .eq('id', id)
+            .then(function(response) {
+                if (response.error) {
+                    console.error('Failed to delete user:', response.error);
+                    deferred.reject(response.error);
+                } else {
+                    console.log('✅ User deleted successfully');
+                    deferred.resolve({ success: true, message: 'User deleted successfully' });
+                }
+            })
+            .catch(function(error) {
+                console.error('Error deleting user:', error);
+                deferred.reject(error);
+            });
 
         return deferred.promise;
     };
 
+    // Get user by ID
     this.getUserById = function(id) {
         console.log('AdminService.getUserById() called with id:', id);
         var deferred = $q.defer();
 
-        var currentUser = AuthService.getCurrentUser();
-        if (currentUser && currentUser.id === id) {
-            setTimeout(function() {
-                deferred.resolve(currentUser);
-            }, 100);
-        } else {
-            setTimeout(function() {
-                deferred.reject(new Error('User not found'));
-            }, 100);
+        var supabaseClient = SupabaseService.getClient();
+
+        if (!supabaseClient) {
+            deferred.reject(new Error('Supabase client not available'));
+            return deferred.promise;
         }
+
+        supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('id', id)
+            .single()
+            .then(function(response) {
+                if (response.error) {
+                    console.error('User not found:', response.error);
+                    deferred.reject(new Error('User not found'));
+                } else {
+                    console.log('User found:', response.data);
+                    deferred.resolve(response.data);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error getting user:', error);
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
+    };
+
+    // Get user statistics
+    this.getUserStats = function() {
+        console.log('AdminService.getUserStats() called');
+        var deferred = $q.defer();
+
+        this.getUsers().then(function(result) {
+            var users = result.data;
+            var stats = {
+                totalUsers: users.length,
+                activeUsers: users.filter(function(user) {
+                    return user.email_confirmed_at;
+                }).length,
+                totalPredictions: users.reduce(function(sum, user) {
+                    return sum + (user.user_metadata.predictions_total || 0);
+                }, 0),
+                totalPoints: users.reduce(function(sum, user) {
+                    return sum + (user.user_metadata.points || 0);
+                }, 0)
+            };
+
+            console.log('User statistics:', stats);
+            deferred.resolve(stats);
+        }).catch(function(error) {
+            deferred.reject(error);
+        });
 
         return deferred.promise;
     };

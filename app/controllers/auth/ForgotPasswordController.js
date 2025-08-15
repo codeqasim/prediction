@@ -37,20 +37,7 @@ function($scope, $location, SupabaseService) {
         return isValid;
     };
 
-    // Generate random password
-    $scope.generatePassword = function() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-        let password = '';
-        for (let i = 0; i < 12; i++) {
-            password += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return password;
-    };
-
-    // Check if user exists and update password
-    // Main password reset function - using Supabase's built-in reset
-
-    // Custom password reset function - no admin API needed
+    // Main password reset function - sends reset email
 $scope.resetPassword = function(event) {
     if (event) {
         event.preventDefault();
@@ -86,15 +73,11 @@ $scope.resetPassword = function(event) {
     const email = $scope.resetForm.email.trim();
     console.log('📤 Processing reset for:', email);
 
-    // Generate new password
-    const newPassword = $scope.generatePassword();
-    console.log('🔑 Generated password:', newPassword);
-
-    // Step 1: Send reset link to get session
+    // Send reset email with proper redirect to password-reset page
     const client = SupabaseService.getClient();
 
     client.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/#!/reset-confirm?password=' + encodeURIComponent(newPassword)
+        redirectTo: window.location.origin + '/#!/password-reset'
     })
         .then(function(response) {
             console.log('📥 Reset email response:', response);
@@ -109,7 +92,7 @@ $scope.resetPassword = function(event) {
                 }
             }
 
-            console.log('✅ Reset process initiated successfully!');
+            console.log('✅ Reset email sent successfully!');
 
             // Set success state
             $scope.resetSent = true;
@@ -118,10 +101,10 @@ $scope.resetPassword = function(event) {
             // Clear form data
             $scope.clearForm();
 
-            // Show the new password immediately
-            $scope.showNewPassword(email, newPassword);
+            // Show success message
+            $scope.showResetSuccess(email);
 
-            console.log('✅ Password reset completed. New password generated:', newPassword);
+            console.log('✅ Password reset email sent to:', email);
         })
         .catch(function(error) {
             console.error('❌ Password reset failed:', error);
@@ -153,63 +136,11 @@ $scope.generatePassword = function() {
     return password;
 };
 
-// Show new password to user
-$scope.showNewPassword = function(email, newPassword) {
-    // Create a nice formatted message
-    const message = `🔑 NEW PASSWORD GENERATED!\n\n` +
-                   `Email: ${email}\n` +
-                   `New Password: ${newPassword}\n\n` +
-                   `IMPORTANT:\n` +
-                   `1. Copy this password now\n` +
-                   `2. Click the link in your email\n` +
-                   `3. Enter this password when prompted\n\n` +
-                   `This password will be used when you click the reset link.`;
-
-    alert(message);
-
-    // Also log to console for easy copying
-    console.log('📧 =============================');
-    console.log('📧 EMAIL:', email);
-    console.log('📧 NEW PASSWORD:', newPassword);
-    console.log('📧 =============================');
-    console.log('📧 INSTRUCTIONS:');
-    console.log('📧 1. Copy the password above');
-    console.log('📧 2. Check your email for reset link');
-    console.log('📧 3. Click the link and enter this password');
-    console.log('📧 =============================');
-
-    // Auto-copy to clipboard if possible
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(newPassword).then(function() {
-            console.log('📋 Password copied to clipboard!');
-        });
-    }
+// Show success message for reset email
+$scope.showResetSuccess = function(email) {
+    console.log('✅ Showing reset success message for:', email);
+    // alert('🔐 PASSWORD RESET EMAIL SENT!\n\nWe\'ve sent a password reset link to:\n' + email + '\n\nPlease check your email and click the link to reset your password.\n\n(Check your spam folder if you don\'t see it)');
 };
-
-    // Send password via email (mock implementation)
-    $scope.sendPasswordEmail = function(email, newPassword) {
-        return new Promise(function(resolve, reject) {
-            // Mock email sending - in real app, you'd call your email service
-            console.log('📧 Sending email to:', email);
-            console.log('📧 New password:', newPassword);
-
-            // Simulate email sending delay
-            setTimeout(function() {
-                // For development, show the password in console
-                console.log('📧 EMAIL SENT!');
-                console.log('📧 =============================');
-                console.log('📧 To:', email);
-                console.log('📧 Subject: Your New Password');
-                console.log('📧 New Password:', newPassword);
-                console.log('📧 =============================');
-
-                // Show password in alert for testing (remove in production)
-                alert('🔑 NEW PASSWORD GENERATED!\n\nEmail: ' + email + '\nNew Password: ' + newPassword + '\n\n(Check console for details)');
-
-                resolve();
-            }, 1000);
-        });
-    };
 
     // Helper function to clear the form
     $scope.clearForm = function() {

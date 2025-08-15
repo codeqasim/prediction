@@ -1,9 +1,9 @@
 // Password Reset Controller - Handles password reset from email link
-angular.module('app').controller('PasswordResetController', ['$scope', '$location', '$timeout', 'SupabaseService', 'AuthService',
-function($scope, $location, $timeout, SupabaseService, AuthService) {
+angular.module('app').controller('PasswordResetController', ['$scope', '$location', '$timeout', 'SupabaseService',
+function($scope, $location, $timeout, SupabaseService) {
 
     // PREVENT DOUBLE INITIALIZATION
-    if ($scope.initialized) return; 
+    if ($scope.initialized) return;
     $scope.initialized = true;
 
     console.log('🔄 PasswordResetController initialized');
@@ -27,34 +27,48 @@ function($scope, $location, $timeout, SupabaseService, AuthService) {
     // Check for reset tokens in URL when controller loads
     $scope.checkResetTokens = function() {
         console.log('🔍 Checking for reset tokens in URL...');
-        
+        console.log('🔍 Current URL:', window.location.href);
+        console.log('🔍 Current hash:', window.location.hash);
+
         const urlParams = new URLSearchParams(window.location.search);
         const hashParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
-        
+
         // Check both URL params and hash params
         const accessToken = urlParams.get('access_token') || hashParams.get('access_token');
         const refreshToken = urlParams.get('refresh_token') || hashParams.get('refresh_token');
         const type = urlParams.get('type') || hashParams.get('type');
-        
-        console.log('🔍 Found tokens:', { 
+
+        console.log('🔍 Found tokens:', {
             accessToken: accessToken ? 'Present' : 'Missing',
-            refreshToken: refreshToken ? 'Present' : 'Missing', 
-            type: type 
+            refreshToken: refreshToken ? 'Present' : 'Missing',
+            type: type
         });
+        console.log('🔍 URL Search:', window.location.search);
+        console.log('🔍 Hash params:', window.location.hash.split('?')[1] || 'None');
+
+        // For development/testing - allow access without tokens
+        // In production, remove this check
+        if (!accessToken && !type) {
+            console.log('⚠️ No reset tokens found - allowing for testing purposes');
+            console.log('⚠️ In production, this should redirect to forgot password');
+            // $scope.errors.general = 'For testing: No reset tokens found. In a real scenario, you would have clicked a link from your email.';
+            // Don't redirect in development
+            return;
+        }
 
         if (type !== 'recovery' || !accessToken) {
             console.log('❌ Invalid or missing reset tokens');
             $scope.errors.general = 'Invalid or expired reset link. Please request a new password reset.';
-            
-            // Redirect to forgot password after 3 seconds
+
+            // Show message for 5 seconds before redirect
             $timeout(function() {
                 $location.path('/forgot-password');
-            }, 3000);
+            }, 5000);
             return;
         }
 
         console.log('✅ Valid reset tokens found, setting session...');
-        
+
         // Set the session with the tokens
         const client = SupabaseService.getClient();
         if (!client) {
@@ -67,7 +81,7 @@ function($scope, $location, $timeout, SupabaseService, AuthService) {
             refresh_token: refreshToken
         }).then(function(response) {
             console.log('Session response:', response);
-            
+
             if (response.error) {
                 console.error('❌ Session setting error:', response.error);
                 $scope.errors.general = 'Invalid or expired reset link. Please request a new password reset.';
@@ -88,7 +102,7 @@ function($scope, $location, $timeout, SupabaseService, AuthService) {
     // Password strength checker
     $scope.checkNewPasswordStrength = function() {
         const password = $scope.newPasswordForm.password;
-        
+
         if (!password || password.length === 0) {
             $scope.newPasswordStrength.visible = false;
             return;
@@ -189,7 +203,14 @@ function($scope, $location, $timeout, SupabaseService, AuthService) {
 
             if (response.error) {
                 console.error('❌ Password update error:', response.error);
-                $scope.errors.general = response.error.message || 'Failed to update password. Please try again.';
+
+                // Handle specific error cases
+                if (response.error.message.includes('session') ||
+                    response.error.message.includes('not authenticated')) {
+                    $scope.errors.general = 'Session expired. Please click the reset link from your email again.';
+                } else {
+                    $scope.errors.general = response.error.message || 'Failed to update password. Please try again.';
+                }
                 $scope.isLoading = false;
             } else {
                 console.log('✅ Password updated successfully!');

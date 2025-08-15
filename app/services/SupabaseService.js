@@ -115,6 +115,30 @@ angular.module('app').service('SupabaseService', ['$q', function($q) {
                 return null;
             }
             return client.auth.onAuthStateChange(callback);
+        }.bind(this),
+
+        updateUser: function(userData) {
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
+            }
+            return toAngularPromise(client.auth.updateUser(userData));
+        }.bind(this),
+
+        resetPasswordForEmail: function(email, options) {
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
+            }
+            return toAngularPromise(client.auth.resetPasswordForEmail(email, options));
+        }.bind(this),
+
+        setSession: function(session) {
+            var client = this.getClient();
+            if (!client) {
+                return $q.reject(new Error('Supabase not available'));
+            }
+            return toAngularPromise(client.auth.setSession(session));
         }.bind(this)
     };
 

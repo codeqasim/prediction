@@ -74,15 +74,13 @@ angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$
         });
 
         // Initialize authentication check
-        // AuthService.checkExistingAuth();
-        
-        // Initialize auth from localStorage
         setTimeout(function() {
             try {
                 const AuthService = angular.element(document).injector().get('AuthService');
                 if (AuthService && typeof AuthService.checkLocalStorage === 'function') {
                     console.log('App.js: Initializing auth from localStorage...');
                     AuthService.checkLocalStorage();
+                    console.log('App.js: Auth state after check:', AuthService.isAuthenticated());
                 } else {
                     console.log('App.js: AuthService not ready yet');
                 }

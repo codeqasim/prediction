@@ -1,0 +1,471 @@
+<!-- Modern User Dashboard -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100" ng-controller="DashboardController">
+    
+    <!-- Dashboard Header with User Welcome -->
+    <div class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <!-- User Avatar -->
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-violet-500 to-blue-500 flex items-center justify-center shadow-lg">
+                        <span class="text-white text-xl font-bold">{{getUserInitial()}}</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Welcome back, {{getUserDisplayName()}}!</h1>
+                        <p class="text-gray-600">Track your prediction performance and climb the leaderboard</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex items-center space-x-3">
+                    <button ng-click="navigateTo('/predictions')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2">
+                        <i class="fas fa-plus"></i>
+                        <span>New Prediction</span>
+                    </button>
+                    <button ng-click="logout()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-all duration-200">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <!-- Performance Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Total Predictions Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+                    </div>
+                    <span class="text-blue-600 text-sm font-medium">All Time</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-gray-600 text-sm">Total Predictions</p>
+                    <p class="text-3xl font-bold text-gray-900">{{userStats.totalPredictions}}</p>
+                    <p class="text-green-600 text-sm flex items-center">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        +12 this month
+                    </p>
+                </div>
+            </div>
+
+            <!-- Correct Predictions Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                    <span class="text-green-600 text-sm font-medium">Correct</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-gray-600 text-sm">Right Predictions</p>
+                    <p class="text-3xl font-bold text-gray-900">{{userStats.correctPredictions}}</p>
+                    <p class="text-green-600 text-sm flex items-center">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        {{userStats.correctPredictions}}/{{userStats.totalPredictions}} correct
+                    </p>
+                </div>
+            </div>
+
+            <!-- Accuracy Score Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-bullseye text-purple-600 text-xl"></i>
+                    </div>
+                    <span class="text-purple-600 text-sm font-medium">Accuracy</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-gray-600 text-sm">Success Rate</p>
+                    <p class="text-3xl font-bold text-gray-900">{{userStats.accuracy}}%</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" 
+                             ng-style="{'width': userStats.accuracy + '%'}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranking Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-trophy text-yellow-600 text-xl"></i>
+                    </div>
+                    <span class="text-yellow-600 text-sm font-medium">Rank</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-gray-600 text-sm">Global Ranking</p>
+                    <p class="text-3xl font-bold text-gray-900">#{{userStats.currentRank}}</p>
+                    <p class="text-yellow-600 text-sm flex items-center">
+                        <i class="fas fa-medal mr-1"></i>
+                        {{userStats.points}} points
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Points & Level Section -->
+        <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg p-8 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold mb-2">Your Prediction Score</h3>
+                    <p class="text-purple-100 mb-4">Keep predicting to earn more points and climb the leaderboard!</p>
+                    <div class="flex items-center space-x-6">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold">{{userStats.points}}</p>
+                            <p class="text-purple-200 text-sm">Total Points</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-semibold">Level {{Math.floor(userStats.points / 100) + 1}}</p>
+                            <p class="text-purple-200 text-sm">Current Level</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xl font-semibold">{{100 - (userStats.points % 100)}}</p>
+                            <p class="text-purple-200 text-sm">Points to next level</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-star text-4xl text-yellow-300"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Progress Bar -->
+            <div class="mt-6">
+                <div class="flex justify-between text-sm text-purple-200 mb-2">
+                    <span>Level {{Math.floor(userStats.points / 100) + 1}}</span>
+                    <span>Level {{Math.floor(userStats.points / 100) + 2}}</span>
+                </div>
+                <div class="w-full bg-white/20 rounded-full h-3">
+                    <div class="bg-yellow-400 h-3 rounded-full transition-all duration-500" 
+                         ng-style="{'width': (userStats.points % 100) + '%'}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <!-- Main Dashboard Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Predictions -->
+            <div class="bg-white rounded-lg border p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-bar text-blue-600"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-500">Total Predictions</div>
+                        <div class="text-2xl font-semibold text-gray-900">{{userStats.totalPredictions}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Correct Predictions -->
+            <div class="bg-white rounded-lg border p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check-circle text-green-600"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-500">Correct</div>
+                        <div class="text-2xl font-semibold text-gray-900">{{userStats.correctPredictions}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accuracy -->
+            <div class="bg-white rounded-lg border p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-target text-yellow-600"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-500">Accuracy</div>
+                        <div class="text-2xl font-semibold" ng-class="getAccuracyColor(userStats.accuracy)">
+                            {{userStats.accuracy}}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Rank -->
+            <div class="bg-white rounded-lg border p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-trophy text-purple-600"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-500">Current Rank</div>
+                        <div class="text-2xl font-semibold text-gray-900">
+                            {{userStats.currentRank}}{{getRankSuffix(userStats.currentRank)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Recent Predictions -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg border">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Recent Predictions</h3>
+                            <button ng-click="navigateTo('/predictions')"
+                                    class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                                View All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="divide-y divide-gray-200">
+                        <div ng-repeat="prediction in recentPredictions"
+                             class="p-6 hover:bg-gray-50 cursor-pointer"
+                             ng-click="viewPrediction(prediction.id)">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-2">
+                                        {{prediction.title}}
+                                    </h4>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <span>Your choice:
+                                            <span ng-class="getUserChoiceClass(prediction)" class="font-medium">
+                                                {{getUserChoice(prediction)}}
+                                            </span>
+                                        </span>
+                                        <span>•</span>
+                                        <span>{{formatDate(prediction.created_at)}}</span>
+                                        <span>•</span>
+                                        <span>Ends: {{formatDate(prediction.end_date)}}</span>
+                                    </div>
+
+                                    <!-- Progress Bar -->
+                                    <div class="mt-3">
+                                        <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+                                            <span>Current: {{prediction.current_yes_percentage}}% YES</span>
+                                            <span>{{100 - prediction.current_yes_percentage}}% NO</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full"
+                                                 style="width: {{prediction.current_yes_percentage}}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-4 flex-shrink-0">
+                                    <span ng-class="getPredictionStatusBadge(prediction).class"
+                                          class="px-2 py-1 text-xs rounded-full text-white">
+                                        {{getPredictionStatusBadge(prediction).text}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Show Recent Predictions -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Predictions ({{recentPredictions.length}})</h3>
+
+                        <!-- Display all predictions -->
+                        <div ng-repeat="prediction in recentPredictions" class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium text-gray-900">{{prediction.title}}</h4>
+                            <div class="text-sm text-gray-600 mt-1">
+                                <span>Your choice: <strong>{{getUserChoice(prediction)}}</strong></span> •
+                                <span>Status: {{getPredictionStatusBadge(prediction).text}}</span> •
+                                <span>{{formatDate(prediction.created_at)}}</span>
+                            </div>
+                        </div>
+
+                        <!-- Default message -->
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <p class="text-green-800">
+                                Dashboard is now loading all data without conditions!
+                                Current predictions: {{recentPredictions.length}}
+                            </p>
+                        </div>
+                    </div>
+                        <i class="fas fa-chart-line text-gray-300 text-3xl mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No predictions yet</h3>
+                        <p class="text-gray-500 mb-4">Start making predictions to see them here!</p>
+                        <button ng-click="navigateTo('/predictions')"
+                                class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                            Browse Predictions
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+
+                <!-- User Profile Card -->
+                <div class="bg-white rounded-lg border p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile</h3>
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-white text-xl font-semibold">
+                                {{dashboard.currentUser.email[0].toUpperCase()}}
+                            </span>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-900">
+                            {{(dashboard.currentUser.user_metadata && dashboard.currentUser.user_metadata.full_name) || dashboard.currentUser.email.split('@')[0]}}
+                        </h4>
+                        <p class="text-gray-500 text-sm">{{dashboard.currentUser.email}}</p>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">Points</span>
+                                <span class="font-medium text-purple-600">{{dashboard.userStats.points}}</span>
+                            </div>
+                            <div class="flex justify-between text-sm mt-2">
+                                <span class="text-gray-500">Rank</span>
+                                <span class="font-medium">
+                                    #{{dashboard.userStats.currentRank}}
+                                </span>
+                            </div>
+                        </div>
+
+                        <button ng-click="dashboard.navigateTo('/profile')"
+                                class="mt-4 w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg border p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button ng-click="dashboard.navigateTo('/predictions')"
+                                class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm flex items-center justify-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Make Prediction
+                        </button>
+                        <button ng-click="dashboard.navigateTo('/leaderboard')"
+                                class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center justify-center">
+                            <i class="fas fa-trophy mr-2"></i>
+                            View Leaderboard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Achievement/Badge Section -->
+                <div class="bg-white rounded-lg border p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Achievement</h3>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-star text-yellow-600"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900">Welcome!</h4>
+                        <p class="text-gray-500 text-sm mt-1">New user account created</p>
+                    </div>
+                </div>
+
+                <!-- Real Supabase Users Section (for debugging) -->
+                <div class="bg-white rounded-lg border p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-users mr-2"></i>
+                        Registered Users ({{dashboard.allUsers?.length || 0}})
+                    </h3>
+
+                    <!-- Users Found -->
+                    <div ng-if="dashboard.allUsers && dashboard.allUsers.length > 0" class="space-y-3">
+                        <div ng-repeat="user in dashboard.allUsers"
+                             class="p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">
+                                        {{user.username || user.email.split('@')[0]}}
+                                    </h4>
+                                    <p class="text-sm text-gray-500">{{user.email}}</p>
+                                    <p class="text-xs text-gray-400">
+                                        Joined: {{dashboard.formatDate(user.created_at)}}
+                                    </p>
+                                    <p class="text-xs text-blue-600" ng-if="user.last_sign_in_at">
+                                        Last login: {{dashboard.formatDate(user.last_sign_in_at)}}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm font-medium text-purple-600">
+                                        {{user.points || 0}} pts
+                                    </span>
+                                    <div class="text-xs text-gray-500">
+                                        {{user.predictions_total || 0}} predictions
+                                    </div>
+                                    <div class="text-xs" ng-class="user.email_confirmed_at ? 'text-green-600' : 'text-yellow-600'">
+                                        {{user.email_confirmed_at ? 'Verified' : 'Pending'}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Link -->
+                        <div class="pt-3 border-t border-gray-200">
+                            <a href="#!/admin" class="inline-flex items-center px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                                <i class="fas fa-cog mr-2"></i>
+                                Admin Dashboard
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- No Users Found -->
+                    <div ng-if="!dashboard.allUsers || dashboard.allUsers.length === 0" class="text-center py-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">Setting up user data...</h4>
+                        <p class="text-gray-500 text-sm mb-4">
+                            To see all users, you need to set up the profiles table in Supabase
+                        </p>
+
+                        <!-- Instructions -->
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-left">
+                            <h5 class="font-medium text-yellow-900 mb-2">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Setup Required
+                            </h5>
+                            <div class="text-sm text-yellow-800 space-y-2">
+                                <p><strong>Step 1:</strong> Go to your Supabase Dashboard → SQL Editor</p>
+                                <p><strong>Step 2:</strong> Run the SQL script from <code>supabase_setup.sql</code></p>
+                                <p><strong>Step 3:</strong> Refresh this page to see all users</p>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-gray-400 space-y-1 mb-4">
+                            <div><strong>Current User:</strong> {{dashboard.currentUser?.email || 'Not logged in'}}</div>
+                            <div><strong>User ID:</strong> {{dashboard.currentUser?.id || 'N/A'}}</div>
+                        </div>
+
+                        <div class="space-x-2">
+                            <a href="#!/admin" class="inline-flex items-center px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                                <i class="fas fa-cog mr-2"></i>
+                                Admin Dashboard
+                            </a>
+                            <a href="#!/login" class="inline-flex items-center px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-sign-in-alt mr-2"></i>
+                                Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

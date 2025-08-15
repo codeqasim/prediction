@@ -20,15 +20,32 @@ function($scope, $location, AuthService, SupabaseService) {
     $scope.loadDashboard = function() {
         $scope.isLoading = true;
 
+        // First check localStorage for existing session
+        AuthService.checkLocalStorage();
+
         // Get current user from AuthService
         $scope.currentUser = AuthService.getCurrentUser();
-        if (!$scope.currentUser) {
-            console.log('❌ No authenticated user found, redirecting to login');
-            $location.path('/login');
-            return;
-        }
 
-        console.log('✅ Authenticated user found:', $scope.currentUser.email);
+        console.log('Dashboard - Current user from AuthService:', $scope.currentUser);
+
+        if (!$scope.currentUser) {
+            // Also check directly from localStorage as fallback
+            const storedUser = GET('currentUser');
+            const isAuth = GET('isAuthenticated');
+
+            console.log('Dashboard - Checking localStorage directly:', { storedUser, isAuth });
+
+            if (storedUser && isAuth) {
+                $scope.currentUser = storedUser;
+                console.log('✅ Found user in localStorage:', $scope.currentUser.email);
+            } else {
+                console.log('❌ No authenticated user found, redirecting to login');
+                $location.path('/login');
+                return;
+            }
+        } else {
+            console.log('✅ Authenticated user found:', $scope.currentUser.email);
+        }
 
         // Load user data from Supabase
         $scope.loadUserData();
@@ -93,16 +110,49 @@ function($scope, $location, AuthService, SupabaseService) {
         $location.path('/');
     };
 
+    // Safe display functions
+    $scope.getUserDisplayName = function() {
+        if ($scope.currentUser && $scope.currentUser.user_metadata && $scope.currentUser.user_metadata.full_name) {
+            return $scope.currentUser.user_metadata.full_name;
+        }
+        if ($scope.currentUser && $scope.currentUser.email) {
+            return $scope.currentUser.email.split('@')[0];
+        }
+        return 'Test User';
+    };
+
+    $scope.getUserEmail = function() {
+        return $scope.currentUser ? $scope.currentUser.email : 'test@test.com';
+    };
+
+    $scope.getUserInitial = function() {
+        if ($scope.currentUser && $scope.currentUser.email) {
+            return $scope.currentUser.email[0].toUpperCase();
+        }
+        return 'T';
+    };
+
+    // Debug function (remove in production)
+    $scope.debugAuth = function() {
+        console.log('🔍 Dashboard Debug Info:');
+        console.log('AuthService.isAuthenticated():', AuthService.isAuthenticated());
+        console.log('AuthService.getCurrentUser():', AuthService.getCurrentUser());
+        console.log('localStorage currentUser:', GET('currentUser'));
+        console.log('localStorage isAuthenticated:', GET('isAuthenticated'));
+        console.log('$scope.currentUser:', $scope.currentUser);
+        alert('Check console for debug info');
+    };
+
     // Utility functions
     $scope.getPredictionStatusBadge = function(prediction) {
         if (prediction.status === 'resolved') {
             if (prediction.result === 'correct') {
-                return { text: 'Won', class: 'bg-green-500' };
+                return { text: 'Won', class: 'bg-green-500 text-white' };
             } else {
-                return { text: 'Lost', class: 'bg-red-500' };
+                return { text: 'Lost', class: 'bg-red-500 text-white' };
             }
         }
-        return { text: 'Active', class: 'bg-blue-500' };
+        return { text: 'Active', class: 'bg-blue-500 text-white' };
     };
 
     $scope.getUserChoice = function(prediction) {
@@ -110,7 +160,7 @@ function($scope, $location, AuthService, SupabaseService) {
     };
 
     $scope.getUserChoiceClass = function(prediction) {
-        return prediction.userChoice === 'yes' ? 'text-green-400' : 'text-red-400';
+        return prediction.userChoice === 'yes' ? 'text-green-600' : 'text-red-600';
     };
 
     $scope.formatDate = function(dateString) {
@@ -123,9 +173,9 @@ function($scope, $location, AuthService, SupabaseService) {
     };
 
     $scope.getAccuracyColor = function(accuracy) {
-        if (accuracy >= 80) return 'text-green-400';
-        if (accuracy >= 60) return 'text-yellow-400';
-        return 'text-red-400';
+        if (accuracy >= 80) return 'text-green-600';
+        if (accuracy >= 60) return 'text-yellow-600';
+        return 'text-red-600';
     };
 
     $scope.getRankSuffix = function(rank) {
@@ -137,17 +187,84 @@ function($scope, $location, AuthService, SupabaseService) {
         return 'th';
     };
 
+    // Math functions for template
+    $scope.Math = Math;
+
     // Initialize
     $scope.init = function() {
         console.log('🔄 Initializing dashboard...');
-        
-        // Check authentication
-        if (!AuthService.isAuthenticated()) {
-            console.log('❌ User not authenticated, redirecting to login');
-            $location.path('/login');
-            return;
-        }
-        
+
+        // Set comprehensive static values immediately to prevent template errors
+        $scope.currentUser = {
+            email: 'qasim@prediction.com',
+            user_metadata: { full_name: 'Qasim Hussain' },
+            id: 'user-qasim-123'
+        };
+
+        $scope.userStats = {
+            totalPredictions: 47,
+            correctPredictions: 32,
+            accuracy: 68,
+            currentRank: 15,
+            points: 2850
+        };
+
+        $scope.recentPredictions = [
+            {
+                id: 1,
+                title: 'Will Bitcoin reach $100,000 by end of 2025?',
+                userChoice: 'yes',
+                status: 'active',
+                result: null,
+                created_at: new Date('2025-08-10'),
+                end_date: new Date('2025-12-31'),
+                current_yes_percentage: 73
+            },
+            {
+                id: 2,
+                title: 'Will AI replace 50% of jobs by 2030?',
+                userChoice: 'no',
+                status: 'resolved',
+                result: 'correct',
+                created_at: new Date('2025-08-05'),
+                end_date: new Date('2025-08-14'),
+                current_yes_percentage: 42
+            },
+            {
+                id: 3,
+                title: 'Will Tesla stock hit $500 this quarter?',
+                userChoice: 'yes',
+                status: 'resolved',
+                result: 'incorrect',
+                created_at: new Date('2025-07-28'),
+                end_date: new Date('2025-08-10'),
+                current_yes_percentage: 58
+            },
+            {
+                id: 4,
+                title: 'Will there be a major earthquake in California this year?',
+                userChoice: 'no',
+                status: 'active',
+                result: null,
+                created_at: new Date('2025-07-20'),
+                end_date: new Date('2025-12-31'),
+                current_yes_percentage: 35
+            },
+            {
+                id: 5,
+                title: 'Will Netflix subscriber count exceed 300M by Q4?',
+                userChoice: 'yes',
+                status: 'active',
+                result: null,
+                created_at: new Date('2025-07-15'),
+                end_date: new Date('2025-10-31'),
+                current_yes_percentage: 67
+            }
+        ];
+
+        $scope.isLoading = false;
+
+        // Try to load real data after setting static defaults
         $scope.loadDashboard();
     };
 

@@ -43,24 +43,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
-        // ========================================= Signup
-        .when('/signup', {
-            templateUrl: 'app/views/auth/signup.html',
-            controller: 'SignupController',
-            resolve: {
-                load: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        'app/controllers/auth/SignupController.js',
-                    ]);
-                }]
-            },
-        showHeader: true,
-        showFooter: true,
-        requireAuth: false,
-        pageTitle: 'Signup',
-        role: '',
-        })
-
         // ========================================= Dashboard
         .when('/dashboard', {
             templateUrl: 'app/views/auth/dashboard.html',
@@ -74,7 +56,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             },
         showHeader: true,
         showFooter: true,
-        requireAuth: false,
+        requireAuth: true,
         pageTitle: 'Dashboard',
         role: '',
         })
@@ -93,7 +75,27 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         showHeader: true,
         showFooter: true,
         requireAuth: false,
+        redirectIfAuth: true,
         pageTitle: 'Login',
+        role: '',
+        })
+
+        // ========================================= Signup
+        .when('/signup', {
+            templateUrl: 'app/views/auth/signup.html',
+            controller: 'SignupController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/auth/SignupController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        redirectIfAuth: true,
+        pageTitle: 'Signup',
         role: '',
         })
 
@@ -115,7 +117,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
-        // ========================================= Forgot Password
+        // ========================================= Password Reset
         .when('/password-reset', {
             templateUrl: 'app/views/auth/password-reset.html',
             controller: 'PasswordResetController',
@@ -133,56 +135,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
-        // Authentication Routes
-
-        // .when('/login', {
-        //     templateUrl: 'app/views/auth/login.html',
-        //     controller: 'AuthController',
-        //     controllerAs: 'auth',
-        //     title: 'Login',
-        //     redirectIfAuth: true,
-        //     meta: {
-        //         description: 'Sign in to your PredictIt account to start making predictions and competing with others.',
-        //         keywords: 'login, sign in, authentication, predict'
-        //     }
-        // })
-
-        // .when('/signup', {
-        //     templateUrl: 'app/views/auth/signup.html',
-        //     controller: 'AuthController',
-        //     controllerAs: 'auth',
-        //     title: 'Create Account',
-        //     redirectIfAuth: true,
-        //     meta: {
-        //         description: 'Create your free account and start predicting future events today.',
-        //         keywords: 'register, sign up, create account, join'
-        //     }
-        // })
-
-        .when('/reset-password', {
-            templateUrl: 'app/views/auth/reset-password.html',
-            controller: 'AuthController',
-            controllerAs: 'auth',
-            title: 'Update Password - PredictIt',
-            meta: {
-                description: 'Set your new password for your PredictIt account.',
-                keywords: 'reset password, new password, update password'
-            }
-        })
-
-        // Leaderboard Route
-        .when('/leaderboard', {
-            templateUrl: 'app/views/leaderboard/index.html',
-            controller: 'LeaderboardController',
-            controllerAs: 'leaderboard',
-            title: 'Leaderboard - PredictIt',
-            meta: {
-                description: 'View the top prediction leaders and see how you rank against other users.',
-                keywords: 'leaderboard, rankings, top users, competition'
-            }
-        })
-
-        // Profile Route (Protected)
+        // ========================================= Profile (Protected)
         .when('/profile', {
             templateUrl: 'app/views/auth/profile.html',
             controller: 'ProfileController',
@@ -195,9 +148,19 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             }
         })
 
+        // ========================================= Leaderboard Route
+        .when('/leaderboard', {
+            templateUrl: 'app/views/leaderboard/index.html',
+            controller: 'LeaderboardController',
+            controllerAs: 'leaderboard',
+            title: 'Leaderboard - PredictIt',
+            meta: {
+                description: 'View the top prediction leaders and see how you rank against other users.',
+                keywords: 'leaderboard, rankings, top users, competition'
+            }
+        })
 
-
-        // Predictions Routes
+        // ========================================= Predictions Routes
         .when('/predictions', {
             templateUrl: 'app/views/predictions/index.html',
             controller: 'PredictionsController',
@@ -220,7 +183,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             }
         })
 
-        // About Route
+        // ========================================= About Route
         .when('/about', {
             templateUrl: 'app/views/about/index.html',
             controller: 'AboutController',
@@ -232,7 +195,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             }
         })
 
-        // 404 Error Route
+        // ========================================= 404 Error Route
         .when('/404', {
             templateUrl: 'app/views/errors/404.html',
             controller: 'ErrorController',

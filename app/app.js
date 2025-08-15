@@ -29,20 +29,27 @@ angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$
             $rootScope.setLoading(true);
 
             // Check authentication for protected routes
-            // if (next.requireAuth && !AuthService.isAuthenticated()) {
-            //     event.preventDefault();
-            //     $location.path('/login');
-            //     $rootScope.setLoading(false);
-            //     return;
-            // }
+            try {
+                const AuthService = angular.element(document).injector().get('AuthService');
+                if (next.requireAuth && AuthService && !AuthService.isAuthenticated()) {
+                    console.log('Route requires auth but user not authenticated, redirecting to login');
+                    event.preventDefault();
+                    $location.path('/login');
+                    $rootScope.setLoading(false);
+                    return;
+                }
 
-            // // Redirect authenticated users away from auth pages
-            // if (next.redirectIfAuth && AuthService.isAuthenticated()) {
-            //     event.preventDefault();
-            //     $location.path('/');
-            //     $rootScope.setLoading(false);
-            //     return;
-            // }
+                // Redirect authenticated users away from auth pages
+                if (next.redirectIfAuth && AuthService && AuthService.isAuthenticated()) {
+                    console.log('User authenticated but trying to access auth page, redirecting to dashboard');
+                    event.preventDefault();
+                    $location.path('/dashboard');
+                    $rootScope.setLoading(false);
+                    return;
+                }
+            } catch (error) {
+                console.log('Auth check skipped - service not ready:', error.message);
+            }
         });
 
         // Route change success
@@ -68,4 +75,19 @@ angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$
 
         // Initialize authentication check
         // AuthService.checkExistingAuth();
+        
+        // Initialize auth from localStorage
+        setTimeout(function() {
+            try {
+                const AuthService = angular.element(document).injector().get('AuthService');
+                if (AuthService && typeof AuthService.checkLocalStorage === 'function') {
+                    console.log('App.js: Initializing auth from localStorage...');
+                    AuthService.checkLocalStorage();
+                } else {
+                    console.log('App.js: AuthService not ready yet');
+                }
+            } catch (error) {
+                console.log('App.js: Auth initialization will happen later:', error.message);
+            }
+        }, 100);
     }]);

@@ -1,6 +1,6 @@
 // Complete SignupController.js - Final Working Version
-angular.module('app').controller('SignupController', ['$scope', '$location', 'SupabaseService',
-function($scope, $location, SupabaseService) {
+angular.module('app').controller('SignupController', ['$scope', '$location', 'SupabaseService', 'AuthService',
+function($scope, $location, SupabaseService, AuthService) {
     console.log('🚀 SignupController loading...');
 
     // Test Supabase directly

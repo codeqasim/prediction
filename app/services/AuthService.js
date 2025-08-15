@@ -18,26 +18,64 @@ function($rootScope, $q, SupabaseService) {
     this.setCurrentUser = function(user) {
         console.log('AuthService setCurrentUser called with:', user);
         currentUser = user;
+        
+        // Store user in localStorage using app.js GET/SET functions
         if (user) {
+            SET('currentUser', user);
+            SET('isAuthenticated', true);
+            console.log('User stored in localStorage:', user);
             console.log('Broadcasting auth:login');
             $rootScope.$broadcast('auth:login', user);
         } else {
+            DEL('currentUser');
+            DEL('isAuthenticated');
+            console.log('User removed from localStorage');
             console.log('Broadcasting auth:logout');
             $rootScope.$broadcast('auth:logout');
         }
+    };
+
+    // Check for user in localStorage first
+    this.checkLocalStorage = function() {
+        const storedUser = GET('currentUser');
+        const isAuth = GET('isAuthenticated');
+        
+        console.log('Checking localStorage for user:', storedUser);
+        console.log('Is authenticated from storage:', isAuth);
+        
+        if (storedUser && isAuth) {
+            currentUser = storedUser;
+            console.log('User found in localStorage, setting currentUser');
+            $rootScope.$broadcast('auth:login', currentUser);
+            return true;
+        }
+        return false;
     };
 
     // Check existing authentication
     this.checkExistingAuth = function() {
         const deferred = $q.defer();
 
+        // First check localStorage
+        if (this.checkLocalStorage()) {
+            deferred.resolve(currentUser);
+            return deferred.promise;
+        }
+
+        // If no localStorage, check Supabase session
         SupabaseService.auth.getSession().then(function(response) {
             if (response.data && response.data.session && response.data.session.user) {
                 currentUser = response.data.session.user;
+                // Store in localStorage
+                SET('currentUser', currentUser);
+                SET('isAuthenticated', true);
                 $rootScope.$broadcast('auth:login', currentUser);
                 deferred.resolve(currentUser);
             } else {
                 currentUser = null;
+                // Clean localStorage
+                DEL('currentUser');
+                DEL('isAuthenticated');
                 deferred.resolve(null);
             }
         }).catch(function(error) {
@@ -105,12 +143,20 @@ function($rootScope, $q, SupabaseService) {
 
         SupabaseService.auth.signOut().then(function() {
             currentUser = null;
+            // Clear localStorage
+            DEL('currentUser');
+            DEL('isAuthenticated');
+            console.log('Logout successful - localStorage cleared');
             $rootScope.$broadcast('auth:logout');
             deferred.resolve();
         }).catch(function(error) {
             console.error('Logout error:', error);
             // Even if logout fails, clear local state
             currentUser = null;
+            // Clear localStorage even if Supabase logout fails
+            DEL('currentUser');
+            DEL('isAuthenticated');
+            console.log('Logout error - localStorage still cleared');
             $rootScope.$broadcast('auth:logout');
             deferred.reject(error);
         });

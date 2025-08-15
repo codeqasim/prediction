@@ -1,161 +1,156 @@
 // Dashboard Controller - Handles user dashboard functionality
-angular.module('app').controller('DashboardController', ['$scope', '$location', '$timeout',
-function($scope, $location, $timeout) {
+angular.module('app').controller('DashboardController', ['$scope', '$location', 'AuthService', 'SupabaseService',
+function($scope, $location, AuthService, SupabaseService) {
 
     console.log('📊 Dashboard Controller Initialized');
 
-    // const vm = this;
+    // User data
+    $scope.currentUser = null;
+    $scope.userStats = {
+        totalPredictions: 0,
+        correctPredictions: 0,
+        accuracy: 0,
+        currentRank: 'Unranked',
+        points: 0
+    };
+    $scope.recentPredictions = [];
+    $scope.isLoading = true;
 
-    // // User data
-    // vm.currentUser = null;
-    // vm.userStats = {
-    //     totalPredictions: 0,
-    //     correctPredictions: 0,
-    //     accuracy: 0,
-    //     currentRank: 0,
-    //     points: 0
-    // };
-    // vm.recentPredictions = [];
-    // vm.isLoading = true;
+    // Load dashboard data
+    $scope.loadDashboard = function() {
+        $scope.isLoading = true;
 
-    // // Load dashboard data
-    // // vm.loadDashboard = function() {
-    // //     vm.isLoading = true;
+        // Get current user from AuthService
+        $scope.currentUser = AuthService.getCurrentUser();
+        if (!$scope.currentUser) {
+            console.log('❌ No authenticated user found, redirecting to login');
+            $location.path('/login');
+            return;
+        }
 
-    // //     // Get current user
-    // //     const authUser = AuthService.getCurrentUser();
-    // //     if (!authUser) {
-    // //         $location.path('/auth');
-    // //         return;
-    // //     }
+        console.log('✅ Authenticated user found:', $scope.currentUser.email);
 
-    // //     vm.currentUser = authUser;
+        // Load user data from Supabase
+        $scope.loadUserData();
+    };
 
-    // //     // Load real user data from Supabase instead of demo data
-    // //     vm.loadRealUserData();
-    // // };
+    // Load user data from Supabase
+    $scope.loadUserData = function() {
+        const client = SupabaseService.getClient();
+        if (!client) {
+            console.log('❌ No Supabase client available');
+            $scope.isLoading = false;
+            return;
+        }
 
-    // // Load real user data from Supabase
-    // // vm.loadRealUserData = function() {
-    // //     // Get user statistics from UserService (which should fetch from Supabase)
-    // //     UserService.getUserStats().then(function(stats) {
-    // //         vm.userStats = {
-    // //             totalPredictions: stats.total_predictions || 0,
-    // //             correctPredictions: stats.correct_predictions || 0,
-    // //             accuracy: stats.accuracy || 0,
-    // //             currentRank: stats.rank || 'Unranked',
-    // //             points: stats.points || 0
-    // //         };
-    // //     }).catch(function(error) {
-    // //         console.error('Error loading user stats:', error);
-    // //         // Use default values if error
-    // //         vm.userStats = {
-    // //             totalPredictions: 0,
-    // //             correctPredictions: 0,
-    // //             accuracy: 0,
-    // //             currentRank: 'Unranked',
-    // //             points: 0
-    // //         };
-    // //     });
+        // Load user profile from profiles table
+        client.from('profiles')
+            .select('*')
+            .eq('id', $scope.currentUser.id)
+            .single()
+            .then(function(response) {
+                if (response.data) {
+                    console.log('✅ User profile loaded:', response.data);
+                    $scope.userProfile = response.data;
+                    $scope.userStats.points = response.data.points || 0;
+                } else {
+                    console.log('ℹ️ No profile found, creating default stats');
+                }
+                $scope.$apply();
+            })
+            .catch(function(error) {
+                console.error('❌ Error loading user profile:', error);
+                $scope.$apply();
+            });
 
-    //     // Get user predictions from UserService
-    //     // UserService.getUserPredictions(5).then(function(predictions) {
-    //     //     vm.recentPredictions = predictions.map(function(prediction) {
-    //     //         return {
-    //     //             id: prediction.id,
-    //     //             title: prediction.match || prediction.title || "Prediction #" + prediction.id,
-    //     //             userChoice: prediction.prediction || 'unknown',
-    //     //             status: prediction.status || (prediction.correct !== undefined ? 'resolved' : 'active'),
-    //     //             result: prediction.correct ? 'correct' : 'incorrect',
-    //     //             created_at: prediction.date || prediction.created_at,
-    //     //             end_date: prediction.end_date || prediction.date,
-    //     //             current_yes_percentage: prediction.current_yes_percentage || Math.floor(Math.random() * 100)
-    //     //         };
-    //     //     });
-    //     // }).catch(function(error) {
-    //     //     console.error('Error loading user predictions:', error);
-    //     //     vm.recentPredictions = [];
-    //     // });
+        // TODO: Load predictions data when predictions table is available
+        // For now, use default values
+        $scope.userStats = {
+            totalPredictions: 0,
+            correctPredictions: 0,
+            accuracy: 0,
+            currentRank: 'Unranked',
+            points: $scope.userStats.points || 0
+        };
 
-    //     // Check if we should load actual Supabase users for admin/leaderboard
-    // //     vm.loadAllUsers();
+        $scope.recentPredictions = [];
+        $scope.isLoading = false;
+        $scope.$apply();
+    };
 
-    // //     vm.isLoading = false;
-    // // };
+    // Navigation functions
+    $scope.navigateTo = function(path) {
+        $location.path(path);
+    };
 
-    // // Load all users from Supabase (for admin or leaderboard display)
-    // // vm.loadAllUsers = function() {
-    // //     // This will show real users from Supabase in console for debugging
-    // //     UserService.getAllUsers().then(function(users) {
-    // //         console.log('Real Supabase users:', users);
-    // //         vm.allUsers = users;
-    // //     }).catch(function(error) {
-    // //         console.error('Error loading all users:', error);
-    // //         vm.allUsers = [];
-    // //     });
-    // // };
+    $scope.viewPrediction = function(predictionId) {
+        $location.path('/predictions/' + predictionId);
+    };
 
-    // // Navigation functions
-    // vm.navigateTo = function(path) {
-    //     $location.path(path);
-    // };
+    // User functions
+    $scope.logout = function() {
+        AuthService.logout();
+        $location.path('/');
+    };
 
-    // vm.viewPrediction = function(predictionId) {
-    //     $location.path('/predictions/' + predictionId);
-    // };
+    // Utility functions
+    $scope.getPredictionStatusBadge = function(prediction) {
+        if (prediction.status === 'resolved') {
+            if (prediction.result === 'correct') {
+                return { text: 'Won', class: 'bg-green-500' };
+            } else {
+                return { text: 'Lost', class: 'bg-red-500' };
+            }
+        }
+        return { text: 'Active', class: 'bg-blue-500' };
+    };
 
-    // // Utility functions
-    // vm.getPredictionStatusBadge = function(prediction) {
-    //     if (prediction.status === 'resolved') {
-    //         if (prediction.result === 'correct') {
-    //             return { text: 'Won', class: 'bg-green-500' };
-    //         } else {
-    //             return { text: 'Lost', class: 'bg-red-500' };
-    //         }
-    //     }
-    //     return { text: 'Active', class: 'bg-blue-500' };
-    // };
+    $scope.getUserChoice = function(prediction) {
+        return prediction.userChoice === 'yes' ? 'YES' : 'NO';
+    };
 
-    // vm.getUserChoice = function(prediction) {
-    //     return prediction.userChoice === 'yes' ? 'YES' : 'NO';
-    // };
+    $scope.getUserChoiceClass = function(prediction) {
+        return prediction.userChoice === 'yes' ? 'text-green-400' : 'text-red-400';
+    };
 
-    // vm.getUserChoiceClass = function(prediction) {
-    //     return prediction.userChoice === 'yes' ? 'text-green-400' : 'text-red-400';
-    // };
+    $scope.formatDate = function(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
 
-    // vm.formatDate = function(dateString) {
-    //     const date = new Date(dateString);
-    //     return date.toLocaleDateString('en-US', {
-    //         year: 'numeric',
-    //         month: 'short',
-    //         day: 'numeric'
-    //     });
-    // };
+    $scope.getAccuracyColor = function(accuracy) {
+        if (accuracy >= 80) return 'text-green-400';
+        if (accuracy >= 60) return 'text-yellow-400';
+        return 'text-red-400';
+    };
 
-    // vm.getAccuracyColor = function(accuracy) {
-    //     if (accuracy >= 80) return 'text-green-400';
-    //     if (accuracy >= 60) return 'text-yellow-400';
-    //     return 'text-red-400';
-    // };
+    $scope.getRankSuffix = function(rank) {
+        if (typeof rank === 'string') return '';
+        const lastDigit = rank % 10;
+        if (lastDigit === 1 && rank !== 11) return 'st';
+        if (lastDigit === 2 && rank !== 12) return 'nd';
+        if (lastDigit === 3 && rank !== 13) return 'rd';
+        return 'th';
+    };
 
-    // vm.getRankSuffix = function(rank) {
-    //     const lastDigit = rank % 10;
-    //     if (lastDigit === 1 && rank !== 11) return 'st';
-    //     if (lastDigit === 2 && rank !== 12) return 'nd';
-    //     if (lastDigit === 3 && rank !== 13) return 'rd';
-    //     return 'th';
-    // };
+    // Initialize
+    $scope.init = function() {
+        console.log('🔄 Initializing dashboard...');
+        
+        // Check authentication
+        if (!AuthService.isAuthenticated()) {
+            console.log('❌ User not authenticated, redirecting to login');
+            $location.path('/login');
+            return;
+        }
+        
+        $scope.loadDashboard();
+    };
 
-    // // Initialize
-    // // vm.init = function() {
-    // //     if (!AuthService.isAuthenticated()) {
-    // //         $location.path('/auth');
-    // //         return;
-    // //     }
-    // //     vm.loadDashboard();
-    // // };
-
-    // // Call init
-    // vm.init();
+    // Call init
+    $scope.init();
 }]);

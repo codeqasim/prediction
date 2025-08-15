@@ -42,7 +42,7 @@
                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
-                        {{auth.errors.email}}
+                        {{errors.email}}
                     </div>
                 </div>
 
@@ -58,11 +58,11 @@
                                placeholder="Enter your password"
                                required>
                     </div>
-                    <div ng-if="auth.errors.password" class="text-red-400 text-sm mt-1 flex items-center">
+                    <div ng-if="errors.password" class="text-red-400 text-sm mt-1 flex items-center">
                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
-                        {{auth.errors.password}}
+                        {{errors.password}}
                     </div>
                 </div>
 
@@ -80,8 +80,8 @@
                 </div>
 
                 <!-- Error Message -->
-                <div ng-if="auth.errors.general" class="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300 text-sm">
-                    {{auth.errors.general}}
+                <div ng-if="errors.general" class="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300 text-sm">
+                    {{errors.general}}
                 </div>
 
                 <!-- Submit Button -->
@@ -104,6 +104,16 @@
                 </button>
 
             </form>
+
+            <!-- Test Buttons (remove after testing) -->
+            <div class="mt-4 space-y-2">
+                <button ng-click="testSignup()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm">
+                    1. Create Test User (test@test.com)
+                </button>
+                <button ng-click="testLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm">
+                    2. Test Login (test@test.com / password123)
+                </button>
+            </div>
 
             <!-- Sign Up Link -->
             <div class="text-center mt-6">

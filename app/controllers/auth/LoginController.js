@@ -1,6 +1,6 @@
 // Complete LoginController.js - Final Working Version
-angular.module('app').controller('LoginController', ['$scope', '$location', 'SupabaseService',
-function($scope, $location, SupabaseService) {
+angular.module('app').controller('LoginController', ['$scope', '$location', 'SupabaseService', 'AuthService',
+function($scope, $location, SupabaseService, AuthService) {
     console.log('🚀 LoginController loading...');
 
     // PREVENT DOUBLE INITIALIZATION
@@ -88,6 +88,14 @@ function($scope, $location, SupabaseService) {
             email: email
         });
 
+        // Add debugging log to check actual form values
+        console.log('Form values debug:', {
+            email: $scope.loginForm.email,
+            password: $scope.loginForm.password ? '***hidden***' : 'MISSING',
+            emailLength: email.length,
+            passwordLength: password.length
+        });
+
 
             // Get the Supabase client directly
             const client = SupabaseService.getClient();
@@ -109,32 +117,17 @@ function($scope, $location, SupabaseService) {
                     throw new Error(response.error.message);
                 }
 
-                // Check if user is verified
-                if (!response.data.user.email_confirmed_at) {
-                    throw new Error('Please verify your email address before logging in. Check your inbox for the verification email.');
-                }
+                // Check if user is verified (commented out for testing)
+                // if (!response.data.user.email_confirmed_at) {
+                //     throw new Error('Please verify your email address before logging in. Check your inbox for the verification email.');
+                // }
 
                 console.log('✅ Login successful!');
 
-                // Prepare user data for cache
-                const userData = {
-                    id: response.data.user.id,
-                    email: response.data.user.email,
-                    email_confirmed_at: response.data.user.email_confirmed_at,
-                    created_at: response.data.user.created_at,
-                    last_sign_in_at: response.data.user.last_sign_in_at,
-                    user_metadata: response.data.user.user_metadata || {},
-                    first_name: response.data.user.user_metadata?.first_name || '',
-                    last_name: response.data.user.user_metadata?.last_name || '',
-                    username: response.data.user.user_metadata?.username || '',
-                    session: response.data.session
-                };
+                // Set user in AuthService (this will handle localStorage automatically)
+                AuthService.setCurrentUser(response.data.user);
 
-                // Save user to cache using SET function
-                SET('user', userData);
-                SET('isLoggedIn', true);
-
-                console.log('💾 User saved to cache:', userData.email);
+                console.log('💾 User set in AuthService and localStorage');
 
                 // Set success state
                 $scope.loginSuccess = true;
@@ -231,6 +224,49 @@ function($scope, $location, SupabaseService) {
         $location.path('/forgot-password');
     };
 
+    // Test login function (remove after testing)
+    $scope.testLogin = function() {
+        console.log('🧪 Testing with predefined credentials...');
+        $scope.loginForm.email = 'test@test.com';
+        $scope.loginForm.password = 'password123';
+        $scope.login();
+    };
+
+    // Test signup function (remove after testing)
+    $scope.testSignup = function() {
+        console.log('🧪 Creating test user...');
+        
+        const client = SupabaseService.getClient();
+        if (!client) {
+            alert('❌ Supabase not available');
+            return;
+        }
+
+        client.auth.signUp({
+            email: 'test@test.com',
+            password: 'password123',
+            options: {
+                data: {
+                    first_name: 'Test',
+                    last_name: 'User',
+                    username: 'testuser'
+                }
+            }
+        })
+        .then(function(response) {
+            console.log('📥 Signup response:', response);
+            if (response.error) {
+                alert('❌ Signup failed: ' + response.error.message);
+            } else {
+                alert('✅ Test user created successfully! You can now try logging in.');
+            }
+        })
+        .catch(function(error) {
+            console.error('❌ Signup error:', error);
+            alert('❌ Signup error: ' + error.message);
+        });
+    };
+
     // Forgot password function
     $scope.forgotPassword = function() {
         if (!$scope.loginForm.email) {
@@ -255,10 +291,7 @@ function($scope, $location, SupabaseService) {
 
     // Check if user is already logged in
     $scope.checkExistingLogin = function() {
-        const existingUser = GET('user');
-        const isLoggedIn = GET('isLoggedIn');
-
-        if (existingUser && isLoggedIn) {
+        if (AuthService.isAuthenticated()) {
             console.log('✅ User already logged in, redirecting to dashboard');
             $location.path('/dashboard');
         }

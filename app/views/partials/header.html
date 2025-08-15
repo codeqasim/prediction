@@ -1,5 +1,5 @@
 <!-- Enhanced Header Component -->
-<header class="sticky top-0 z-50 backdrop-blur-lg bg-black/70 border-b border-purple-500/20">
+<header class="sticky top-0 z-50 backdrop-blur-lg bg-black/70 border-b border-purple-500/20" ng-controller="HeaderController as header">
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div class="flex items-center justify-between">
 
@@ -48,10 +48,10 @@
                 <!-- Authenticated User - WITH REAL DATA -->
                 <div ng-show="header.isAuthenticated()" class="flex items-center space-x-3">
 
-                    <!-- User Points - Same height as dropdown -->
+                    <!-- User Points - Real data -->
                     <div class="flex items-center bg-gradient-to-r from-purple-500/20 to-violet-500/20 backdrop-blur-sm border border-purple-500/30 rounded-lg px-3 py-2 h-10">
                         <span class="material-icons-outlined text-purple-300 text-sm mr-2">stars</span>
-                        <span class="text-purple-300 font-semibold text-sm">{{(header.getCurrentUser() && header.getCurrentUser().points) || 1250}}</span>
+                        <span class="text-purple-300 font-semibold text-sm">{{header.getUserPoints()}}</span>
                     </div>
 
                     <!-- Simple User Dropdown -->
@@ -76,10 +76,10 @@
                                 <div class="text-white text-sm font-medium">
                                     {{header.getUserDisplayName()}}
                                 </div>
-                                <div class="text-xs text-slate-400">{{header.getCurrentUser() && header.getCurrentUser().email}}</div>
+                                <div class="text-xs text-slate-400">{{header.getUserEmail()}}</div>
                                 <div class="flex items-center text-xs mt-1">
                                     <span class="material-icons-outlined text-purple-400 text-xs mr-1">stars</span>
-                                    <span class="text-purple-400">{{(header.getCurrentUser() && header.getCurrentUser().points) || 1250}} points</span>
+                                    <span class="text-purple-400">{{header.getUserPoints()}} points</span>
                                 </div>
                             </div>
 

@@ -9,15 +9,56 @@ function($scope, $location, AuthService) {
     vm.currentUser = null;
     vm.isAuth = false;
 
-    // Update user data
+    // Check localStorage directly using app.js functions
+    vm.checkLocalStorage = function() {
+        const storedUser = GET('currentUser');
+        const isAuth = GET('isAuthenticated');
+        
+        console.log('HeaderController checking localStorage:');
+        console.log('- Stored user:', storedUser);
+        console.log('- Is authenticated:', isAuth);
+        
+        if (storedUser && isAuth) {
+            vm.currentUser = storedUser;
+            vm.isAuth = true;
+            console.log('HeaderController: User found in localStorage!');
+            return true;
+        }
+        
+        vm.currentUser = null;
+        vm.isAuth = false;
+        console.log('HeaderController: No valid user in localStorage');
+        return false;
+    };
+
+    // Update user data from AuthService
     vm.updateUserData = function() {
         vm.currentUser = AuthService.getCurrentUser();
         vm.isAuth = AuthService.isAuthenticated();
         console.log('Header user data updated:', vm.currentUser ? 'logged in' : 'logged out');
     };
 
-    // Initialize user data
-    vm.updateUserData();
+    // Initialize user data - check localStorage first, then AuthService
+    vm.initializeUser = function() {
+        console.log('HeaderController: Initializing user data...');
+        
+        // First check localStorage directly
+        if (!vm.checkLocalStorage()) {
+            // If no localStorage data, check AuthService
+            vm.updateUserData();
+            
+            // If AuthService also has no data, try to load from storage
+            if (!vm.isAuth) {
+                AuthService.checkLocalStorage();
+                vm.updateUserData();
+            }
+        }
+        
+        console.log('HeaderController: Initialization complete. User:', vm.currentUser ? 'Found' : 'Not found');
+    };
+
+    // Initialize on controller load
+    vm.initializeUser();
 
     // Navigation function
     vm.navigateTo = function(path) {
@@ -56,6 +97,11 @@ function($scope, $location, AuthService) {
             return user.user_metadata.username;
         }
 
+        // Check for display name
+        if (user.user_metadata && user.user_metadata.display_name) {
+            return user.user_metadata.display_name;
+        }
+
         // Use email prefix
         if (user.email) {
             return user.email.split('@')[0];
@@ -64,12 +110,43 @@ function($scope, $location, AuthService) {
         return 'User';
     };
 
+    // Get user email
+    vm.getUserEmail = function() {
+        const user = vm.getCurrentUser();
+        return user ? user.email || 'No email' : 'No email';
+    };
+
+    // Get user points with fallback
+    vm.getUserPoints = function() {
+        const user = vm.getCurrentUser();
+        if (!user) return 0;
+
+        // Check various possible locations for points
+        return user.points || 
+               (user.user_metadata && user.user_metadata.points) || 
+               (user.app_metadata && user.app_metadata.points) || 
+               0;
+    };
+
     // Logout function
     vm.logout = function() {
+        console.log('HeaderController: Logout initiated');
+        
+        // Clear local cache immediately
+        vm.currentUser = null;
+        vm.isAuth = false;
+        
+        // Clear localStorage directly
+        DEL('currentUser');
+        DEL('isAuthenticated');
+        
         AuthService.logout().then(function() {
+            console.log('HeaderController: Logout successful, redirecting to home');
             $location.path('/');
         }).catch(function(error) {
             console.error('Logout error:', error);
+            // Even if logout fails, redirect to home since we cleared local data
+            $location.path('/');
         });
     };
 
@@ -93,16 +170,6 @@ function($scope, $location, AuthService) {
 
     vm.closeUserDropdown = function() {
         vm.userDropdownOpen = false;
-    };
-
-    // Test function to check auth state
-    vm.testAuth = function() {
-        console.log('=== AUTH TEST ===');
-        console.log('AuthService.isAuthenticated():', AuthService.isAuthenticated());
-        console.log('AuthService.getCurrentUser():', AuthService.getCurrentUser());
-        console.log('vm.isAuthenticated():', vm.isAuthenticated());
-        console.log('vm.getCurrentUser():', vm.getCurrentUser());
-        alert('Check console for auth state');
     };
 
     // Listen for auth state changes

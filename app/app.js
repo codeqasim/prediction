@@ -26,20 +26,20 @@ angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$
             $rootScope.setLoading(true);
 
             // Check authentication for protected routes
-            if (next.requireAuth && !AuthService.isAuthenticated()) {
-                event.preventDefault();
-                $location.path('/login');
-                $rootScope.setLoading(false);
-                return;
-            }
+            // if (next.requireAuth && !AuthService.isAuthenticated()) {
+            //     event.preventDefault();
+            //     $location.path('/login');
+            //     $rootScope.setLoading(false);
+            //     return;
+            // }
 
-            // Redirect authenticated users away from auth pages
-            if (next.redirectIfAuth && AuthService.isAuthenticated()) {
-                event.preventDefault();
-                $location.path('/');
-                $rootScope.setLoading(false);
-                return;
-            }
+            // // Redirect authenticated users away from auth pages
+            // if (next.redirectIfAuth && AuthService.isAuthenticated()) {
+            //     event.preventDefault();
+            //     $location.path('/');
+            //     $rootScope.setLoading(false);
+            //     return;
+            // }
         });
 
         // Route change success

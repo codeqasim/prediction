@@ -61,6 +61,42 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
+        // ========================================= Dashboard
+        .when('/dashboard', {
+            templateUrl: 'app/views/auth/dashboard.html',
+            controller: 'DashboardController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/auth/DashboardController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Dashboard',
+        role: '',
+        })
+
+        // ========================================= Login
+        .when('/login', {
+            templateUrl: 'app/views/auth/login.html',
+            controller: 'LoginController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/auth/LoginController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Login',
+        role: '',
+        })
+
         // Authentication Routes
 
         // .when('/login', {
@@ -135,18 +171,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             }
         })
 
-        // Dashboard Route (Protected)
-        .when('/dashboard', {
-            templateUrl: 'app/views/auth/dashboard.html',
-            controller: 'DashboardController',
-            controllerAs: 'dashboard',
-            title: 'Dashboard',
-            requireAuth: true,
-            meta: {
-                description: 'Your personal prediction dashboard with stats and active predictions.',
-                keywords: 'dashboard, stats, predictions, personal'
-            }
-        })
+
 
         // Predictions Routes
         .when('/predictions', {

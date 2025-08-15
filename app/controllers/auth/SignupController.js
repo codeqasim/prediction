@@ -9,12 +9,12 @@ function($scope, $location, SupabaseService) {
 
     // Form data
     $scope.registerForm = {
-        firstName: 'qasim',
-        lastName: 'khan',
-        username: 'qasim',
-        email: 'compoxition@gmail.com',
-        password: '12345678',
-        confirmPassword: '12345678',
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
         agreeTerms: false
     };
 
@@ -229,7 +229,8 @@ function($scope, $location, SupabaseService) {
         email: email,
         password: password,
         options: {
-            data: userData
+            data: userData,
+        emailRedirectTo: window.location.origin + '/login'
         }
     })
         .then(function(response) {
@@ -263,6 +264,14 @@ function($scope, $location, SupabaseService) {
             if (!$scope.$$phase && !$scope.$root.$$phase) {
                 $scope.$apply();
             }
+
+            $scope.scrollToTop = function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            };
+
         });
 };
 

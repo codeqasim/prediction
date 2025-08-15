@@ -115,6 +115,24 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
+        // ========================================= Forgot Password
+        .when('/password-reset', {
+            templateUrl: 'app/views/auth/password-reset.html',
+            controller: 'PasswordResetController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/auth/PasswordResetController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Reset Password',
+        role: '',
+        })
+
         // Authentication Routes
 
         // .when('/login', {

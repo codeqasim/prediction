@@ -97,6 +97,24 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
+        // ========================================= Forgot Password
+        .when('/forgot-password', {
+            templateUrl: 'app/views/auth/forgot-password.html',
+            controller: 'ForgotPasswordController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/auth/ForgotPasswordController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'Forgot Password',
+        role: '',
+        })
+
         // Authentication Routes
 
         // .when('/login', {
@@ -122,18 +140,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         //         keywords: 'register, sign up, create account, join'
         //     }
         // })
-
-        .when('/forgot-password', {
-            templateUrl: 'app/views/auth/forgot-password.html',
-            controller: 'AuthController',
-            controllerAs: 'auth',
-            title: 'Reset Password - PredictIt',
-            redirectIfAuth: true,
-            meta: {
-                description: 'Reset your PredictIt account password.',
-                keywords: 'forgot password, reset password, recovery'
-            }
-        })
 
         .when('/reset-password', {
             templateUrl: 'app/views/auth/reset-password.html',

@@ -1,4 +1,7 @@
-
+// ======================== LOCAL STORAGE ========================
+function SET($name, $value) { localStorage.setItem($name, JSON.stringify($value)); }
+function GET($name) { try { return JSON.parse(localStorage.getItem($name)); } catch { return null; } }
+function DEL($name) { localStorage.removeItem($name); }
 
 // AngularJS Application Module
 angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {

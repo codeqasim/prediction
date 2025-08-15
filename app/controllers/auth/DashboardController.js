@@ -39,9 +39,10 @@ function($scope, $location, AuthService, SupabaseService) {
                 $scope.currentUser = storedUser;
                 console.log('✅ Found user in localStorage:', $scope.currentUser.email);
             } else {
-                console.log('❌ No authenticated user found, redirecting to login');
-                $location.path('/login');
-                return;
+                console.log('ℹ️ No authenticated user found, using static data for demo');
+                // Don't redirect - keep static data and show dashboard
+                // $location.path('/login');
+                // return;
             }
         } else {
             console.log('✅ Authenticated user found:', $scope.currentUser.email);
@@ -69,9 +70,10 @@ function($scope, $location, AuthService, SupabaseService) {
                 if (response.data) {
                     console.log('✅ User profile loaded:', response.data);
                     $scope.userProfile = response.data;
-                    $scope.userStats.points = response.data.points || 0;
+                    // Don't overwrite our static data - keep the static values
+                    // $scope.userStats.points = response.data.points || 0;
                 } else {
-                    console.log('ℹ️ No profile found, creating default stats');
+                    console.log('ℹ️ No profile found, keeping static data');
                 }
                 $scope.$apply();
             })
@@ -80,17 +82,9 @@ function($scope, $location, AuthService, SupabaseService) {
                 $scope.$apply();
             });
 
-        // TODO: Load predictions data when predictions table is available
-        // For now, use default values
-        $scope.userStats = {
-            totalPredictions: 0,
-            correctPredictions: 0,
-            accuracy: 0,
-            currentRank: 'Unranked',
-            points: $scope.userStats.points || 0
-        };
-
-        $scope.recentPredictions = [];
+        // Keep our static data instead of resetting to defaults
+        console.log('📊 Using static data for demo');
+        
         $scope.isLoading = false;
         $scope.$apply();
     };
@@ -193,6 +187,9 @@ function($scope, $location, AuthService, SupabaseService) {
     // Initialize
     $scope.init = function() {
         console.log('🔄 Initializing dashboard...');
+        
+        // Debug alert to see if controller is running
+        console.log('🚨 DASHBOARD CONTROLLER IS RUNNING!');
 
         // Set comprehensive static values immediately to prevent template errors
         $scope.currentUser = {
@@ -263,9 +260,17 @@ function($scope, $location, AuthService, SupabaseService) {
         ];
 
         $scope.isLoading = false;
+        
+        console.log('✅ Static data initialized successfully');
+        console.log('📊 User Stats:', $scope.userStats);
+        console.log('👤 Current User:', $scope.currentUser);
+        console.log('📈 Recent Predictions:', $scope.recentPredictions.length, 'items');
 
-        // Try to load real data after setting static defaults
-        $scope.loadDashboard();
+        // Force a digest cycle to update the view
+        $scope.$apply();
+
+        // Optionally try to load real data (but don't overwrite static data)
+        // $scope.loadDashboard();
     };
 
     // Call init

@@ -56,7 +56,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             },
         showHeader: true,
         showFooter: true,
-        requireAuth: true,
+        requireAuth: false, // Temporarily set to false to show static data
         pageTitle: 'Dashboard',
         role: '',
         })

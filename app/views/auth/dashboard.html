@@ -1,5 +1,16 @@
 <!-- Professional User Dashboard -->
 <div class="min-h-screen bg-gray-50">
+
+    <!-- DEBUG SECTION - Remove this after testing -->
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" style="margin: 10px;">
+        <h3><strong>🔍 DEBUG INFO:</strong></h3>
+        <p><strong>userStats.totalPredictions:</strong> {{userStats.totalPredictions}}</p>
+        <p><strong>userStats (full object):</strong> {{userStats | json}}</p>
+        <p><strong>currentUser.email:</strong> {{currentUser.email}}</p>
+        <p><strong>isLoading:</strong> {{isLoading}}</p>
+        <button ng-click="debugAuth()" class="bg-blue-500 text-white px-2 py-1 rounded mt-2">Debug Auth</button>
+    </div>
+
     <!-- Modern Header -->
     <div class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

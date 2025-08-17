@@ -40,6 +40,12 @@
                    class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer flex items-center border">
                     <span class="material-icons-outlined text-sm mr-2">info</span>About
                 </a>
+
+                <a ng-click="header.navigateTo('/points-policy')"
+                   ng-class="{'bg-purple-500/20 text-white border-purple-500/30': header.isActive('/points-policy'), 'text-slate-400 hover:text-white hover:bg-purple-500/10 border-transparent': !header.isActive('/points-policy')}"
+                   class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer flex items-center border">
+                    <span class="material-icons-outlined text-sm mr-2">stars</span>Points
+                </a>
             </nav>
 
             <!-- Enhanced User Section -->

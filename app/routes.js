@@ -213,6 +213,24 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
             }
         })
 
+        // ========================================= Points Policy Route
+        .when('/points-policy', {
+            templateUrl: 'app/views/points-policy.html',
+            controller: 'PointsPolicyController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        'app/controllers/PointsPolicyController.js',
+                    ]);
+                }]
+            },
+            showHeader: true,
+            showFooter: true,
+            requireAuth: false,
+            pageTitle: 'Points Policy',
+            role: '',
+        })
+
         // ========================================= 404 Error Route
         .when('/404', {
             templateUrl: 'app/views/errors/404.html',

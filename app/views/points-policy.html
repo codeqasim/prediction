@@ -1,0 +1,177 @@
+<!-- Points Policy Page -->
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden relative">
+    <!-- Background Effects -->
+    <div class="absolute inset-0">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <div class="flex justify-center mb-6">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-2xl">
+                    <span class="material-icons-outlined text-white text-3xl">stars</span>
+                </div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent mb-4">
+                Points Policy
+            </h1>
+            <p class="text-xl text-slate-300 max-w-2xl mx-auto">
+                Learn how our points system works, how to earn rewards, and what you can do with your points
+            </p>
+        </div>
+
+        <!-- How to Earn Points Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 flex items-center justify-center">
+                <span class="material-icons-outlined text-purple-400 mr-3">add_circle</span>
+                How to Earn Points
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div ng-repeat="rule in pointsRules" 
+                     class="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-violet-500/20 flex items-center justify-center mr-4 flex-shrink-0">
+                            <span class="material-icons-outlined {{rule.color}} text-lg">{{rule.icon}}</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-white mb-2">{{rule.title}}</h3>
+                            <p class="text-slate-400 text-sm mb-3">{{rule.description}}</p>
+                            <div class="flex items-center">
+                                <span class="material-icons-outlined text-yellow-400 text-sm mr-1">stars</span>
+                                <span class="text-yellow-400 font-semibold">+{{formatNumber(rule.points)}} points</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Point Redemption Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 flex items-center justify-center">
+                <span class="material-icons-outlined text-green-400 mr-3">redeem</span>
+                What You Can Do With Points
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div ng-repeat="option in redemptionOptions" 
+                     class="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-violet-500/20 flex items-center justify-center mr-4 flex-shrink-0">
+                            <span class="material-icons-outlined {{option.color}} text-lg">{{option.icon}}</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-white mb-2">{{option.title}}</h3>
+                            <p class="text-slate-400 text-sm mb-3">{{option.description}}</p>
+                            <div class="flex items-center">
+                                <span class="material-icons-outlined text-red-400 text-sm mr-1">remove_circle</span>
+                                <span class="text-red-400 font-semibold">{{formatNumber(option.cost)}} points</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Tiers Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 flex items-center justify-center">
+                <span class="material-icons-outlined text-orange-400 mr-3">emoji_events</span>
+                Leaderboard Tiers
+            </h2>
+            
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-purple-500/20">
+                <div class="space-y-4">
+                    <div ng-repeat="tier in leaderboardTiers" 
+                         class="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+                        <div class="flex items-center">
+                            <span class="material-icons-outlined {{tier.color}} text-2xl mr-4">{{tier.icon}}</span>
+                            <div>
+                                <h3 class="text-lg font-semibold {{tier.color}}">{{tier.name}} Tier</h3>
+                                <p class="text-slate-400 text-sm">
+                                    {{formatNumber(tier.minPoints)}}{{tier.maxPoints ? ' - ' + formatNumber(tier.maxPoints) : '+'}} points
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="w-3 h-3 rounded-full {{tier.color.replace('text-', 'bg-')}} opacity-60"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 flex items-center justify-center">
+                <span class="material-icons-outlined text-blue-400 mr-3">help</span>
+                Frequently Asked Questions
+            </h2>
+            
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-purple-500/20">
+                <div class="space-y-4">
+                    <div ng-repeat="faq in faqItems" class="border-b border-white/10 last:border-b-0 pb-4 last:pb-0">
+                        <button ng-click="toggleFaqItem($index)" 
+                                class="w-full text-left flex items-center justify-between p-4 hover:bg-white/5 rounded-lg transition-all duration-200">
+                            <h3 class="text-lg font-semibold text-white">{{faq.question}}</h3>
+                            <span class="material-icons-outlined text-slate-400 transition-transform duration-200"
+                                  ng-class="{'rotate-180': faq.isOpen}">expand_more</span>
+                        </button>
+                        <div ng-show="faq.isOpen" 
+                             class="px-4 pb-4 text-slate-300 animate-fadeIn">
+                            <p>{{faq.answer}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="text-center">
+            <div class="bg-gradient-to-r from-purple-500/20 to-violet-500/20 backdrop-blur-sm rounded-xl p-8 border border-purple-500/30">
+                <h2 class="text-2xl font-bold text-white mb-4">Ready to Start Earning Points?</h2>
+                <p class="text-slate-300 mb-6 max-w-2xl mx-auto">
+                    Join our prediction platform today and start earning points for your accurate predictions and daily activities.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button ng-click="navigateTo('/predictions')" 
+                            class="px-6 py-3 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-purple-500/25 transform hover:scale-105 flex items-center">
+                        <span class="material-icons-outlined mr-2">psychology</span>Make Predictions
+                    </button>
+                    <button ng-click="navigateTo('/leaderboard')" 
+                            class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center">
+                        <span class="material-icons-outlined mr-2">emoji_events</span>View Leaderboard
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<style>
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .rotate-180 {
+        transform: rotate(180deg);
+    }
+</style>

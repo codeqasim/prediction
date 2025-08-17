@@ -1,273 +1,258 @@
-<!-- Public User Profile -->
-<div class="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-    
+<!-- Modern Public User Profile -->
+<div class="min-h-screen bg-gray-50">
+
     <!-- Loading State -->
     <div ng-if="isLoading" class="flex items-center justify-center min-h-screen">
         <div class="text-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p class="text-gray-600">Loading profile...</p>
         </div>
     </div>
 
     <!-- User Not Found -->
     <div ng-if="userNotFound && !isLoading" class="flex items-center justify-center min-h-screen">
-        <div class="text-center bg-white rounded-lg shadow-lg p-8 max-w-md mx-4">
-            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-user-slash text-gray-400 text-3xl"></i>
+        <div class="text-center bg-white rounded-lg shadow-sm border p-8 max-w-md mx-4">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons-outlined text-gray-400 text-2xl">person_off</span>
             </div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">User Not Found</h2>
+            <h2 class="text-xl font-semibold text-gray-900 mb-2">User Not Found</h2>
             <p class="text-gray-600 mb-6">The profile "@{{username}}" doesn't exist or is private.</p>
-            <a href="/" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <a href="/" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                <span class="material-icons-outlined mr-2 text-sm">home</span>
                 Back to Home
             </a>
         </div>
     </div>
 
     <!-- Main Profile Content -->
-    <div ng-if="!isLoading && !userNotFound" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Profile Header -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-            <!-- Cover Photo Area -->
-            <div class="bg-gradient-to-r from-purple-600 to-blue-600 h-32 sm:h-48 relative">
-                <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                
-                <!-- Share Button -->
-                <button ng-click="shareProfile()" 
-                        class="absolute top-4 right-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg backdrop-blur-sm transition-all">
-                    <i class="fas fa-share mr-2"></i>Share Profile
-                </button>
-            </div>
+    <div ng-if="!isLoading && !userNotFound" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-            <!-- Profile Info -->
-            <div class="relative px-6 pb-6">
-                <!-- Profile Picture -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-end space-y-4 sm:space-y-0 sm:space-x-6">
-                    <div class="relative -mt-16 sm:-mt-20">
-                        <div class="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
-                            <span class="text-white font-bold text-2xl sm:text-3xl">{{getUserInitial()}}</span>
+        <!-- Profile Header -->
+        <div class="bg-white rounded-lg shadow-sm border mb-6">
+            <div class="p-6">
+                <div class="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                    <!-- Profile Picture -->
+                    <div class="relative">
+                        <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-sm">
+                            <span class="text-white font-semibold text-xl">{{getUserInitial()}}</span>
                         </div>
-                        
-                        <!-- Online/Verified Badge -->
-                        <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-white rounded-full"></div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full"></div>
                     </div>
 
                     <div class="flex-1">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                             <div>
-                                <h1 class="text-3xl font-bold text-gray-900">{{getDisplayName()}}</h1>
-                                <p class="text-lg text-purple-600 font-medium">@{{userProfile.username}}</p>
+                                <h1 class="text-2xl font-semibold text-gray-900">{{getDisplayName()}}</h1>
+                                <p class="text-lg text-blue-600 font-medium">@{{userProfile.username}}</p>
                                 <div class="flex items-center space-x-4 text-sm text-gray-500 mt-2">
-                                    <span ng-if="userProfile.location">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>{{userProfile.location}}
+                                    <span ng-if="userProfile.location" class="flex items-center">
+                                        <span class="material-icons-outlined mr-1 text-sm">location_on</span>
+                                        {{userProfile.location}}
                                     </span>
-                                    <span>
-                                        <i class="fas fa-calendar-alt mr-1"></i>Joined {{formatDate(userStats.joinDate)}}
+                                    <span class="flex items-center">
+                                        <span class="material-icons-outlined mr-1 text-sm">calendar_today</span>
+                                        Joined {{formatDate(userStats.joinDate)}}
                                     </span>
+                                </div>
+
+                                <!-- Bio -->
+                                <div ng-if="userProfile.bio" class="mt-3">
+                                    <p class="text-gray-700 text-sm leading-relaxed">{{userProfile.bio}}</p>
+                                </div>
+
+                                <!-- Website Link -->
+                                <div ng-if="userProfile.website" class="mt-2">
+                                    <a ng-href="{{userProfile.website}}" target="_blank"
+                                       class="text-blue-600 hover:text-blue-700 inline-flex items-center text-sm">
+                                        <span class="material-icons-outlined mr-1 text-sm">link</span>
+                                        {{userProfile.website}}
+                                    </a>
                                 </div>
                             </div>
-                            
-                            <!-- Quick Stats -->
-                            <div class="flex space-x-6 mt-4 sm:mt-0">
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-900">{{userStats.accuracy}}%</div>
-                                    <div class="text-sm text-gray-500">Accuracy</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-900">{{userStats.totalPredictions}}</div>
-                                    <div class="text-sm text-gray-500">Predictions</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-900">#{{userStats.currentRank}}</div>
-                                    <div class="text-sm text-gray-500">Rank</div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Bio -->
-                        <div ng-if="userProfile.bio" class="mt-4">
-                            <p class="text-gray-700 leading-relaxed">{{userProfile.bio}}</p>
-                        </div>
-
-                        <!-- Website Link -->
-                        <div ng-if="userProfile.website" class="mt-2">
-                            <a ng-href="{{userProfile.website}}" target="_blank" 
-                               class="text-purple-600 hover:text-purple-700 inline-flex items-center">
-                                <i class="fas fa-link mr-1"></i>{{userProfile.website}}
-                            </a>
+                            <!-- Share Button -->
+                            <button ng-click="shareProfile()"
+                                    class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+                                <span class="material-icons-outlined mr-2 text-sm">share</span>
+                                Share
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Stats & Achievements Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            
-            <!-- Performance Stats -->
-            <div class="lg:col-span-2">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">📊 Performance Overview</h2>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <!-- Total Predictions -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">{{userStats.totalPredictions}}</div>
-                        <div class="text-sm text-gray-500">Total Predictions</div>
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Total Predictions -->
+            <div class="bg-white rounded-lg shadow-sm border p-4">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                        <span class="material-icons-outlined text-blue-600 text-xl">trending_up</span>
                     </div>
-
-                    <!-- Correct Predictions -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">{{userStats.correctPredictions}}</div>
-                        <div class="text-sm text-gray-500">Correct</div>
+                    <div>
+                        <p class="text-2xl font-semibold text-gray-900">{{userStats.totalPredictions}}</p>
+                        <p class="text-sm text-gray-600">Predictions</p>
                     </div>
-
-                    <!-- Current Streak -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
-                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-fire text-orange-600 text-xl"></i>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">{{userStats.streakDays}}</div>
-                        <div class="text-sm text-gray-500">Day Streak</div>
-                    </div>
-
-                    <!-- Points -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
-                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-star text-purple-600 text-xl"></i>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900">{{userStats.points}}</div>
-                        <div class="text-sm text-gray-500">Points</div>
-                    </div>
-                </div>
-
-                <!-- Accuracy Chart -->
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Accuracy Rate</h3>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-1">
-                            <div class="w-full bg-gray-200 rounded-full h-4">
-                                <div class="{{getAccuracyBgColor(userStats.accuracy)}} h-4 rounded-full transition-all duration-1000" 
-                                     ng-style="{'width': userStats.accuracy + '%'}"></div>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold {{getAccuracyColor(userStats.accuracy)}}">
-                            {{userStats.accuracy}}%
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2">
-                        {{userStats.correctPredictions}} out of {{userStats.totalPredictions}} predictions correct
-                    </p>
                 </div>
             </div>
 
+            <!-- Accuracy -->
+            <div class="bg-white rounded-lg shadow-sm border p-4">
+                <div class="flex items-center">
+                    <div class="p-2 bg-green-100 rounded-lg mr-3">
+                        <span class="material-icons-outlined text-green-600 text-xl">gps_fixed</span>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-semibold text-gray-900">{{userStats.accuracy}}%</p>
+                        <p class="text-sm text-gray-600">Accuracy</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Rank -->
+            <div class="bg-white rounded-lg shadow-sm border p-4">
+                <div class="flex items-center">
+                    <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                        <span class="material-icons-outlined text-purple-600 text-xl">leaderboard</span>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-semibold text-gray-900">{{userStats.currentRank}}</p>
+                        <p class="text-sm text-gray-600">Rank</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Points -->
+            <div class="bg-white rounded-lg shadow-sm border p-4">
+                <div class="flex items-center">
+                    <div class="p-2 bg-orange-100 rounded-lg mr-3">
+                        <span class="material-icons-outlined text-orange-600 text-xl">stars</span>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-semibold text-gray-900">{{userStats.points}}</p>
+                        <p class="text-sm text-gray-600">Points</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements & Recent Activity -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-6">
             <!-- Achievements -->
-            <div class="lg:col-span-1">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">🏆 Achievements</h2>
-                <div class="space-y-3">
-                    <div ng-repeat="achievement in achievements" 
-                         class="bg-white rounded-xl p-4 shadow-lg flex items-center space-x-3"
+            <div class="bg-white rounded-lg shadow-sm border p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <span class="material-icons-outlined mr-2 text-yellow-500">military_tech</span>
+                        Achievements
+                    </h3>
+                    <span class="text-sm text-gray-500">{{achievements.length}} earned</span>
+                </div>
+
+                <div class="space-y-2">
+                    <div ng-repeat="achievement in achievements | limitTo:4"
+                         class="flex items-center p-3 bg-gray-50 rounded-lg"
                          ng-class="{'opacity-50': !achievement.earned}">
-                        <div class="text-2xl">{{achievement.icon}}</div>
-                        <div class="flex-1">
-                            <div class="font-semibold text-gray-900">{{achievement.name}}</div>
-                            <div class="text-sm text-gray-500">{{achievement.description}}</div>
-                        </div>
-                        <div ng-if="achievement.earned" class="text-green-500">
-                            <i class="fas fa-check-circle"></i>
+                        <span class="material-icons-outlined text-yellow-500 mr-3 text-lg">{{achievement.materialIcon}}</span>
+                        <div>
+                            <p class="font-medium text-sm text-gray-900">{{achievement.name}}</p>
+                            <p class="text-xs text-gray-600">{{achievement.description}}</p>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="bg-white rounded-lg shadow-sm border p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <span class="material-icons-outlined mr-2 text-green-500">analytics</span>
+                        Accuracy Rate
+                    </h3>
+                    <span class="text-2xl font-semibold text-gray-900">{{userStats.accuracy}}%</span>
+                </div>
+
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
+                    <div class="bg-green-500 h-3 rounded-full transition-all duration-1000"
+                         ng-style="{'width': userStats.accuracy + '%'}"></div>
+                </div>
+                <p class="text-sm text-gray-600">
+                    {{userStats.correctPredictions}} out of {{userStats.totalPredictions}} predictions correct
+                </p>
             </div>
         </div>
 
         <!-- Recent Predictions -->
-        <div class="bg-white rounded-2xl shadow-xl p-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">🔮 Recent Predictions</h2>
-            
-            <div ng-if="recentPredictions.length === 0" class="text-center py-12">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-crystal-ball text-gray-400 text-2xl"></i>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No Predictions Yet</h3>
-                <p class="text-gray-500">This user hasn't made any public predictions yet.</p>
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <span class="material-icons-outlined mr-2 text-blue-500">history</span>
+                    Recent Predictions
+                </h3>
+                <a href="/dashboard" class="text-sm text-blue-600 hover:text-blue-700">View All</a>
             </div>
 
-            <div ng-if="recentPredictions.length > 0" class="space-y-4">
-                <div ng-repeat="prediction in recentPredictions" 
-                     class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-200">
-                    
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 mb-1">{{prediction.predictions.title}}</h3>
-                            <div class="flex items-center space-x-4 text-sm text-gray-500">
-                                <span>
-                                    <i class="fas fa-calendar mr-1"></i>{{formatDate(prediction.created_at)}}
-                                </span>
-                                <span ng-if="prediction.predictions.end_date">
-                                    <i class="fas fa-flag-checkered mr-1"></i>Ends {{formatDate(prediction.predictions.end_date)}}
+            <div ng-if="recentPredictions.length === 0" class="text-center py-8">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <span class="material-icons-outlined text-gray-400 text-xl">history</span>
+                </div>
+                <h4 class="text-sm font-medium text-gray-900 mb-1">No Predictions Yet</h4>
+                <p class="text-xs text-gray-500">This user hasn't made any public predictions yet.</p>
+            </div>
+
+            <div ng-if="recentPredictions.length > 0" class="space-y-3">
+                <div ng-repeat="prediction in recentPredictions | limitTo:5"
+                     class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <span class="material-icons-outlined text-blue-600 text-sm">{{getPredictionIcon(prediction)}}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-sm text-gray-900 truncate">{{(prediction.predictions && prediction.predictions.title) || prediction.title}}</p>
+                            <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                <span>{{formatDate(prediction.created_at)}}</span>
+                                <span ng-if="prediction.predictions && prediction.predictions.end_date">
+                                    Ends {{formatDate(prediction.predictions.end_date)}}
                                 </span>
                             </div>
                         </div>
-                        
-                        <span class="px-3 py-1 rounded-full text-xs font-medium {{getPredictionBadge(prediction).class}}">
-                            {{getPredictionBadge(prediction).text}}
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium"
+                              ng-class="prediction.prediction_choice === 'yes' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                            {{prediction.prediction_choice === 'yes' ? 'YES' : 'NO'}}
+                        </span>
+
+                        <span ng-class="{
+                            'bg-green-100 text-green-700': prediction.result === 'correct',
+                            'bg-red-100 text-red-700': prediction.result === 'incorrect',
+                            'bg-yellow-100 text-yellow-700': !prediction.result
+                        }" class="px-2 py-1 rounded-full text-xs font-medium">
+                            {{prediction.result === 'correct' ? 'WON' : (prediction.result === 'incorrect' ? 'LOST' : 'PENDING')}}
                         </span>
                     </div>
-
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-700">Predicted:</span>
-                                <span class="px-2 py-1 rounded text-sm font-medium"
-                                      ng-class="prediction.prediction_choice === 'yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
-                                    {{prediction.prediction_choice === 'yes' ? 'YES' : 'NO'}}
-                                </span>
-                            </div>
-                            
-                            <div ng-if="prediction.confidence" class="flex items-center space-x-2">
-                                <span class="text-sm text-gray-500">Confidence:</span>
-                                <span class="text-sm font-medium text-gray-700">{{prediction.confidence}}%</span>
-                            </div>
-                        </div>
-
-                        <div ng-if="prediction.result" class="text-sm">
-                            <span ng-if="prediction.result === 'correct'" class="text-green-600 font-medium">
-                                <i class="fas fa-trophy mr-1"></i>+{{Math.floor(prediction.confidence * 0.1)}} pts
-                            </span>
-                            <span ng-if="prediction.result === 'incorrect'" class="text-red-600">
-                                <i class="fas fa-times mr-1"></i>0 pts
-                            </span>
-                        </div>
-                    </div>
                 </div>
-            </div>
-
-            <!-- View More Button -->
-            <div ng-if="recentPredictions.length >= 10" class="text-center mt-6">
-                <button class="text-purple-600 hover:text-purple-700 font-medium">
-                    View All Predictions <i class="fas fa-arrow-right ml-1"></i>
-                </button>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="text-center mt-12 py-8">
-            <p class="text-gray-500 mb-4">Want to create your own prediction profile?</p>
-            <a href="/signup" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-all shadow-lg hover:shadow-xl">
+        <!-- Join CTA -->
+        <div class="text-center mt-8 py-6">
+            <p class="text-gray-600 mb-4 text-sm">Want to create your own prediction profile?</p>
+            <a href="/signup" class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                <span class="material-icons-outlined mr-2 text-sm">person_add</span>
                 Join PredictIt
             </a>
         </div>
     </div>
 </div>
 
+<!-- Material Icons CSS -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
 <style>
-/* Custom styles for animations */
+/* Minimal custom styles */
 .animate-spin {
     animation: spin 1s linear infinite;
 }
@@ -277,31 +262,47 @@
     to { transform: rotate(360deg); }
 }
 
-/* Hover effects */
-.hover\:shadow-xl:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.hover\:bg-gray-100:hover {
+    background-color: #f3f4f6;
 }
 
-.hover\:shadow-lg:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+.hover\:bg-gray-200:hover {
+    background-color: #e5e7eb;
 }
 
-/* Gradient backgrounds */
-.bg-gradient-to-r {
-    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+.hover\:bg-blue-700:hover {
+    background-color: #1d4ed8;
 }
 
-.bg-gradient-to-br {
-    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+.hover\:text-blue-700:hover {
+    color: #1d4ed8;
+}
+
+.transition-colors {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.min-w-0 {
+    min-width: 0px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .grid-cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    
-    .md\:grid-cols-4 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

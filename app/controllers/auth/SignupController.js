@@ -230,7 +230,7 @@ function($scope, $location, SupabaseService, AuthService) {
         password: password,
         options: {
             data: userData,
-        emailRedirectTo: window.location.origin + '/login'
+        emailRedirectTo: window.location.origin + '/login?activated=true'
         }
     })
         .then(function(response) {

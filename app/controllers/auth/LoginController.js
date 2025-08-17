@@ -18,6 +18,25 @@ function($scope, $location, SupabaseService, AuthService) {
     $scope.errors = {};
     $scope.loginSuccess = false;
     $scope.userEmail = '';
+    $scope.showActivationSuccess = false;
+
+    // Check for activation success parameter
+    $scope.checkActivationStatus = function() {
+        console.log('🔍 Checking activation status...');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const activated = urlParams.get('activated');
+        
+        if (activated === 'true') {
+            $scope.showActivationSuccess = true;
+            console.log('✅ Account activation detected - showing success message');
+            
+            // Simple auto-redirect after 3 seconds
+            setTimeout(function() {
+                window.location.href = '/dashboard';
+            }, 3000);
+        }
+    };
 
     // Clear autofill on page load
     setTimeout(function() {
@@ -213,6 +232,12 @@ function($scope, $location, SupabaseService, AuthService) {
         alert('❌ ' + message);
     };
 
+    // Function to dismiss activation success message
+    $scope.dismissActivationSuccess = function() {
+        $scope.showActivationSuccess = false;
+        window.location.href = '/dashboard';
+    };
+
     // Function to go to signup
     $scope.goToSignup = function() {
         $location.path('/signup');
@@ -291,9 +316,14 @@ function($scope, $location, SupabaseService, AuthService) {
 
     // Check if user is already logged in
     $scope.checkExistingLogin = function() {
+        // Don't check if we're showing activation message
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('activated') === 'true') {
+            return; // Let activation message show first
+        }
+        
         if (AuthService.isAuthenticated()) {
-            console.log('✅ User already logged in, redirecting to dashboard');
-            $location.path('/dashboard');
+            window.location.href = '/dashboard';
         }
     };
 
@@ -301,7 +331,7 @@ function($scope, $location, SupabaseService, AuthService) {
     $scope.init = function() {
         console.log('🔄 Initializing Login Controller...');
 
-        // Check if user is already logged in
+        $scope.checkActivationStatus();
         $scope.checkExistingLogin();
 
         console.log('✅ Login Controller loaded successfully');

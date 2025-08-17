@@ -181,6 +181,31 @@ function($scope, $location, AuthService, SupabaseService) {
         return user ? user.email || 'No email' : 'No email';
     };
 
+    // Navigate to user's public profile
+    vm.navigateToUserProfile = function() {
+        const user = vm.getCurrentUser();
+        if (!user) {
+            console.log('HeaderController: No user found for profile navigation');
+            return;
+        }
+
+        // Get username from various possible sources
+        let username = null;
+        if (user.user_metadata && user.user_metadata.username) {
+            username = user.user_metadata.username;
+        } else if (user.email) {
+            // Use email prefix as fallback username
+            username = user.email.split('@')[0];
+        }
+
+        if (username) {
+            console.log('HeaderController: Navigating to profile for username:', username);
+            $location.path('/u/' + username);
+        } else {
+            console.log('HeaderController: No username found, cannot navigate to profile');
+        }
+    };
+
     // Refresh user points (can be called when points are updated)
     vm.refreshUserPoints = function() {
         vm.userPoints = 0; // Clear cache

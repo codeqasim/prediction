@@ -1,16 +1,6 @@
 <!-- Professional User Dashboard -->
 <div class="min-h-screen bg-gray-50">
 
-    <!-- DEBUG SECTION - Remove this after testing -->
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" style="margin: 10px;">
-        <h3><strong>🔍 DEBUG INFO:</strong></h3>
-        <p><strong>userStats.totalPredictions:</strong> {{userStats.totalPredictions}}</p>
-        <p><strong>userStats (full object):</strong> {{userStats | json}}</p>
-        <p><strong>currentUser.email:</strong> {{currentUser.email}}</p>
-        <p><strong>isLoading:</strong> {{isLoading}}</p>
-        <button ng-click="debugAuth()" class="bg-blue-500 text-white px-2 py-1 rounded mt-2">Debug Auth</button>
-    </div>
-
     <!-- Modern Header -->
     <div class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +15,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button ng-click="navigateTo('/predictions')" 
+                    <button ng-click="navigateTo('/predictions')"
                             class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                         <i class="fas fa-plus mr-2"></i>New Prediction
                     </button>
@@ -42,7 +32,7 @@
 
     <!-- Main Dashboard Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         <!-- Performance Overview Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Predictions Card -->
@@ -93,7 +83,7 @@
                     <p class="text-gray-600 text-sm">Success Rate</p>
                     <p class="text-3xl font-bold text-gray-900">{{userStats.accuracy}}%</p>
                     <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                        <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" 
+                        <div class="bg-purple-600 h-2 rounded-full transition-all duration-500"
                              ng-style="{'width': userStats.accuracy + '%'}"></div>
                     </div>
                 </div>
@@ -152,7 +142,7 @@
                     <span>Level {{Math.floor(userStats.points / 100) + 2}}</span>
                 </div>
                 <div class="w-full bg-white/20 rounded-full h-3">
-                    <div class="bg-yellow-400 h-3 rounded-full transition-all duration-500" 
+                    <div class="bg-yellow-400 h-3 rounded-full transition-all duration-500"
                          ng-style="{'width': (userStats.points % 100) + '%'}"></div>
                 </div>
             </div>
@@ -160,7 +150,7 @@
 
         <!-- Recent Predictions Section -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
+
             <!-- Recent Predictions List -->
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -170,10 +160,10 @@
                             {{recentPredictions.length}} Total
                         </span>
                     </div>
-                    
+
                     <!-- Predictions List -->
                     <div class="space-y-4" ng-if="recentPredictions.length > 0">
-                        <div ng-repeat="prediction in recentPredictions" 
+                        <div ng-repeat="prediction in recentPredictions"
                              class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-200">
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
@@ -181,7 +171,7 @@
                                     <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                                         <span class="flex items-center">
                                             <i class="fas fa-vote-yea mr-1 text-purple-500"></i>
-                                            Your choice: 
+                                            Your choice:
                                             <span class="font-medium ml-1" ng-class="getUserChoiceClass(prediction)">
                                                 {{getUserChoice(prediction)}}
                                             </span>
@@ -191,7 +181,7 @@
                                             {{formatDate(prediction.created_at)}}
                                         </span>
                                     </div>
-                                    
+
                                     <!-- Prediction Progress Bar -->
                                     <div class="mb-3">
                                         <div class="flex justify-between text-xs text-gray-500 mb-1">
@@ -199,18 +189,18 @@
                                             <span>{{100 - prediction.current_yes_percentage}}% NO</span>
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-2">
-                                            <div class="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                                            <div class="bg-green-500 h-2 rounded-full transition-all duration-500"
                                                  ng-style="{'width': prediction.current_yes_percentage + '%'}"></div>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="ml-4 flex flex-col items-end space-y-2">
                                     <span ng-class="getPredictionStatusBadge(prediction).class"
                                           class="px-3 py-1 text-xs font-medium rounded-full">
                                         {{getPredictionStatusBadge(prediction).text}}
                                     </span>
-                                    <button ng-click="viewPrediction(prediction.id)" 
+                                    <button ng-click="viewPrediction(prediction.id)"
                                             class="text-purple-600 hover:text-purple-800 text-sm font-medium">
                                         View Details →
                                     </button>
@@ -218,13 +208,13 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Empty State -->
                     <div ng-if="recentPredictions.length === 0" class="text-center py-12">
                         <i class="fas fa-chart-line text-gray-300 text-4xl mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No predictions yet</h3>
                         <p class="text-gray-500 mb-6">Start making predictions to track your performance!</p>
-                        <button ng-click="navigateTo('/predictions')" 
+                        <button ng-click="navigateTo('/predictions')"
                                 class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                             Browse Predictions
                         </button>
@@ -234,7 +224,7 @@
 
             <!-- Quick Stats & Actions Sidebar -->
             <div class="space-y-6">
-                
+
                 <!-- Performance Summary -->
                 <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                     <h4 class="font-bold text-gray-900 mb-4">Performance Summary</h4>
@@ -262,17 +252,17 @@
                 <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                     <h4 class="font-bold text-gray-900 mb-4">Quick Actions</h4>
                     <div class="space-y-3">
-                        <button ng-click="navigateTo('/predictions')" 
+                        <button ng-click="navigateTo('/predictions')"
                                 class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
                             <i class="fas fa-plus mr-2"></i>
                             New Prediction
                         </button>
-                        <button ng-click="navigateTo('/leaderboard')" 
+                        <button ng-click="navigateTo('/leaderboard')"
                                 class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
                             <i class="fas fa-trophy mr-2"></i>
                             View Leaderboard
                         </button>
-                        <button ng-click="navigateTo('/profile')" 
+                        <button ng-click="navigateTo('/profile')"
                                 class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
                             <i class="fas fa-user mr-2"></i>
                             Edit Profile

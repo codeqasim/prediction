@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title ng-bind="pageTitle || 'Predict Tomorrow Win Today'">Predict Tomorrow Win Today</title>
+    <title ng-bind="pageTitle || 'Predict Tomorrow Win Today'">Predict Today</title>
     <meta name="description" content="{{pageDescription || 'Join the ultimate prediction market platform. Make predictions, compete with others, and climb the leaderboard.'}}">
 
     <!-- Google Fonts - Inter -->
@@ -70,35 +70,35 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <link rel="stylesheet" href="assets/app.css">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/assets/app.css">
 </head>
 
 <body class="text-white min-h-screen relative overflow-x-hidden" style="background: linear-gradient(135deg, #020617 0%, #1e293b 100%);">
     <!-- Main Application Container -->
     <div class="min-h-screen">
         <!-- Header -->
-        <div ng-include="'app/views/partials/header.html'"></div>
+        <div ng-include="'/app/views/partials/header.html'"></div>
         <main>
             <div ng-view></div>
         </main>
-        <div ng-include="'app/views/partials/footer.html'"></div>
+        <div ng-include="'/app/views/partials/footer.html'"></div>
     </div>
 
     <!-- App Configuration -->
-    <script src="app/app.js"></script>
-    <script src="app/routes.js"></script>
+    <script src="/app/app.js"></script>
+    <script src="/app/routes.js"></script>
 
     <!-- Services -->
-    <script src="app/services/SupabaseService.js"></script>
-    <script src="app/services/AdminService.js"></script>
-    <script src="app/services/AuthService.js"></script>
-    <script src="app/services/UserService.js"></script>
+    <script src="/app/services/SupabaseService.js"></script>
+    <script src="/app/services/AdminService.js"></script>
+    <script src="/app/services/AuthService.js"></script>
+    <script src="/app/services/UserService.js"></script>
 
     <!-- Controllers -->
-    <script src="app/controllers/MainController.js"></script>
-    <script src="app/controllers/HeaderController.js"></script>
-    <script src="app/controllers/AdminController.js"></script>
+    <script src="/app/controllers/MainController.js"></script>
+    <script src="/app/controllers/HeaderController.js"></script>
+    <script src="/app/controllers/AdminController.js"></script>
 
 </body>
 </html>

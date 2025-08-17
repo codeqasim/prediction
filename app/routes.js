@@ -43,6 +43,24 @@ angular.module('app').config(['$routeProvider', function($routeProvider) { $rout
         role: '',
         })
 
+        // ========================================= Public Profile
+        .when('/u/:username', {
+            templateUrl: '/app/views/auth/public-profile.html',
+            controller: 'PublicProfileController',
+            resolve: {
+                load: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        '/app/controllers/auth/PublicProfileController.js',
+                    ]);
+                }]
+            },
+        showHeader: true,
+        showFooter: true,
+        requireAuth: false,
+        pageTitle: 'User Profile',
+        role: '',
+        })
+
         // ========================================= Dashboard
         .when('/dashboard', {
             templateUrl: 'app/views/auth/dashboard.html',

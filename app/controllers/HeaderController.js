@@ -1,6 +1,6 @@
 // Header Controller - Handles navigation and user actions
-angular.module('app').controller('HeaderController', ['$scope', '$location', 'AuthService', 'SupabaseService',
-function($scope, $location, AuthService, SupabaseService) {
+angular.module('app').controller('HeaderController', ['$scope', '$location',
+function($scope, $location) {
     const vm = this;
 
     console.log('HeaderController initialized');
@@ -14,16 +14,16 @@ function($scope, $location, AuthService, SupabaseService) {
     vm.loadUserPoints = function() {
         const user = vm.getCurrentUser();
         console.log('HeaderController: loadUserPoints - user object:', user);
-        
+
         // Try different possible user ID fields
         let userId = null;
         if (user) {
             userId = user.id || user.user_id || (user.user && user.user.id);
         }
-        
+
         if (!user || !userId) {
-            console.log('HeaderController: No user or userId found:', { 
-                user: !!user, 
+            console.log('HeaderController: No user or userId found:', {
+                user: !!user,
                 userId: userId,
                 userKeys: user ? Object.keys(user) : 'no user'
             });
@@ -76,11 +76,11 @@ function($scope, $location, AuthService, SupabaseService) {
     vm.checkLocalStorage = function() {
         const storedUser = GET('currentUser');
         const isAuth = GET('isAuthenticated');
-        
+
         console.log('HeaderController checking localStorage:');
         console.log('- Stored user:', storedUser);
         console.log('- Is authenticated:', isAuth);
-        
+
         if (storedUser && isAuth) {
             vm.currentUser = storedUser;
             vm.isAuth = true;
@@ -88,7 +88,7 @@ function($scope, $location, AuthService, SupabaseService) {
             vm.loadUserPoints(); // Load points when user is found
             return true;
         }
-        
+
         vm.currentUser = null;
         vm.isAuth = false;
         console.log('HeaderController: No valid user in localStorage');
@@ -96,39 +96,39 @@ function($scope, $location, AuthService, SupabaseService) {
     };
 
     // Update user data from AuthService
-    vm.updateUserData = function() {
-        vm.currentUser = AuthService.getCurrentUser();
-        vm.isAuth = AuthService.isAuthenticated();
-        vm.userPoints = 0; // Reset points cache
-        console.log('Header user data updated:', vm.currentUser ? 'logged in' : 'logged out');
-        
-        // Load fresh points if user is authenticated
-        if (vm.isAuth && vm.currentUser) {
-            vm.loadUserPoints();
-        }
-    };
+    // vm.updateUserData = function() {
+    //     vm.currentUser = AuthService.getCurrentUser();
+    //     vm.isAuth = AuthService.isAuthenticated();
+    //     vm.userPoints = 0; // Reset points cache
+    //     console.log('Header user data updated:', vm.currentUser ? 'logged in' : 'logged out');
+
+    //     // Load fresh points if user is authenticated
+    //     if (vm.isAuth && vm.currentUser) {
+    //         vm.loadUserPoints();
+    //     }
+    // };
 
     // Initialize user data - check localStorage first, then AuthService
-    vm.initializeUser = function() {
-        console.log('HeaderController: Initializing user data...');
-        
-        // First check localStorage directly
-        if (!vm.checkLocalStorage()) {
-            // If no localStorage data, check AuthService
-            vm.updateUserData();
-            
-            // If AuthService also has no data, try to load from storage
-            if (!vm.isAuth) {
-                AuthService.checkLocalStorage();
-                vm.updateUserData();
-            }
-        }
-        
-        console.log('HeaderController: Initialization complete. User:', vm.currentUser ? 'Found' : 'Not found');
-    };
+    // vm.initializeUser = function() {
+    //     console.log('HeaderController: Initializing user data...');
+
+    //     // First check localStorage directly
+    //     if (!vm.checkLocalStorage()) {
+    //         // If no localStorage data, check AuthService
+    //         vm.updateUserData();
+
+    //         // If AuthService also has no data, try to load from storage
+    //         if (!vm.isAuth) {
+    //             AuthService.checkLocalStorage();
+    //             vm.updateUserData();
+    //         }
+    //     }
+
+    //     console.log('HeaderController: Initialization complete. User:', vm.currentUser ? 'Found' : 'Not found');
+    // };
 
     // Initialize on controller load
-    vm.initializeUser();
+    // vm.initializeUser();
 
     // Navigation function
     vm.navigateTo = function(path) {
@@ -220,24 +220,24 @@ function($scope, $location, AuthService, SupabaseService) {
     // Logout function
     vm.logout = function() {
         console.log('HeaderController: Logout initiated');
-        
+
         // Clear local cache immediately
         vm.currentUser = null;
         vm.isAuth = false;
         vm.userPoints = 0; // Clear points cache
-        
+
         // Clear localStorage directly
         DEL('currentUser');
         DEL('isAuthenticated');
-        
-        AuthService.logout().then(function() {
-            console.log('HeaderController: Logout successful, redirecting to home');
-            $location.path('/');
-        }).catch(function(error) {
-            console.error('Logout error:', error);
-            // Even if logout fails, redirect to home since we cleared local data
-            $location.path('/');
-        });
+
+        // AuthService.logout().then(function() {
+        //     console.log('HeaderController: Logout successful, redirecting to home');
+        //     $location.path('/');
+        // }).catch(function(error) {
+        //     console.error('Logout error:', error);
+        //     // Even if logout fails, redirect to home since we cleared local data
+        //     $location.path('/');
+        // });
     };
 
     // Mobile menu state

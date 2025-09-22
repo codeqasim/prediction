@@ -28,28 +28,7 @@ angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$
         $rootScope.$on('$routeChangeStart', function(event, next, current) {
             $rootScope.setLoading(true);
 
-            // Check authentication for protected routes
-            try {
-                const AuthService = angular.element(document).injector().get('AuthService');
-                if (next.requireAuth && AuthService && !AuthService.isAuthenticated()) {
-                    console.log('Route requires auth but user not authenticated, redirecting to login');
-                    event.preventDefault();
-                    $location.path('/login');
-                    $rootScope.setLoading(false);
-                    return;
-                }
 
-                // Redirect authenticated users away from auth pages
-                if (next.redirectIfAuth && AuthService && AuthService.isAuthenticated()) {
-                    console.log('User authenticated but trying to access auth page, redirecting to dashboard');
-                    event.preventDefault();
-                    $location.path('/dashboard');
-                    $rootScope.setLoading(false);
-                    return;
-                }
-            } catch (error) {
-                console.log('Auth check skipped - service not ready:', error.message);
-            }
         });
 
         // Route change success
@@ -74,18 +53,18 @@ angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$
         });
 
         // Initialize authentication check
-        setTimeout(function() {
-            try {
-                const AuthService = angular.element(document).injector().get('AuthService');
-                if (AuthService && typeof AuthService.checkLocalStorage === 'function') {
-                    console.log('App.js: Initializing auth from localStorage...');
-                    AuthService.checkLocalStorage();
-                    console.log('App.js: Auth state after check:', AuthService.isAuthenticated());
-                } else {
-                    console.log('App.js: AuthService not ready yet');
-                }
-            } catch (error) {
-                console.log('App.js: Auth initialization will happen later:', error.message);
-            }
-        }, 100);
+        // setTimeout(function() {
+        //     try {
+        //         const AuthService = angular.element(document).injector().get('AuthService');
+        //         if (AuthService && typeof AuthService.checkLocalStorage === 'function') {
+        //             console.log('App.js: Initializing auth from localStorage...');
+        //             AuthService.checkLocalStorage();
+        //             console.log('App.js: Auth state after check:', AuthService.isAuthenticated());
+        //         } else {
+        //             console.log('App.js: AuthService not ready yet');
+        //         }
+        //     } catch (error) {
+        //         console.log('App.js: Auth initialization will happen later:', error.message);
+        //     }
+        // }, 100);
     }]);

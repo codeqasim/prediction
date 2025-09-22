@@ -6,13 +6,16 @@ use AppRouter\Router;
 require_once 'vendor/autoload.php';
 require_once 'functions.php';
 
-// Environment & Constants
+header("Content-Type: application/json");
+header('Access-Control-Allow-Origin: *');
+
 $env = parse_ini_file('.env');
 
 $root=(isset($_SERVER['HTTPS']) ? "https://" : "http://").$_SERVER['HTTP_HOST'];
 $root.= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
 define('root', $root);
 
+// Environment & Constants
 $GLOBALS['db'] = $db = new Medoo([
 'type' => $env['DB_TYPE'] ?? 'mysql',
 'host' => $env['DB_HOST'] ?? 'localhost',
@@ -29,8 +32,6 @@ $router = new Router(function ($method, $path, $statusCode) {
 
 $router->get('/', function () use ($router, $db) {
    echo "API SERVER ACTIVE";
-   echo "\n";
-   print_r($db->select("users", "*"));
 });
 
 require_once 'routes.php';

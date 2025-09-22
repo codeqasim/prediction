@@ -1,6 +1,6 @@
 // Authentication Service - Handles user authentication
-angular.module('app').service('AuthService', ['$rootScope', '$q', 'SupabaseService',
-function($rootScope, $q, SupabaseService) {
+angular.module('app').service('AuthService', ['$rootScope', '$q',
+function($rootScope, $q) {
     let currentUser = null;
     let authListener = null;
 
@@ -18,7 +18,7 @@ function($rootScope, $q, SupabaseService) {
     this.setCurrentUser = function(user) {
         console.log('AuthService setCurrentUser called with:', user);
         currentUser = user;
-        
+
         // Store user in localStorage using app.js GET/SET functions
         if (user) {
             SET('currentUser', user);
@@ -39,10 +39,10 @@ function($rootScope, $q, SupabaseService) {
     this.checkLocalStorage = function() {
         const storedUser = GET('currentUser');
         const isAuth = GET('isAuthenticated');
-        
+
         console.log('Checking localStorage for user:', storedUser);
         console.log('Is authenticated from storage:', isAuth);
-        
+
         if (storedUser && isAuth) {
             currentUser = storedUser;
             console.log('User found in localStorage, setting currentUser');
@@ -230,17 +230,17 @@ function($rootScope, $q, SupabaseService) {
 
         authListener = SupabaseService.auth.onAuthStateChange(function(event, session) {
             console.log('Auth state changed:', event, session?.user?.email);
-            
+
             if (event === 'SIGNED_IN' && session && session.user) {
                 currentUser = session.user;
                 $rootScope.$broadcast('auth:login', currentUser);
-                
+
                 // If this is the first sign in after email confirmation, create user profile
                 if (session.user.email_confirmed_at && !session.user.user_metadata?.profile_created) {
                     console.log('Creating user profile after email confirmation...');
                     // You can call UserService.createProfile here if needed
                 }
-                
+
                 $rootScope.$apply();
             } else if (event === 'SIGNED_OUT') {
                 currentUser = null;

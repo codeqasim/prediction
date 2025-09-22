@@ -1,0 +1,31 @@
+{
+    "name": "qaxim/php-router",
+    "description": "A lightning fast router for PHP",
+    "keywords": ["router", "routing", "url", "beutified url"],
+    "homepage": "https://github.com/qaxim/php-router",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+         "name": "Qasim Hussain",
+         "email": "compoxition@gmail.com",
+         "homepage": "http://qasimhussain.com/",
+         "role": "Creator/Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8"
+    },
+    "autoload": {
+        "psr-0": {"Router": "src/"}
+    },
+    "minimum-stability": "stable",
+    "scripts": {
+        "test": "./vendor/bin/phpunit --colors=always",
+        "lint": "php-cs-fixer fix --diff --dry-run",
+        "fix": "php-cs-fixer fix"
+    }
+}

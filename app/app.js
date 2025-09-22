@@ -3,8 +3,13 @@ function SET($name, $value) { localStorage.setItem($name, JSON.stringify($value)
 function GET($name) { try { return JSON.parse(localStorage.getItem($name)); } catch { return null; } }
 function DEL($name) { localStorage.removeItem($name); }
 
+// ======================== API CONFIGURATION ========================
+const API_BASE_URL = 'http://localhost:3000/api';
+
 // AngularJS Application Module
-angular.module('app', ['ngRoute','oc.lazyLoad']).config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
+angular.module('app', ['ngRoute','oc.lazyLoad'])
+    .constant('API_BASE_URL', API_BASE_URL)
+    .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
         // Enable HTML5 mode for clean URLs
         $locationProvider.html5Mode({
             enabled: true,

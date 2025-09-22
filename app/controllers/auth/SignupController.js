@@ -11,7 +11,6 @@ function($scope, $location, AuthService) {
     $scope.registerForm = {
         firstName: '',
         lastName: '',
-        username: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -23,8 +22,6 @@ function($scope, $location, AuthService) {
     $scope.errors = {};
     $scope.registrationSuccess = false;
     $scope.registeredEmail = '';
-    $scope.usernameChecking = false;
-    $scope.usernameStatus = '';
     $scope.passwordStrength = { score: 0, feedback: 'Weak', visible: false };
 
     // Clear autofill on page load
@@ -32,28 +29,6 @@ function($scope, $location, AuthService) {
         // $scope.registerForm.email = '';
         $scope.$apply();
     }, 100);
-
-    // Username availability check - Simplified for now
-    $scope.checkUsernameAvailability = function() {
-        console.log('🔍 Checking username availability...');
-        const username = $scope.registerForm.username;
-
-        // Clear previous status
-        $scope.errors.username = '';
-        $scope.usernameStatus = '';
-
-        // Must be at least 3 characters
-        if (!username || username.length < 3) {
-            if (username && username.length > 0) {
-                $scope.errors.username = 'Username must be at least 3 characters';
-            }
-            return;
-        }
-
-        // For now, just show that it's valid if it meets basic requirements
-        // TODO: Implement API endpoint for username checking
-        $scope.usernameStatus = '✅ Looks good';
-    };
 
     // Password strength checker
     $scope.checkPasswordStrength = function() {
@@ -89,14 +64,6 @@ function($scope, $location, AuthService) {
 
         if (!$scope.registerForm.lastName?.trim()) {
             $scope.errors.lastName = 'Last name is required';
-            isValid = false;
-        }
-
-        if (!$scope.registerForm.username?.trim()) {
-            $scope.errors.username = 'Username is required';
-            isValid = false;
-        } else if ($scope.registerForm.username.trim().length < 3) {
-            $scope.errors.username = 'Username must be at least 3 characters';
             isValid = false;
         }
 
@@ -162,20 +129,18 @@ function($scope, $location, AuthService) {
         }
 
         // Check if username is taken
-        if ($scope.usernameStatus.includes('❌')) {
-            $scope.showError('Please choose a different username');
-            return;
-        }
+        // Removed username validation since username field is removed
 
         // Start loading
         $scope.isLoading = true;
         console.log('✅ Starting registration process...');
 
-        // Prepare user data for our API
+        // Prepare user data for our API - Generate username from email
+        const emailUsername = $scope.registerForm.email.split('@')[0];
         const userData = {
             firstName: $scope.registerForm.firstName.trim(),
             lastName: $scope.registerForm.lastName.trim(),
-            username: $scope.registerForm.username.trim(),
+            username: emailUsername, // Auto-generate from email
             email: $scope.registerForm.email.trim(),
             password: $scope.registerForm.password
         };
@@ -222,7 +187,6 @@ $scope.clearForm = function() {
     $scope.registerForm = {
         firstName: '',
         lastName: '',
-        username: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -235,9 +199,6 @@ $scope.clearForm = function() {
         $scope.passwordStrength.score = 0;
         $scope.passwordStrength.feedback = '';
     }
-
-    // Clear username status
-    $scope.usernameStatus = '';
 
     // Clear any form validation states
     if ($scope.signupForm) {
@@ -255,11 +216,6 @@ $scope.handleRegistrationError = function(error) {
         errorMessage.includes('Invalid email format')) {
         $scope.errors.email = errorMessage;
         $scope.showError('Please check your email address.');
-    }
-    else if (errorMessage.includes('username is required') ||
-             errorMessage.includes('username')) {
-        $scope.errors.username = errorMessage;
-        $scope.showError('Please check your username.');
     }
     else if (errorMessage.includes('password is required') ||
              errorMessage.includes('password')) {

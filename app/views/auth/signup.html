@@ -25,9 +25,9 @@
                     </svg>
                 </div>
                 <h1 ng-if="!registrationSuccess" class="text-3xl font-bold text-white mb-2">Create Account</h1>
-                <h1 ng-if="registrationSuccess" class="text-3xl font-bold text-white mb-2">Check Your Email</h1>
+                <h1 ng-if="registrationSuccess" class="text-3xl font-bold text-white mb-2">Welcome!</h1>
                 <p ng-if="!registrationSuccess" class="text-gray-300">Join us to start predicting the future</p>
-                <p ng-if="registrationSuccess" class="text-gray-300">We've sent you a confirmation link</p>
+                <p ng-if="registrationSuccess" class="text-gray-300">Your account has been created successfully</p>
             </div>
 
             <!-- Success Page -->
@@ -41,8 +41,8 @@
                     </div>
                     <h3 class="text-xl font-semibold text-green-300 mb-2">Account Created Successfully!</h3>
                     <p class="text-green-200 text-sm leading-relaxed">
-                        We've sent a confirmation email to <span class="font-semibold">{{registeredEmail}}</span>.
-                        Please check your inbox and click the confirmation link to activate your account.
+                        Welcome to the platform! Your account has been created with the email <span class="font-semibold">{{registeredEmail}}</span>.
+                        You can now sign in and start making predictions!
                     </p>
                 </div>
 

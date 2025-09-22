@@ -33,7 +33,7 @@ function($scope, $location, SupabaseService, AuthService) {
         $scope.$apply();
     }, 100);
 
-    // Username availability check - REAL SUPABASE ONLY
+    // Username availability check - Simplified for now
     $scope.checkUsernameAvailability = function() {
         console.log('🔍 Checking username availability...');
         const username = $scope.registerForm.username;
@@ -50,47 +50,9 @@ function($scope, $location, SupabaseService, AuthService) {
             return;
         }
 
-        $scope.usernameChecking = true;
-        $scope.usernameStatus = 'Checking...';
-
-        // Get Supabase client
-        const client = SupabaseService.getClient();
-        if (!client) {
-            console.log('❌ No Supabase client available');
-            $scope.errors.username = 'Database connection not available';
-            $scope.usernameChecking = false;
-            $scope.usernameStatus = '';
-            return;
-        }
-
-        console.log('🔍 Checking username with Supabase:', username);
-
-        // Check profiles table
-        client.from('profiles')
-            .select('username')
-            .eq('username', username)
-            .then(function(response) {
-                console.log('Username check response:', response);
-
-                if (response.data && response.data.length > 0) {
-                    $scope.errors.username = 'Username already taken';
-                    $scope.usernameStatus = '❌ Not available';
-                    console.log('❌ Username taken');
-                } else {
-                    $scope.usernameStatus = '✅ Available';
-                    console.log('✅ Username available');
-                }
-            })
-            .catch(function(error) {
-                console.error('Error checking username:', error);
-                // For errors, assume available
-                $scope.usernameStatus = '⚠️ Unable to verify';
-                console.log('⚠️ Username check failed');
-            })
-            .finally(function() {
-                $scope.usernameChecking = false;
-                $scope.$apply();
-            });
+        // For now, just show that it's valid if it meets basic requirements
+        // TODO: Implement API endpoint for username checking
+        $scope.usernameStatus = '✅ Looks good';
     };
 
     // Password strength checker
@@ -172,106 +134,88 @@ function($scope, $location, SupabaseService, AuthService) {
 
     // Main registration function
     $scope.register = function(event) {
-    if (event) {
-        event.preventDefault();
-    }
-
-    console.log('🚀 Register function called');
-
-    // Prevent double submission
-    if ($scope.isLoading) {
-        console.log('Already processing, ignoring...');
-        return;
-    }
-
-    // Reset any previous success state
-    $scope.registrationSuccess = false;
-    $scope.registeredEmail = '';
-
-    // Clear previous errors
-    $scope.errors = {};
-
-    // Validate form
-    if (!$scope.validateForm()) {
-        console.log('❌ Form validation failed');
-        const firstError = Object.keys($scope.errors)[0];
-        $scope.showError('Please fix the form errors: ' + $scope.errors[firstError]);
-        return;
-    }
-
-    // Check if username is taken
-    if ($scope.usernameStatus.includes('❌')) {
-        $scope.showError('Please choose a different username');
-        return;
-    }
-
-    // Start loading
-    $scope.isLoading = true;
-    console.log('✅ Starting registration process...');
-
-    // Prepare user data for Supabase
-    const userData = {
-        first_name: $scope.registerForm.firstName.trim(),
-        last_name: $scope.registerForm.lastName.trim(),
-        username: $scope.registerForm.username.trim()
-    };
-
-    const email = $scope.registerForm.email.trim();
-    const password = $scope.registerForm.password;
-
-    console.log('📤 Sending to Supabase:', {
-        email: email,
-        userData: userData
-    });
-
-    // Call Supabase auth with correct parameter structure
-    SupabaseService.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-            data: userData,
-        emailRedirectTo: window.location.origin + '/login?activated=true'
+        if (event) {
+            event.preventDefault();
         }
-    })
-        .then(function(response) {
-            console.log('📥 Registration response:', response);
 
-            if (response.error) {
-                throw new Error(response.error.message);
-            }
+        console.log('🚀 Register function called');
 
-            console.log('✅ Registration successful!');
+        // Prevent double submission
+        if ($scope.isLoading) {
+            console.log('Already processing, ignoring...');
+            return;
+        }
 
-            // Set success state
-            $scope.registrationSuccess = true;
-            $scope.registeredEmail = email;
+        // Reset any previous success state
+        $scope.registrationSuccess = false;
+        $scope.registeredEmail = '';
 
-            // Clear form data
-            $scope.clearForm();
+        // Clear previous errors
+        $scope.errors = {};
 
-            // Show success message (will be handled by the UI with ng-if)
-            console.log('✅ Registration completed. Email confirmation sent to:', email);
-        })
-        .catch(function(error) {
-            console.error('❌ Registration failed:', error);
-            $scope.handleRegistrationError(error);
-        })
-        .finally(function() {
-            $scope.isLoading = false;
-            console.log('🏁 Registration process completed');
+        // Validate form
+        if (!$scope.validateForm()) {
+            console.log('❌ Form validation failed');
+            const firstError = Object.keys($scope.errors)[0];
+            $scope.showError('Please fix the form errors: ' + $scope.errors[firstError]);
+            return;
+        }
 
-            // Safe UI update - only apply if not already in digest cycle
-            if (!$scope.$$phase && !$scope.$root.$$phase) {
-                $scope.$apply();
-            }
+        // Check if username is taken
+        if ($scope.usernameStatus.includes('❌')) {
+            $scope.showError('Please choose a different username');
+            return;
+        }
 
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+        // Start loading
+        $scope.isLoading = true;
+        console.log('✅ Starting registration process...');
+
+        // Prepare user data for our API
+        const userData = {
+            firstName: $scope.registerForm.firstName.trim(),
+            lastName: $scope.registerForm.lastName.trim(),
+            username: $scope.registerForm.username.trim(),
+            email: $scope.registerForm.email.trim(),
+            password: $scope.registerForm.password
+        };
+
+        console.log('📤 Sending to our API:', userData);
+
+        // Call our new API
+        AuthService.registerWithAPI(userData)
+            .then(function(response) {
+                console.log('📥 Registration response:', response);
+                console.log('✅ Registration successful!');
+
+                // Set success state
+                $scope.registrationSuccess = true;
+                $scope.registeredEmail = userData.email;
+
+                // Clear form data
+                $scope.clearForm();
+
+                console.log('✅ Registration completed. User created:', response.data);
+            })
+            .catch(function(error) {
+                console.error('❌ Registration failed:', error);
+                $scope.handleRegistrationError(error);
+            })
+            .finally(function() {
+                $scope.isLoading = false;
+                console.log('🏁 Registration process completed');
+
+                // Safe UI update - only apply if not already in digest cycle
+                if (!$scope.$$phase && !$scope.$root.$$phase) {
+                    $scope.$apply();
+                }
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
-
-        });
-};
+    };
 
 // Helper function to clear the form
 $scope.clearForm = function() {
@@ -306,27 +250,29 @@ $scope.clearForm = function() {
 $scope.handleRegistrationError = function(error) {
     let errorMessage = error.message || 'Registration failed';
 
-    // Handle specific Supabase errors
-    if (errorMessage.includes('User already registered') ||
-        errorMessage.includes('email') && errorMessage.includes('already') ||
-        errorMessage.includes('already exists')) {
-        $scope.errors.email = 'This email is already registered';
-        $scope.showError('This email is already registered. Please use a different email or try logging in.');
+    // Handle specific API errors
+    if (errorMessage.includes('email is required') || 
+        errorMessage.includes('Invalid email format')) {
+        $scope.errors.email = errorMessage;
+        $scope.showError('Please check your email address.');
     }
-    else if (errorMessage.includes('username') && errorMessage.includes('taken')) {
-        $scope.errors.username = 'This username is already taken';
-        $scope.showError('This username is already taken. Please choose a different username.');
+    else if (errorMessage.includes('username is required') || 
+             errorMessage.includes('username')) {
+        $scope.errors.username = errorMessage;
+        $scope.showError('Please check your username.');
     }
-    else if (errorMessage.includes('Password should be at least')) {
-        $scope.errors.password = 'Password is too weak';
-        $scope.showError('Password is too weak. Please choose a stronger password.');
+    else if (errorMessage.includes('password is required') || 
+             errorMessage.includes('password')) {
+        $scope.errors.password = errorMessage;
+        $scope.showError('Please check your password.');
     }
-    else if (errorMessage.includes('Invalid email')) {
-        $scope.errors.email = 'Please enter a valid email address';
-        $scope.showError('Please enter a valid email address.');
+    else if (errorMessage.includes('first_name is required')) {
+        $scope.errors.firstName = 'First name is required';
+        $scope.showError('Please enter your first name.');
     }
-    else if (errorMessage.includes('rate limit') || errorMessage.includes('too many')) {
-        $scope.showError('Too many registration attempts. Please wait a few minutes before trying again.');
+    else if (errorMessage.includes('last_name is required')) {
+        $scope.errors.lastName = 'Last name is required';
+        $scope.showError('Please enter your last name.');
     }
     else {
         $scope.errors.general = errorMessage;

@@ -112,6 +112,44 @@ function($rootScope, $q) {
         return deferred.promise;
     };
 
+    // Register with new API
+    this.registerWithAPI = function(userData) {
+        console.log('AuthService registerWithAPI called with:', userData);
+        const deferred = $q.defer();
+
+        // Make API call to our signup endpoint
+        fetch('/projects/prediction/api/users/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: userData.email,
+                password: userData.password,
+                username: userData.username,
+                first_name: userData.firstName,
+                last_name: userData.lastName
+            })
+        })
+        .then(function(response) {
+            return response.json().then(function(data) {
+                if (response.ok && data.status) {
+                    console.log('Registration successful:', data);
+                    deferred.resolve(data);
+                } else {
+                    console.error('Registration failed:', data);
+                    deferred.reject(new Error(data.message || 'Registration failed'));
+                }
+            });
+        })
+        .catch(function(error) {
+            console.error('Registration error:', error);
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+    };
+
     // Register
     this.register = function(email, password, userData = {}) {
         const deferred = $q.defer();

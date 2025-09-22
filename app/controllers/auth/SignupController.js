@@ -1,6 +1,6 @@
 // Complete SignupController.js - Final Working Version
-angular.module('app').controller('SignupController', ['$scope', '$location', 'SupabaseService', 'AuthService',
-function($scope, $location, SupabaseService, AuthService) {
+angular.module('app').controller('SignupController', ['$scope', '$location', 'AuthService',
+function($scope, $location, AuthService) {
     console.log('🚀 SignupController loading...');
 
     // Test Supabase directly
@@ -251,17 +251,17 @@ $scope.handleRegistrationError = function(error) {
     let errorMessage = error.message || 'Registration failed';
 
     // Handle specific API errors
-    if (errorMessage.includes('email is required') || 
+    if (errorMessage.includes('email is required') ||
         errorMessage.includes('Invalid email format')) {
         $scope.errors.email = errorMessage;
         $scope.showError('Please check your email address.');
     }
-    else if (errorMessage.includes('username is required') || 
+    else if (errorMessage.includes('username is required') ||
              errorMessage.includes('username')) {
         $scope.errors.username = errorMessage;
         $scope.showError('Please check your username.');
     }
-    else if (errorMessage.includes('password is required') || 
+    else if (errorMessage.includes('password is required') ||
              errorMessage.includes('password')) {
         $scope.errors.password = errorMessage;
         $scope.showError('Please check your password.');
@@ -307,24 +307,15 @@ $scope.goToLogin = function() {
     console.log('Navigate to login');
 };
 
-    // Resend confirmation email
+    // Resend confirmation email - Disabled since we're not using email confirmation
     $scope.resendConfirmation = function() {
         if (!$scope.registeredEmail) {
             alert('❌ No email address found');
             return;
         }
 
-        console.log('📧 Resending confirmation to:', $scope.registeredEmail);
-
-        SupabaseService.auth.resetPassword($scope.registeredEmail)
-            .then(function(response) {
-                console.log('✅ Resend response:', response);
-                alert('✅ Confirmation email sent to ' + $scope.registeredEmail);
-            })
-            .catch(function(error) {
-                console.error('❌ Resend failed:', error);
-                alert('❌ Failed to send confirmation email. Please try again.');
-            });
+        console.log('📧 Email confirmation not needed with current API');
+        alert('✅ No email confirmation required! You can sign in directly.');
     };
 
     // Clear autofill helper

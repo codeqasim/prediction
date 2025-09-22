@@ -1,5 +1,10 @@
 <?php
 
+// Disable error display for clean JSON responses
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
+
 use Medoo\Medoo;
 use AppRouter\Router;
 

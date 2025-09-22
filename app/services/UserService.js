@@ -1,51 +1,128 @@
-// User Service - Handles user data and operations (Demo Mode)
-angular.module('app').service('UserService', ['$q', '$timeout', 'AuthService',
-function($q, $timeout, AuthService) {
+// User Service - Handles user data and operations (API Integration)
+angular.module('app').service('UserService', ['$http', '$q', '$timeout', 'AuthService',
+function($http, $q, $timeout, AuthService) {
 
-    // Get current user data from auth (no database dependency)
+    // Get current user profile from API
     this.getCurrentUser = function() {
         const deferred = $q.defer();
 
         const authUser = AuthService.getCurrentUser();
-        if (!authUser) {
+        if (!authUser || !authUser.id) {
             deferred.reject(new Error('No authenticated user'));
             return deferred.promise;
         }
 
-        // Create user profile from auth data only
-        const userProfile = {
-            id: authUser.id,
-            email: authUser.email,
-            username: authUser.email.split('@')[0],
-            full_name: (authUser.user_metadata && authUser.user_metadata.full_name) || '',
-            created_at: authUser.created_at,
-            points: 1250, // Default points
-            predictions_total: 15,
-            predictions_correct: 12,
-            avatar_url: (authUser.user_metadata && authUser.user_metadata.avatar_url) ||
-                       'https://ui-avatars.com/api/?name=' + encodeURIComponent(authUser.email.split('@')[0]) + '&background=8b45ff&color=fff'
-        };
-
-        $timeout(function() {
-            deferred.resolve(userProfile);
-        }, 50);
+        // Make API call to get user profile
+        $http({
+            method: 'GET',
+            url: '/api/users/profile',
+            headers: {
+                'Authorization': 'Bearer ' + authUser.id,
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            if (response.data && response.data.status) {
+                const user = response.data.data;
+                // Add computed properties for compatibility
+                user.username = user.email.split('@')[0];
+                user.full_name = (user.first_name + ' ' + user.last_name).trim();
+                user.predictions_total = user.stats ? user.stats.total_predictions : 0;
+                user.predictions_correct = user.stats ? user.stats.correct_predictions : 0;
+                user.accuracy = user.stats ? user.stats.accuracy : 0;
+                
+                // Ensure avatar_url has a fallback
+                if (!user.avatar_url) {
+                    user.avatar_url = 'https://ui-avatars.com/api/?name=' + 
+                                    encodeURIComponent(user.full_name || user.username) + 
+                                    '&background=8b45ff&color=fff';
+                }
+                
+                deferred.resolve(user);
+            } else {
+                deferred.reject(new Error(response.data.message || 'Failed to fetch user profile'));
+            }
+        }).catch(function(error) {
+            console.error('Error fetching user profile:', error);
+            deferred.reject(error);
+        });
 
         return deferred.promise;
     };
 
-    // Update user data (demo mode - just returns success)
+    // Update user profile data
     this.updateUser = function(userData) {
         const deferred = $q.defer();
 
-        $timeout(function() {
-            console.log('UserService: Update user (demo mode):', userData);
-            deferred.resolve(userData);
-        }, 100);
+        const authUser = AuthService.getCurrentUser();
+        if (!authUser || !authUser.id) {
+            deferred.reject(new Error('No authenticated user'));
+            return deferred.promise;
+        }
+
+        $http({
+            method: 'PUT',
+            url: '/api/users/profile',
+            headers: {
+                'Authorization': 'Bearer ' + authUser.id,
+                'Content-Type': 'application/json'
+            },
+            data: userData
+        }).then(function(response) {
+            if (response.data && response.data.status) {
+                const user = response.data.data;
+                // Add computed properties for compatibility
+                user.username = user.email.split('@')[0];
+                user.full_name = (user.first_name + ' ' + user.last_name).trim();
+                
+                deferred.resolve(user);
+            } else {
+                deferred.reject(new Error(response.data.message || 'Failed to update profile'));
+            }
+        }).catch(function(error) {
+            console.error('Error updating user profile:', error);
+            deferred.reject(error);
+        });
 
         return deferred.promise;
     };
 
-    // Add points (demo mode)
+    // Upload user avatar
+    this.uploadAvatar = function(file) {
+        const deferred = $q.defer();
+
+        const authUser = AuthService.getCurrentUser();
+        if (!authUser || !authUser.id) {
+            deferred.reject(new Error('No authenticated user'));
+            return deferred.promise;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        $http({
+            method: 'POST',
+            url: '/api/users/avatar',
+            headers: {
+                'Authorization': 'Bearer ' + authUser.id,
+                'Content-Type': undefined // Let browser set content-type for FormData
+            },
+            data: formData,
+            transformRequest: angular.identity
+        }).then(function(response) {
+            if (response.data && response.data.status) {
+                deferred.resolve(response.data.data);
+            } else {
+                deferred.reject(new Error(response.data.message || 'Failed to upload avatar'));
+            }
+        }).catch(function(error) {
+            console.error('Error uploading avatar:', error);
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+    };
+
+    // Add points (demo mode - would need API endpoint)
     this.addPoints = function(points) {
         const deferred = $q.defer();
 
@@ -57,122 +134,40 @@ function($q, $timeout, AuthService) {
         return deferred.promise;
     };
 
-    // Get user statistics (real data from Supabase profiles table)
+    // Get user statistics (now included in getCurrentUser response)
     this.getUserStats = function() {
         const deferred = $q.defer();
         
-        const authUser = AuthService.getCurrentUser();
-        if (!authUser) {
-            deferred.reject(new Error('No authenticated user'));
-            return deferred.promise;
-        }
-
-        // Try to get real stats from Supabase profiles table
-        const supabaseService = angular.element(document).injector().get('SupabaseService');
-        const supabaseClient = supabaseService.getClient();
-
-        if (supabaseClient) {
-            supabaseClient
-                .from('profiles')
-                .select('points, predictions_total, predictions_correct, rank')
-                .eq('id', authUser.id)
-                .single()
-                .then(function(response) {
-                    if (response.error) {
-                        console.error('Error fetching user stats from profiles:', response.error);
-                        // Fallback to default stats for new users
-                        fallbackToDefaults();
-                        return;
-                    }
-                    
-                    const userProfile = response.data;
-                    const stats = {
-                        total_predictions: userProfile.predictions_total || 0,
-                        correct_predictions: userProfile.predictions_correct || 0,
-                        accuracy: userProfile.predictions_total > 0 ? 
-                                 Math.round((userProfile.predictions_correct / userProfile.predictions_total) * 100) : 0,
-                        points: userProfile.points || 0,
-                        rank: userProfile.rank || 'Beginner'
-                    };
-                    
-                    console.log('✅ UserService: Real user stats from database:', stats);
-                    deferred.resolve(stats);
-                })
-                .catch(function(error) {
-                    console.error('Error fetching user stats:', error);
-                    fallbackToDefaults();
-                });
-        } else {
-            fallbackToDefaults();
-        }
-
-        function fallbackToDefaults() {
-            $timeout(function() {
-                // Default stats for new users
-                const stats = {
-                    total_predictions: 0,
-                    correct_predictions: 0,
-                    accuracy: 0,
-                    points: 100, // Give new users 100 starting points
-                    rank: 'Beginner'
-                };
-                console.log('UserService: Fallback default stats:', stats);
-                deferred.resolve(stats);
-            }, 100);
-        }
+        // Use getCurrentUser which now includes stats
+        this.getCurrentUser().then(function(user) {
+            const stats = {
+                total_predictions: user.stats ? user.stats.total_predictions : 0,
+                correct_predictions: user.stats ? user.stats.correct_predictions : 0,
+                accuracy: user.stats ? user.stats.accuracy : 0,
+                points: user.points || 0,
+                rank: user.stats && user.stats.accuracy > 80 ? 'Expert' : 
+                      user.stats && user.stats.accuracy > 60 ? 'Advanced' : 
+                      user.stats && user.stats.accuracy > 40 ? 'Intermediate' : 'Beginner'
+            };
+            
+            deferred.resolve(stats);
+        }).catch(function(error) {
+            deferred.reject(error);
+        });
         
         return deferred.promise;
     };
 
-    // Get user predictions history (real data from Supabase)
+    // Get user predictions history (would need API endpoint)
     this.getUserPredictions = function(limit = 10) {
         const deferred = $q.defer();
         
-        const authUser = AuthService.getCurrentUser();
-        if (!authUser) {
-            deferred.reject(new Error('No authenticated user'));
-            return deferred.promise;
-        }
-
-        // Try to get real predictions from Supabase predictions table
-        const supabaseService = angular.element(document).injector().get('SupabaseService');
-        const supabaseClient = supabaseService.getClient();
-
-        if (supabaseClient) {
-            supabaseClient
-                .from('predictions')
-                .select('*')
-                .eq('user_id', authUser.id)
-                .order('created_at', { ascending: false })
-                .limit(limit)
-                .then(function(response) {
-                    if (response.error) {
-                        console.error('Error fetching user predictions:', response.error);
-                        // Fallback to empty array
-                        fallbackToEmpty();
-                        return;
-                    }
-                    
-                    const predictions = response.data || [];
-                    console.log('✅ UserService: Real user predictions from database:', predictions);
-                    deferred.resolve(predictions);
-                })
-                .catch(function(error) {
-                    console.error('Error fetching user predictions:', error);
-                    fallbackToEmpty();
-                });
-        } else {
-            fallbackToEmpty();
-        }
-
-        function fallbackToEmpty() {
-            $timeout(function() {
-                // For new users or when database is not available
-                const predictions = [];
-                console.log('UserService: Fallback empty predictions:', predictions);
-                deferred.resolve(predictions);
-            }, 100);
-        }
+        $timeout(function() {
+            // For now, return empty array until predictions API is implemented
+            const predictions = [];
+            console.log('UserService: User predictions (not implemented):', predictions);
+            deferred.resolve(predictions);
+        }, 100);
         
         return deferred.promise;
     };
@@ -209,208 +204,57 @@ function($q, $timeout, AuthService) {
         return deferred.promise;
     };
 
-    // Create user profile (called after registration) - Real Supabase integration with fallback
+    // Create user profile (called after registration) - Not needed with current API design
     this.createProfile = function(userData) {
         const deferred = $q.defer();
 
-        console.log('🔄 CreateProfile called with userData:', userData);
-
-        const authUser = AuthService.getCurrentUser();
-        console.log('🔍 Current auth user:', authUser);
-
-        if (!authUser) {
-            console.error('❌ No authenticated user found during profile creation');
-            deferred.reject(new Error('No authenticated user'));
-            return deferred.promise;
-        }
-
-        // Create profile in Supabase profiles table
-        const supabaseService = angular.element(document).injector().get('SupabaseService');
-        const supabaseClient = supabaseService.getClient();
-
-        console.log('🔍 Supabase client:', supabaseClient);
-        console.log('🔍 Supabase available:', supabaseService.isAvailable());
-
-        if (!supabaseClient) {
-            console.warn('⚠️ Supabase client not available, using demo mode fallback');
-            return createDemoProfile();
-        }
-
-        // Test basic connection first
-        console.log('🧪 Testing Supabase connection...');
-        supabaseClient
-            .from('profiles')
-            .select('count', { count: 'exact' })
-            .then(function(testResponse) {
-                console.log('🧪 Connection test result:', testResponse);
-                
-                if (testResponse.error) {
-                    console.error('❌ Connection test failed:', testResponse.error);
-                    console.warn('⚠️ Falling back to demo mode due to connection failure');
-                    return createDemoProfile();
-                }
-                
-                console.log('✅ Connection test passed, proceeding with profile creation');
-                
-                // Now proceed with actual profile creation
-                const profileData = {
+        console.log('UserService: createProfile called (demo mode):', userData);
+        
+        // Profile is created during registration, just return success
+        $timeout(function() {
+            const authUser = AuthService.getCurrentUser();
+            if (authUser) {
+                deferred.resolve({
                     id: authUser.id,
                     email: authUser.email,
-                    username: userData.username || authUser.email.split('@')[0],
-                    full_name: ((userData.firstName || '') + ' ' + (userData.lastName || '')).trim(),
-                    email_confirmed_at: authUser.email_confirmed_at,
-                    last_sign_in_at: authUser.last_sign_in_at,
-                    created_at: authUser.created_at,
-                    points: 100, // New user starts with 100 points
-                    predictions_total: 0,
-                    predictions_correct: 0,
-                    rank: 'Beginner',
-                    avatar_url: userData.avatar_url || 
-                               'https://ui-avatars.com/api/?name=' + encodeURIComponent((userData.firstName || '') + ' ' + (userData.lastName || '')) + '&background=8b45ff&color=fff'
-                };
-
-                console.log('📝 Attempting to create profile in database:', profileData);
-
-                return supabaseClient
-                    .from('profiles')
-                    .upsert(profileData)
-                    .select();
-            })
-            .then(function(response) {
-                if (response && response.then) {
-                    // This is a promise (from demo fallback)
-                    return response;
-                }
-                
-                console.log('📊 Database response:', response);
-                
-                if (response.error) {
-                    console.error('❌ Database error response:', response.error);
-                    console.warn('⚠️ Falling back to demo mode due to database error');
-                    return createDemoProfile();
-                }
-                
-                if (!response.data || response.data.length === 0) {
-                    console.error('❌ No data returned from database insert');
-                    console.warn('⚠️ Falling back to demo mode due to empty response');
-                    return createDemoProfile();
-                }
-                
-                console.log('✅ UserService: Profile created successfully in database:', response.data[0]);
-                deferred.resolve(response.data[0]);
-            })
-            .catch(function(error) {
-                console.error('❌ Error during profile creation (catch block):', error);
-                console.warn('⚠️ Falling back to demo mode due to error');
-                createDemoProfile().then(function(profile) {
-                    deferred.resolve(profile);
-                }).catch(function(demoError) {
-                    deferred.reject(demoError);
+                    username: authUser.email.split('@')[0],
+                    full_name: userData.firstName + ' ' + userData.lastName,
+                    points: 100,
+                    message: 'Profile created successfully'
                 });
-            });
-
-        // Demo mode fallback function
-        function createDemoProfile() {
-            return new Promise(function(resolve) {
-                $timeout(function() {
-                    const profileData = {
-                        id: authUser.id,
-                        email: authUser.email,
-                        username: userData.username || authUser.email.split('@')[0],
-                        full_name: ((userData.firstName || '') + ' ' + (userData.lastName || '')).trim(),
-                        created_at: authUser.created_at,
-                        points: 100, // New user starts with 100 points
-                        predictions_total: 0,
-                        predictions_correct: 0,
-                        rank: 'Beginner',
-                        avatar_url: userData.avatar_url || 
-                                   'https://ui-avatars.com/api/?name=' + encodeURIComponent((userData.firstName || '') + ' ' + (userData.lastName || '')) + '&background=8b45ff&color=fff'
-                    };
-
-                    console.log('✅ UserService: Profile created (demo mode):', profileData);
-                    resolve(profileData);
-                }, 100);
-            });
-        }
+            } else {
+                deferred.reject(new Error('No authenticated user'));
+            }
+        }, 100);
 
         return deferred.promise;
     };
 
-    // Get all users from Supabase (for admin dashboard, leaderboard, etc.)
+    // Get all users (demo mode - would need API endpoint)
     this.getAllUsers = function() {
         const deferred = $q.defer();
 
-        // Try to get real users from Supabase profiles table
-        const supabaseService = angular.element(document).injector().get('SupabaseService');
-        const supabaseClient = supabaseService.getClient();
+        $timeout(function() {
+            const authUser = AuthService.getCurrentUser();
+            const users = [];
 
-        if (supabaseClient) {
-            // Use the profiles table for better data access
-            supabaseClient
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .then(function(response) {
-                    if (response.error) {
-                        console.error('Error fetching users from profiles:', response.error);
-                        // Fallback to current user
-                        fallbackToCurrentUser();
-                        return;
-                    }
-
-                    console.log('✅ Successfully fetched users from profiles table:', response.data.length);
-                    const users = response.data.map(function(user) {
-                        return {
-                            id: user.id,
-                            email: user.email,
-                            created_at: user.created_at,
-                            last_sign_in_at: user.last_sign_in_at,
-                            username: user.username || user.email.split('@')[0],
-                            full_name: user.full_name || '',
-                            email_confirmed_at: user.email_confirmed_at,
-                            points: user.points || 0,
-                            predictions_total: user.predictions_total || 0,
-                            predictions_correct: user.predictions_correct || 0,
-                            accuracy: user.predictions_total > 0 ?
-                                     Math.round((user.predictions_correct / user.predictions_total) * 100) : 0
-                        };
-                    });
-                    deferred.resolve(users);
-                })
-                .catch(function(error) {
-                    console.error('Error fetching users from profiles table:', error);
-                    fallbackToCurrentUser();
+            if (authUser) {
+                users.push({
+                    id: authUser.id,
+                    email: authUser.email,
+                    created_at: new Date().toISOString(),
+                    username: authUser.email.split('@')[0],
+                    full_name: authUser.first_name + ' ' + authUser.last_name,
+                    points: authUser.points || 0,
+                    predictions_total: 0,
+                    predictions_correct: 0,
+                    accuracy: 0
                 });
-        } else {
-            fallbackToCurrentUser();
-        }
+            }
 
-        function fallbackToCurrentUser() {
-            // Fallback: Show current user only
-            $timeout(function() {
-                const authUser = AuthService.getCurrentUser();
-                const users = [];
-
-                if (authUser) {
-                    users.push({
-                        id: authUser.id,
-                        email: authUser.email,
-                        created_at: authUser.created_at,
-                        last_sign_in_at: authUser.last_sign_in_at,
-                        username: authUser.user_metadata?.username || authUser.email.split('@')[0],
-                        full_name: authUser.user_metadata?.full_name || '',
-                        email_confirmed_at: authUser.email_confirmed_at,
-                        points: authUser.user_metadata?.points || 0,
-                        predictions_total: 0,
-                        predictions_correct: 0,
-                        accuracy: 0
-                    });
-                }
-
-                console.log('Fallback: Current authenticated user:', users);
-                deferred.resolve(users);
-            }, 100);
-        }
+            console.log('UserService: All users (demo mode):', users);
+            deferred.resolve(users);
+        }, 100);
 
         return deferred.promise;
     };

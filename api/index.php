@@ -47,6 +47,7 @@ $router->get('/', function () use ($router, $db) {
    echo "API SERVER ACTIVE";
 });
 
-require_once 'routes.php';
+include 'routes/users.php';
+include 'routes/predictions.php';
 
 $router->dispatchGlobal();

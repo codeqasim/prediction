@@ -1,6 +1,6 @@
-// Complete LoginController.js - Final Working Version
-angular.module('app').controller('LoginController', ['$scope', '$location', 'SupabaseService', 'AuthService',
-function($scope, $location, SupabaseService, AuthService) {
+// Complete LoginController.js - API-based Authentication
+angular.module('app').controller('LoginController', ['$scope', '$location', 'AuthService',
+function($scope, $location, AuthService) {
     console.log('🚀 LoginController loading...');
 
     // PREVENT DOUBLE INITIALIZATION
@@ -103,50 +103,14 @@ function($scope, $location, SupabaseService, AuthService) {
         const email = $scope.loginForm.email.trim();
         const password = $scope.loginForm.password;
 
-        console.log('📤 Sending to Supabase:', {
+        console.log('📤 Sending to API:', {
             email: email
         });
 
-        // Add debugging log to check actual form values
-        console.log('Form values debug:', {
-            email: $scope.loginForm.email,
-            password: $scope.loginForm.password ? '***hidden***' : 'MISSING',
-            emailLength: email.length,
-            passwordLength: password.length
-        });
-
-
-            // Get the Supabase client directly
-            const client = SupabaseService.getClient();
-
-            if (!client) {
-            throw new Error('Supabase client not available');
-            }
-
-            // Use the raw client method
-            client.auth.signInWithPassword({
-            email: email,
-            password: password
-            })
-
-            .then(function(response) {
-                console.log('📥 Login response:', response);
-
-                if (response.error) {
-                    throw new Error(response.error.message);
-                }
-
-                // Check if user is verified (commented out for testing)
-                // if (!response.data.user.email_confirmed_at) {
-                //     throw new Error('Please verify your email address before logging in. Check your inbox for the verification email.');
-                // }
-
-                console.log('✅ Login successful!');
-
-                // Set user in AuthService (this will handle localStorage automatically)
-                AuthService.setCurrentUser(response.data.user);
-
-                console.log('💾 User set in AuthService and localStorage');
+        // Use AuthService to login with our API
+        AuthService.login(email, password)
+            .then(function(user) {
+                console.log('✅ Login successful!', user);
 
                 // Set success state
                 $scope.loginSuccess = true;
@@ -202,23 +166,21 @@ function($scope, $location, SupabaseService, AuthService) {
     $scope.handleLoginError = function(error) {
         let errorMessage = error.message || 'Login failed';
 
-        // Handle specific Supabase errors
-        if (errorMessage.includes('Invalid login credentials') ||
-            errorMessage.includes('Invalid email or password')) {
+        // Handle specific API errors
+        if (errorMessage.includes('Invalid credentials') ||
+            errorMessage.includes('Invalid email or password') ||
+            errorMessage.includes('User not found') ||
+            errorMessage.includes('Incorrect password')) {
             $scope.errors.general = 'Invalid email or password. Please try again.';
             $scope.showError('Invalid email or password. Please try again.');
         }
-        else if (errorMessage.includes('Email not confirmed') ||
+        else if (errorMessage.includes('Account not activated') ||
             errorMessage.includes('verify your email')) {
             $scope.errors.email = 'Please verify your email address first';
             $scope.showError('Please verify your email address before logging in.');
         }
         else if (errorMessage.includes('Too many requests')) {
             $scope.showError('Too many login attempts. Please wait a few minutes before trying again.');
-        }
-        else if (errorMessage.includes('User not found')) {
-            $scope.errors.email = 'No account found with this email';
-            $scope.showError('No account found with this email. Please sign up first.');
         }
         else {
             $scope.errors.general = errorMessage;
@@ -247,71 +209,6 @@ function($scope, $location, SupabaseService, AuthService) {
     $scope.goToForgotPassword = function() {
         // Navigate to forgot password page
         $location.path('/forgot-password');
-    };
-
-    // Test login function (remove after testing)
-    $scope.testLogin = function() {
-        console.log('🧪 Testing with predefined credentials...');
-        $scope.loginForm.email = 'test@test.com';
-        $scope.loginForm.password = 'password123';
-        $scope.login();
-    };
-
-    // Test signup function (remove after testing)
-    $scope.testSignup = function() {
-        console.log('🧪 Creating test user...');
-        
-        const client = SupabaseService.getClient();
-        if (!client) {
-            alert('❌ Supabase not available');
-            return;
-        }
-
-        client.auth.signUp({
-            email: 'test@test.com',
-            password: 'password123',
-            options: {
-                data: {
-                    first_name: 'Test',
-                    last_name: 'User',
-                    username: 'testuser'
-                }
-            }
-        })
-        .then(function(response) {
-            console.log('📥 Signup response:', response);
-            if (response.error) {
-                alert('❌ Signup failed: ' + response.error.message);
-            } else {
-                alert('✅ Test user created successfully! You can now try logging in.');
-            }
-        })
-        .catch(function(error) {
-            console.error('❌ Signup error:', error);
-            alert('❌ Signup error: ' + error.message);
-        });
-    };
-
-    // Forgot password function
-    $scope.forgotPassword = function() {
-        if (!$scope.loginForm.email) {
-            $scope.showError('Please enter your email address first');
-            return;
-        }
-
-        console.log('📧 Sending password reset to:', $scope.loginForm.email);
-
-        SupabaseService.auth.resetPassword({
-            email: $scope.loginForm.email
-        })
-            .then(function(response) {
-                console.log('✅ Password reset response:', response);
-                alert('✅ Password reset email sent to ' + $scope.loginForm.email);
-            })
-            .catch(function(error) {
-                console.error('❌ Password reset failed:', error);
-                alert('❌ Failed to send password reset email. Please try again.');
-            });
     };
 
     // Check if user is already logged in

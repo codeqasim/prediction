@@ -40,7 +40,7 @@ $router->post('/users/signup', function () use ($db) {
         'password' => password_hash($input['password'], PASSWORD_DEFAULT),
         'first_name' => $input['first_name'],
         'last_name' => $input['last_name'],
-        'status' => 0,
+        'status' => 0, // Active user
         'points' => 100,
     ];
 
@@ -54,7 +54,6 @@ $router->post('/users/signup', function () use ($db) {
             'data' => [
                 'id' => $userData['id'],
                 'email' => $userData['email'],
-                'username' => $userData['username'],
                 'first_name' => $userData['first_name'],
                 'last_name' => $userData['last_name'],
                 'points' => $userData['points']
